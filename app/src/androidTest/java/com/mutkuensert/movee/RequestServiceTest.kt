@@ -28,7 +28,7 @@ class RequestServiceTest {
     }
 
     @Test
-    fun requestPopularMovies(){
+    fun popularMoviesRequestHttpStatusCodeIs200(){
         runTest {
             val response = requestService.getPopularMovies()
             Assert.assertEquals(200, response.code())
