@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.mutkuensert.movee.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -70,10 +70,17 @@ dependencies {
 
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
+    // For instrumented tests.
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    // ...with Kotlin.
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
 
 }
 
