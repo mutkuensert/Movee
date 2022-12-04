@@ -33,6 +33,7 @@ class RequestServiceTest {
             val response = requestService.getPopularMovies()
             Assert.assertEquals(200, response.code())
             response.body()?.let { popularMovies ->
+                Log.i(TAG, "${popularMovies.results.size}")
                 Log.i(TAG, "${popularMovies.results}")
             }
         }
