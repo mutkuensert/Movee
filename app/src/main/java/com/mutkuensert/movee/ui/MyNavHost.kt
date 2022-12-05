@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mutkuensert.movee.ui.home.Home
+import com.mutkuensert.movee.ui.popularmovies.PopularMovies
 import com.mutkuensert.movee.util.HOME
 
 @Composable
@@ -18,6 +18,6 @@ fun MyNavHost(
     NavHost(modifier = modifier,
     navController = navController,
     startDestination = startDestination){
-        composable(HOME){ Home()}
+        composable(HOME){ PopularMovies()}
     }
 }

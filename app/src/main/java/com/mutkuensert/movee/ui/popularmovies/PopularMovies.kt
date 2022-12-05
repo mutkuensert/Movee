@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.ui.home
+package com.mutkuensert.movee.ui.popularmovies
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -23,20 +23,19 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.flowlayout.FlowRow
 import com.mutkuensert.movee.data.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
-private const val TAG = "Home Composable"
+private const val TAG = "PopularMovies Composable"
 
 @Composable
-fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel()) {
-    HomeDataObserver(viewModel = viewModel)
+fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel()) {
+    PopularMoviesDataObserver(viewModel = viewModel)
 }
 
 @Composable
-fun HomeDataObserver(modifier: Modifier = Modifier, viewModel: HomeViewModel){
+fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel){
     val lazyPagingItems = viewModel.flow.collectAsLazyPagingItems()
 
     Column(
