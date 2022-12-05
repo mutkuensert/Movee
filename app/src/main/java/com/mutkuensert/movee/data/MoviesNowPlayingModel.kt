@@ -2,14 +2,14 @@ package com.mutkuensert.movee.data
 
 import com.squareup.moshi.Json
 
-data class PopularMovies(
+data class MoviesNowPlayingModel(
     val page: Int,
-    val results: List<PopularMoviesResult>,
+    val results: List<MoviesNowPlayingResult>,
     @Json(name = "total_results") val totalResults: Int,
     @Json(name = "total_pages") val totalPages: Int
 )
 
-data class PopularMoviesResult(
+data class MoviesNowPlayingResult(
     @Json(name = "poster_path") val posterPath: String?,
     @Json(name = "original_title") val originalTitle: String,
     val id: Int,
