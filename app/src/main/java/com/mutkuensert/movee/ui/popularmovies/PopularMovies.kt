@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -27,20 +26,19 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.MOVIE_DETAILS
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
 private const val TAG = "PopularMovies Composable"
 
 @Composable
-fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel(), navController: NavController) {
+fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel(), navigateToMovieDetails: () -> Unit) {
     PopularMoviesDataObserver(
         viewModel = viewModel,
-        navController = navController)
+        navigateToMovieDetails = navigateToMovieDetails)
 }
 
 @Composable
-fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel, navController: NavController){
+fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel, navigateToMovieDetails: () -> Unit){
     val lazyPagingItems = viewModel.flow.collectAsLazyPagingItems()
 
     Column(
@@ -57,7 +55,7 @@ fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularM
 
             itemsIndexed(lazyPagingItems){ index, item ->
                 item?.let { itemNonNull ->
-                    PopularMoviesItem(movie = itemNonNull, onClick = {navController.navigate(MOVIE_DETAILS)})
+                    PopularMoviesItem(movie = itemNonNull, onClick = { navigateToMovieDetails() })
                 }
             }
 

@@ -20,7 +20,8 @@ fun MyNavHost(
     NavHost(modifier = modifier,
     navController = navController,
     startDestination = startDestination){
-        composable(HOME){ PopularMovies(navController = navController) }
+        composable(HOME){ PopularMovies(navigateToMovieDetails = { navController.navigate(MOVIE_DETAILS) }) }
+
         composable(MOVIE_DETAILS){ MovieDetails() }
     }
 }
