@@ -1,6 +1,7 @@
 package com.mutkuensert.movee.ui.popularmovies
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -25,17 +27,20 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
+import com.mutkuensert.movee.util.MOVIE_DETAILS
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
 private const val TAG = "PopularMovies Composable"
 
 @Composable
-fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel()) {
-    PopularMoviesDataObserver(viewModel = viewModel)
+fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel(), navController: NavController) {
+    PopularMoviesDataObserver(
+        viewModel = viewModel,
+        navController = navController)
 }
 
 @Composable
-fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel){
+fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel, navController: NavController){
     val lazyPagingItems = viewModel.flow.collectAsLazyPagingItems()
 
     Column(
@@ -52,7 +57,7 @@ fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularM
 
             itemsIndexed(lazyPagingItems){ index, item ->
                 item?.let { itemNonNull ->
-                    PopularMoviesItem(movie = itemNonNull)
+                    PopularMoviesItem(movie = itemNonNull, onClick = {navController.navigate(MOVIE_DETAILS)})
                 }
             }
 
@@ -62,14 +67,15 @@ fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularM
 }
 
 @Composable
-fun PopularMoviesItem(movie: PopularMoviesResult){
+fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit){
 
     Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 2.dp, horizontal = 5.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .padding(10.dp)
-            .fillMaxWidth()) {
+            .fillMaxWidth()
+            .clickable { onClick() }) {
 
             Row(modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically){
 
@@ -111,5 +117,5 @@ fun PopularMoviesItem(movie: PopularMoviesResult){
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewPopularMoviesItem(){
-    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0,5.0))
+    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0,5.0), onClick = {})
 }
