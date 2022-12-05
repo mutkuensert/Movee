@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.ui.popularmovies
+package com.mutkuensert.movee.ui.home
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import androidx.paging.compose.itemsIndexed
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.MoviesNowPlayingResult
@@ -32,10 +31,10 @@ import com.mutkuensert.movee.data.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
-private const val TAG = "PopularMovies Composable"
+private const val TAG = "Home Composable"
 
 @Composable
-fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel = hiltViewModel(), navigateToMovieDetails: () -> Unit) {
+fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel(), navigateToMovieDetails: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingDataObserver(
             modifier = Modifier
@@ -62,7 +61,7 @@ fun PopularMovies(modifier: Modifier = Modifier, viewModel: PopularMoviesViewMod
 }
 
 @Composable
-fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:PopularMoviesViewModel, navigateToMovieDetails: () -> Unit){
+fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeViewModel, navigateToMovieDetails: () -> Unit){
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
 
     Row(modifier = modifier,
@@ -94,7 +93,7 @@ fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:Popula
 }
 
 @Composable
-fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: PopularMoviesViewModel, navigateToMovieDetails: () -> Unit){
+fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeViewModel, navigateToMovieDetails: () -> Unit){
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
     Column(

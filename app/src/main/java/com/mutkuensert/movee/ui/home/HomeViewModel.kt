@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.ui.popularmovies
+package com.mutkuensert.movee.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,10 +11,10 @@ import com.mutkuensert.movee.data.source.RequestService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-private const val TAG = "PopularMoviesViewModel"
+private const val TAG = "HomeViewModel"
 
 @HiltViewModel
-class PopularMoviesViewModel @Inject constructor(private val requestService: RequestService): ViewModel() {
+class HomeViewModel @Inject constructor(private val requestService: RequestService): ViewModel() {
 
     val popularMovies = Pager(
         PagingConfig(pageSize = 20)
