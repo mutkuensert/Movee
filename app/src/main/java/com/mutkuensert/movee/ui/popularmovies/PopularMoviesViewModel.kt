@@ -10,7 +10,7 @@ import com.mutkuensert.movee.data.source.RequestService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-private const val TAG = "HomeViewModel"
+private const val TAG = "PopularMoviesViewModel"
 
 @HiltViewModel
 class PopularMoviesViewModel @Inject constructor(private val requestService: RequestService): ViewModel() {
