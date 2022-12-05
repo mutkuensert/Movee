@@ -100,6 +100,8 @@ dependencies {
     implementation "androidx.paging:paging-runtime:$paging_version"
     implementation "androidx.paging:paging-compose:1.0.0-alpha17"
 
+    implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
+
 }
 
 kapt {
