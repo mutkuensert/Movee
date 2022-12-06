@@ -34,7 +34,7 @@ import com.mutkuensert.movee.util.POSTER_SIZE_W500
 private const val TAG = "Home Composable"
 
 @Composable
-fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel(), navigateToMovieDetails: () -> Unit) {
+fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel(), navigateToMovieDetails: (movieId: Int) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingDataObserver(
             modifier = Modifier
@@ -61,7 +61,7 @@ fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel
 }
 
 @Composable
-fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeViewModel, navigateToMovieDetails: () -> Unit){
+fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeViewModel, navigateToMovieDetails: (movieId: Int) -> Unit){
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
 
     Row(modifier = modifier,
@@ -84,7 +84,7 @@ fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeVi
         LazyRow(modifier = Modifier.padding(horizontal = 10.dp)){
             items(moviesNowPlayingLazyPagingItems){ item ->
                 item?.let { itemNonNull ->
-                    MoviesNowPlayingItem(movie = itemNonNull, onClick = { navigateToMovieDetails() })
+                    MoviesNowPlayingItem(movie = itemNonNull, onClick = { navigateToMovieDetails(itemNonNull.id) })
                 }
             }
         }
@@ -93,7 +93,7 @@ fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeVi
 }
 
 @Composable
-fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeViewModel, navigateToMovieDetails: () -> Unit){
+fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeViewModel, navigateToMovieDetails: (movieId: Int) -> Unit){
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
     Column(
@@ -113,7 +113,7 @@ fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeView
         LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)){
             items(popularMoviesLazyPagingItems){ item ->
                 item?.let { itemNonNull ->
-                    PopularMoviesItem(movie = itemNonNull, onClick = { navigateToMovieDetails() })
+                    PopularMoviesItem(movie = itemNonNull, onClick = { navigateToMovieDetails(itemNonNull.id) })
                 }
             }
 
