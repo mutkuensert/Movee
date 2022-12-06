@@ -1,6 +1,6 @@
 package com.mutkuensert.movee.di
 
-import com.mutkuensert.movee.data.source.RequestService
+import com.mutkuensert.movee.data.api.MovieApi
 import com.mutkuensert.movee.util.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -14,11 +14,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRequestService(): RequestService {
+    fun provideRequestService(): MovieApi {
         val moshi = Moshi
             .Builder()
             .add(KotlinJsonAdapterFactory())
@@ -28,6 +28,6 @@ object DataModule {
             .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(RequestService::class.java)
+            .create(MovieApi::class.java)
     }
 }

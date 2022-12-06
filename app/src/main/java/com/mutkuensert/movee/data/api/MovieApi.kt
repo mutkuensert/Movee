@@ -1,20 +1,20 @@
-package com.mutkuensert.movee.data.source
+package com.mutkuensert.movee.data.api
 
-import com.mutkuensert.movee.data.MovieDetailsModel
-import com.mutkuensert.movee.data.MoviesNowPlayingModel
-import com.mutkuensert.movee.data.PopularMoviesModel
+import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
+import com.mutkuensert.movee.data.model.remote.MoviesNowPlayingModel
+import com.mutkuensert.movee.data.model.remote.PopularMoviesModel
 import com.mutkuensert.movee.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface RequestService {
+interface MovieApi {
 
     @GET("movie/popular")
     suspend fun getPopularMovies(
-      @Query("api_key") apiKey: String = API_KEY,
-      @Query("page") page: Int = 1
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("page") page: Int = 1
     ): Response<PopularMoviesModel>
 
     @GET("movie/now_playing")

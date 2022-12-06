@@ -1,29 +1,31 @@
-package com.mutkuensert.movee.data.source
+package com.mutkuensert.movee.data.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mutkuensert.movee.data.MoviesNowPlayingResult
+import com.mutkuensert.movee.data.api.MovieApi
+import com.mutkuensert.movee.data.model.remote.MoviesNowPlayingResult
 import com.mutkuensert.movee.util.CustomUnsuccessfulResponseException
 import retrofit2.HttpException
 
-class MoviesNowPlayingPagingSource(val requestService: RequestService): PagingSource<Int, MoviesNowPlayingResult>() {
+class MoviesNowPlayingPagingSource(val movieApi: MovieApi) :
+    PagingSource<Int, MoviesNowPlayingResult>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MoviesNowPlayingResult> {
         try {
 
-            val nextPageNumber = params.key?: 1
-            val response = requestService.getMoviesNowPlaying(page = nextPageNumber)
+            val nextPageNumber = params.key ?: 1
+            val response = movieApi.getMoviesNowPlaying(page = nextPageNumber)
 
-            if(response.isSuccessful && response.body() != null){
+            if (response.isSuccessful && response.body() != null) {
                 return LoadResult.Page(
                     data = response.body()!!.results,
                     prevKey = null,
                     nextKey = if (nextPageNumber + 1 <= response.body()!!.totalPages) nextPageNumber + 1 else null
                 )
-            }else {
+            } else {
                 return LoadResult.Error(CustomUnsuccessfulResponseException("Unsuccessful Popular Movies Request"))
             }
 
-        }catch (exception: HttpException){
+        } catch (exception: HttpException) {
             return LoadResult.Error(exception)
         }
     }

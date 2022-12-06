@@ -10,7 +10,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,26 +26,35 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.MoviesNowPlayingResult
-import com.mutkuensert.movee.data.PopularMoviesResult
+import com.mutkuensert.movee.data.model.remote.MoviesNowPlayingResult
+import com.mutkuensert.movee.data.model.remote.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
 private const val TAG = "Home Composable"
 
 @Composable
-fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel(), navigateToMovieDetails: (movieId: Int) -> Unit) {
+fun Home(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigateToMovieDetails: (movieId: Int) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingDataObserver(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            navigateToMovieDetails = navigateToMovieDetails)
+            navigateToMovieDetails = navigateToMovieDetails
+        )
 
         Spacer(Modifier.height(10.dp))
 
-        Divider(modifier = Modifier.padding(horizontal = 10.dp), thickness = 1.dp, color = Color.Black)
+        Divider(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            thickness = 1.dp,
+            color = Color.Black
+        )
 
         Spacer(Modifier.height(10.dp))
 
@@ -54,37 +63,52 @@ fun Home(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltViewModel
                 .weight(1f)
                 .fillMaxWidth(),
             viewModel = viewModel,
-            navigateToMovieDetails = navigateToMovieDetails)
+            navigateToMovieDetails = navigateToMovieDetails
+        )
     }
 
 
 }
 
 @Composable
-fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeViewModel, navigateToMovieDetails: (movieId: Int) -> Unit){
+fun MoviesNowPlayingDataObserver(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel,
+    navigateToMovieDetails: (movieId: Int) -> Unit
+) {
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
 
-    Row(modifier = modifier,
-    verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        if(moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading || moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading){
+        if (moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading || moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading) {
 
-            Column(modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Spacer(Modifier.height(50.dp))
 
-                CircularProgressIndicator(modifier = Modifier.size(100.dp),
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
                     strokeWidth = 6.dp,
-                    color = Color.Gray)
+                    color = Color.Gray
+                )
 
                 Spacer(Modifier.height(50.dp))
             }
         }
 
-        LazyRow(modifier = Modifier.padding(horizontal = 10.dp)){
-            items(moviesNowPlayingLazyPagingItems){ item ->
+        LazyRow(modifier = Modifier.padding(horizontal = 10.dp)) {
+            items(moviesNowPlayingLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
-                    MoviesNowPlayingItem(movie = itemNonNull, onClick = { navigateToMovieDetails(itemNonNull.id) })
+                    MoviesNowPlayingItem(
+                        movie = itemNonNull,
+                        onClick = { navigateToMovieDetails(itemNonNull.id) })
                 }
             }
         }
@@ -93,27 +117,36 @@ fun MoviesNowPlayingDataObserver(modifier: Modifier = Modifier, viewModel:HomeVi
 }
 
 @Composable
-fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeViewModel, navigateToMovieDetails: (movieId: Int) -> Unit){
+fun PopularMoviesDataObserver(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel,
+    navigateToMovieDetails: (movieId: Int) -> Unit
+) {
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-        if(popularMoviesLazyPagingItems.loadState.refresh == LoadState.Loading || popularMoviesLazyPagingItems.loadState.append == LoadState.Loading){
+        if (popularMoviesLazyPagingItems.loadState.refresh == LoadState.Loading || popularMoviesLazyPagingItems.loadState.append == LoadState.Loading) {
             Spacer(Modifier.height(50.dp))
 
-            CircularProgressIndicator(modifier = Modifier.size(100.dp),
+            CircularProgressIndicator(
+                modifier = Modifier.size(100.dp),
                 strokeWidth = 6.dp,
-            color = Color.Gray)
+                color = Color.Gray
+            )
 
             Spacer(Modifier.height(50.dp))
         }
 
-        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)){
-            items(popularMoviesLazyPagingItems){ item ->
+        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+            items(popularMoviesLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
-                    PopularMoviesItem(movie = itemNonNull, onClick = { navigateToMovieDetails(itemNonNull.id) })
+                    PopularMoviesItem(
+                        movie = itemNonNull,
+                        onClick = { navigateToMovieDetails(itemNonNull.id) })
                 }
             }
 
@@ -123,40 +156,49 @@ fun PopularMoviesDataObserver(modifier: Modifier = Modifier, viewModel: HomeView
 }
 
 @Composable
-fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit){
+fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { onClick() }) {
 
-            Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp), horizontalAlignment = Alignment.CenterHorizontally){
+            Column(
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
                 Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(model = ImageRequest.Builder(LocalContext.current)
-                        .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
-                        .crossfade(true)
-                        .build(),
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .crossfade(true)
+                            .build(),
                         loading = {
                             CircularProgressIndicator(color = Color.Gray)
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
                             .height(150.dp),
-                        contentDescription = "Movie Poster")
+                        contentDescription = "Movie Poster"
+                    )
                 }
 
                 Spacer(Modifier.height(10.dp))
 
-                Text(text = movie.originalTitle,
+                Text(
+                    text = movie.originalTitle,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp)
+                    fontSize = 20.sp
+                )
 
                 Spacer(Modifier.height(10.dp))
 
-                Text(text = movie.voteAverage.toString(),
+                Text(
+                    text = movie.voteAverage.toString(),
                     color = Color.Gray,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
 
             }
         }
@@ -165,45 +207,57 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit){
 }
 
 @Composable
-fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit){
+fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
 
-    Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+    Log.i(
+        TAG,
+        "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}"
+    )
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }) {
 
-            Row(modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically){
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(model = ImageRequest.Builder(LocalContext.current)
-                        .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
-                        .crossfade(true)
-                        .build(),
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .crossfade(true)
+                            .build(),
                         loading = {
                             CircularProgressIndicator(color = Color.Gray)
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
                             .height(150.dp),
-                        contentDescription = "Movie Poster")
+                        contentDescription = "Movie Poster"
+                    )
                 }
 
                 Spacer(Modifier.width(20.dp))
 
                 Column() {
 
-                    Text(text = movie.originalTitle,
+                    Text(
+                        text = movie.originalTitle,
                         color = Color.DarkGray,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp)
+                        fontSize = 20.sp
+                    )
 
                     Spacer(Modifier.height(10.dp))
 
-                    Text(text = movie.voteAverage.toString(),
+                    Text(
+                        text = movie.voteAverage.toString(),
                         color = Color.Gray,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
@@ -213,22 +267,22 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit){
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewPopularMoviesItem(){
-    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0,5.0), onClick = {})
+fun PreviewPopularMoviesItem() {
+    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewMoviesNowPlayingItem(){
-    MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0,5.0), onClick = {})
+fun PreviewMoviesNowPlayingItem() {
+    MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewPopularMovies(){
+fun PreviewPopularMovies() {
     Column(modifier = Modifier.fillMaxSize()) {
-        MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0,5.0), onClick = {})
+        MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
-        PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0,5.0), onClick = {})
+        PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
     }
 }

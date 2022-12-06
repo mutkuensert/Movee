@@ -16,39 +16,46 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.MovieDetailsModel
-import com.mutkuensert.movee.util.*
+import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
+import com.mutkuensert.movee.util.IMAGE_BASE_URL
+import com.mutkuensert.movee.util.POSTER_SIZE_ORIGINAL
+import com.mutkuensert.movee.util.Resource
+import com.mutkuensert.movee.util.Status
 
 @Composable
-fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel()){
+fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel()) {
 
     val data = viewModel.movieDetails.observeAsState()
-    if(movieId != null){
+    if (movieId != null) {
         viewModel.getMovieDetails(movieId!!)
         MovieDetailsDataObserver(data = data)
     }
 }
 
 @Composable
-fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>?>){
+fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>?>) {
 
 
-    when(data.value?.status){
+    when (data.value?.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Spacer(Modifier.height(50.dp))
 
-                CircularProgressIndicator(modifier = Modifier.size(100.dp),
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
                     strokeWidth = 6.dp,
-                    color = Color.Gray)
+                    color = Color.Gray
+                )
             }
         }
 
@@ -58,64 +65,86 @@ fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>?>){
             }
         }
 
-        Status.ERROR -> { Toast.makeText(LocalContext.current, "${data.value?.message}", Toast.LENGTH_LONG).show() }
+        Status.ERROR -> {
+            Toast.makeText(LocalContext.current, "${data.value?.message}", Toast.LENGTH_LONG).show()
+        }
     }
 }
 
 @Composable
-fun MovieDetailsItem(movieDetails: MovieDetailsModel){
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
-        .padding(bottom = 30.dp)) {
+fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 30.dp)
+    ) {
 
         movieDetails.posterPath?.let { posterPathNonNull ->
 
-            Card(elevation = 10.dp,
-            shape = RectangleShape) {
-                SubcomposeAsyncImage(model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$POSTER_SIZE_ORIGINAL${posterPathNonNull}")
-                    .crossfade(true)
-                    .build(),
+            Card(
+                elevation = 10.dp,
+                shape = RectangleShape
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("$IMAGE_BASE_URL$POSTER_SIZE_ORIGINAL${posterPathNonNull}")
+                        .crossfade(true)
+                        .build(),
                     loading = {
-                        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Spacer(Modifier.height(50.dp))
-                            CircularProgressIndicator(color = Color.Gray, modifier = Modifier.size(100.dp))
+                            CircularProgressIndicator(
+                                color = Color.Gray,
+                                modifier = Modifier.size(100.dp)
+                            )
                             Spacer(Modifier.height(50.dp))
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    contentDescription = "Movie Poster")
+                    contentDescription = "Movie Poster"
+                )
             }
         }
 
         Column(modifier = Modifier.padding(horizontal = 15.dp)) {
             Spacer(modifier = Modifier.height(15.dp))
 
-            Text(text = movieDetails.originalTitle,
+            Text(
+                text = movieDetails.originalTitle,
                 color = Color.DarkGray,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 30.sp)
+                fontSize = 30.sp
+            )
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            Text(text = movieDetails.voteAverage.toString(),
+            Text(
+                text = movieDetails.voteAverage.toString(),
                 color = Color.Gray,
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp)
+                fontSize = 20.sp
+            )
 
             Spacer(modifier = Modifier.height(15.dp))
 
             Row() {
-                Text(text = "Runtime(min): ",
+                Text(
+                    text = "Runtime(min): ",
                     color = Color.DarkGray,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp)
+                    fontSize = 18.sp
+                )
 
-                Text(text = movieDetails.runtime.toString(),
+                Text(
+                    text = movieDetails.runtime.toString(),
                     color = Color.DarkGray,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp)
+                    fontSize = 18.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(15.dp))

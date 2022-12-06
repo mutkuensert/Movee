@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data
+package com.mutkuensert.movee.data.model.remote
 
 import com.squareup.moshi.Json
 
@@ -34,6 +34,7 @@ data class Genre(
     val id: Int,
     val name: String
 )
+
 data class ProductionCompany(
     val id: Int,
     @Json(name = "logo_path") val logoPath: String?,
