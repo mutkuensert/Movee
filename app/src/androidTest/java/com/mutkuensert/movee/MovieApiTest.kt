@@ -11,7 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
-private const val TAG = "RequestServiceTest"
+private const val TAG = "MovieApiTest"
 
 @HiltAndroidTest
 class MovieApiTest {
