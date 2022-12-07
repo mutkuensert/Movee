@@ -2,6 +2,7 @@ package com.mutkuensert.movee.util
 
 const val MOVIES = "movies"
 const val MOVIE_DETAILS = "movieDetails"
+const val MOVIE_NAV_GRAPH = "movieNavGraph"
 
 const val BASE_URL = "https://api.themoviedb.org/3/"
 
