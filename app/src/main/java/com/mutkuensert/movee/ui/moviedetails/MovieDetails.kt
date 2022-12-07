@@ -9,7 +9,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
@@ -27,10 +28,11 @@ import com.mutkuensert.movee.util.POSTER_SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.Status
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel()) {
 
-    val data = viewModel.movieDetails.observeAsState()
+    val data = viewModel.movieDetails.collectAsStateWithLifecycle()
     if (movieId != null) {
         viewModel.getMovieDetails(movieId!!)
         MovieDetailsDataObserver(data = data)
@@ -38,10 +40,9 @@ fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel
 }
 
 @Composable
-fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>?>) {
+fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>>) {
 
-
-    when (data.value?.status) {
+    when (data.value.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
@@ -60,13 +61,13 @@ fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>?>) {
         }
 
         Status.SUCCESS -> {
-            data.value?.data?.let { movieDetails: MovieDetailsModel ->
+            data.value.data?.let { movieDetails: MovieDetailsModel ->
                 MovieDetailsItem(movieDetails)
             }
         }
 
         Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value?.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
