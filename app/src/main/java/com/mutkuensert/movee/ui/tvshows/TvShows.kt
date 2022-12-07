@@ -1,6 +1,5 @@
-package com.mutkuensert.movee.ui.movies
+package com.mutkuensert.movee.ui.tvshows
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,28 +25,28 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.model.remote.movies.MoviesNowPlayingResult
-import com.mutkuensert.movee.data.model.remote.movies.PopularMoviesResult
+import com.mutkuensert.movee.data.model.remote.tvshows.PopularTvShowsResult
+import com.mutkuensert.movee.data.model.remote.tvshows.TopRatedTvShowsResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
-private const val TAG = "Movies Composable"
+private const val TAG = "TvShows Composable"
 
 @Composable
-fun Movies(
+fun TvShows(
     modifier: Modifier = Modifier,
-    viewModel: MoviesViewModel = hiltViewModel(),
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    viewModel: TvShowsViewModel = hiltViewModel(),
+    navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
-    val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
-    val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
+    val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
+    val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(Modifier.height(10.dp))
 
         Text(
             modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Movies in Theaters",
+            text = "Popular Tv Shows",
             color = Color.LightGray,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 20.sp
@@ -56,13 +54,13 @@ fun Movies(
 
         Spacer(Modifier.height(10.dp))
 
-        MoviesNowPlayingDataObserver(
+        PopularTvShowsDataObserver(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 10.dp),
-            moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
-            navigateToMovieDetails = navigateToMovieDetails
+            popularTvShowsLazyPagingItems = popularTvShowsLazyPagingItems,
+            navigateToTvShowDetails = navigateToTvShowDetails
         )
 
         Spacer(Modifier.height(10.dp))
@@ -77,7 +75,7 @@ fun Movies(
 
         Text(
             modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Popular Movies",
+            text = "Top Rated Tv Shows",
             color = Color.LightGray,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 20.sp
@@ -85,33 +83,29 @@ fun Movies(
 
         Spacer(Modifier.height(10.dp))
 
-        PopularMoviesDataObserver(
+        TopRatedTvShowsDataObserver(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
-            navigateToMovieDetails = navigateToMovieDetails
+            topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
+            navigateToTvShowDetails = navigateToTvShowDetails
         )
     }
-
-
 }
 
 @Composable
-fun MoviesNowPlayingDataObserver(
+fun PopularTvShowsDataObserver(
     modifier: Modifier = Modifier,
-    moviesNowPlayingLazyPagingItems: LazyPagingItems<MoviesNowPlayingResult>,
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    popularTvShowsLazyPagingItems: LazyPagingItems<PopularTvShowsResult>,
+    navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading || moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading) {
-
+        if (popularTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading || popularTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,58 +125,67 @@ fun MoviesNowPlayingDataObserver(
         }
 
         LazyRow {
-            items(moviesNowPlayingLazyPagingItems) { item ->
+            items(popularTvShowsLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
-                    MoviesNowPlayingItem(
-                        movie = itemNonNull,
-                        onClick = { navigateToMovieDetails(itemNonNull.id) })
+                    PopularTvShowsItem(
+                        popularTvShow = itemNonNull,
+                        onClick = { navigateToTvShowDetails(itemNonNull.id) }
+                    )
                 }
             }
         }
 
     }
+
 }
 
 @Composable
-fun PopularMoviesDataObserver(
+fun TopRatedTvShowsDataObserver(
     modifier: Modifier = Modifier,
-    popularMoviesLazyPagingItems: LazyPagingItems<PopularMoviesResult>,
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
+    navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
-
-    Column(
+    Row(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (popularMoviesLazyPagingItems.loadState.refresh == LoadState.Loading || popularMoviesLazyPagingItems.loadState.append == LoadState.Loading) {
-            Spacer(Modifier.height(50.dp))
+        if (topRatedTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading || topRatedTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(50.dp))
 
-            CircularProgressIndicator(
-                modifier = Modifier.size(100.dp),
-                strokeWidth = 6.dp,
-                color = Color.Gray
-            )
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
+                    strokeWidth = 6.dp,
+                    color = Color.Gray
+                )
 
-            Spacer(Modifier.height(50.dp))
+                Spacer(Modifier.height(50.dp))
+            }
         }
 
         LazyColumn {
-            items(popularMoviesLazyPagingItems) { item ->
+            items(topRatedTvShowsLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
-                    PopularMoviesItem(
-                        movie = itemNonNull,
-                        onClick = { navigateToMovieDetails(itemNonNull.id) })
+                    TopRatedTvShowsItem(
+                        topRatedTvShow = itemNonNull,
+                        onClick = { navigateToTvShowDetails(itemNonNull.id) }
+                    )
                 }
             }
-
         }
 
     }
+
 }
 
 @Composable
-fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
+fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit) {
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
@@ -196,7 +199,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${popularTvShow.posterPath}")
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -212,7 +215,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = movie.originalTitle,
+                    text = popularTvShow.originalName,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp
@@ -221,7 +224,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = movie.voteAverage.toString(),
+                    text = popularTvShow.voteAverage.toString(),
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
@@ -233,12 +236,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
 }
 
 @Composable
-fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
-
-    Log.i(
-        TAG,
-        "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}"
-    )
+fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Unit) {
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
@@ -253,7 +251,7 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${topRatedTvShow.posterPath}")
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -266,12 +264,11 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
                     )
                 }
 
-                Spacer(Modifier.width(20.dp))
+                Spacer(Modifier.width(10.dp))
 
                 Column() {
-
                     Text(
-                        text = movie.originalTitle,
+                        text = topRatedTvShow.originalName,
                         color = Color.DarkGray,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 20.sp
@@ -279,36 +276,17 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
 
                     Spacer(Modifier.height(10.dp))
 
+
+
                     Text(
-                        text = movie.voteAverage.toString(),
+                        text = topRatedTvShow.voteAverage.toString(),
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
                     )
                 }
+
             }
         }
 
-    }
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun PreviewPopularMoviesItem() {
-    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun PreviewMoviesNowPlayingItem() {
-    MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
-}
-
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun PreviewPopularMovies() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
-        Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
-        PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
     }
 }

@@ -6,8 +6,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.mutkuensert.movee.data.api.MovieApi
-import com.mutkuensert.movee.data.datasource.paging.MoviesNowPlayingPagingSource
-import com.mutkuensert.movee.data.datasource.paging.PopularMoviesPagingSource
+import com.mutkuensert.movee.data.datasource.paging.movies.MoviesNowPlayingPagingSource
+import com.mutkuensert.movee.data.datasource.paging.movies.PopularMoviesPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

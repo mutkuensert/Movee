@@ -11,9 +11,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mutkuensert.movee.ui.moviedetails.MovieDetails
 import com.mutkuensert.movee.ui.movies.Movies
-import com.mutkuensert.movee.util.MOVIES
-import com.mutkuensert.movee.util.MOVIE_DETAILS
-import com.mutkuensert.movee.util.MOVIE_NAV_GRAPH
+import com.mutkuensert.movee.ui.tvshows.TvShows
+import com.mutkuensert.movee.util.*
 
 @Composable
 fun MyNavHost(
@@ -42,6 +41,12 @@ fun MyNavHost(
             }
         }
 
-
+        navigation(startDestination = TV_SHOWS, route = TV_SHOWS_NAV_GRAPH) {
+            composable(TV_SHOWS) {
+                TvShows() { tvShowId ->
+                    navController.navigate("$TV_SHOW_DETAILS/$tvShowId")
+                }
+            }
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.mutkuensert.movee.data.api
 
-import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
-import com.mutkuensert.movee.data.model.remote.MoviesNowPlayingModel
-import com.mutkuensert.movee.data.model.remote.PopularMoviesModel
+import com.mutkuensert.movee.data.model.remote.movies.MovieDetailsModel
+import com.mutkuensert.movee.data.model.remote.movies.MoviesNowPlayingModel
+import com.mutkuensert.movee.data.model.remote.movies.PopularMoviesModel
 import com.mutkuensert.movee.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET

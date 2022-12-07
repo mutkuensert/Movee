@@ -3,7 +3,7 @@ package com.mutkuensert.movee.ui.moviedetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.api.MovieApi
-import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
+import com.mutkuensert.movee.data.model.remote.movies.MovieDetailsModel
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

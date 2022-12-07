@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.model.remote.MovieDetailsModel
+import com.mutkuensert.movee.data.model.remote.movies.MovieDetailsModel
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Resource
