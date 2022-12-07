@@ -32,12 +32,12 @@ import com.mutkuensert.movee.data.model.remote.PopularMoviesResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 
-private const val TAG = "Home Composable"
+private const val TAG = "Movies Composable"
 
 @Composable
-fun Home(
+fun Movies(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: MoviesViewModel = hiltViewModel(),
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()

@@ -1,6 +1,6 @@
 package com.mutkuensert.movee.util
 
-const val HOME = "home"
+const val MOVIES = "movies"
 const val MOVIE_DETAILS = "movieDetails"
 
 const val BASE_URL = "https://api.themoviedb.org/3/"

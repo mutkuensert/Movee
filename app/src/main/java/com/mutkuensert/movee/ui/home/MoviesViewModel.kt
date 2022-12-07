@@ -11,10 +11,10 @@ import com.mutkuensert.movee.data.datasource.paging.PopularMoviesPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-private const val TAG = "HomeViewModel"
+private const val TAG = "MoviesViewModel"
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val movieApi: MovieApi) : ViewModel() {
+class MoviesViewModel @Inject constructor(private val movieApi: MovieApi) : ViewModel() {
 
     val popularMovies = Pager(
         PagingConfig(pageSize = 20)
