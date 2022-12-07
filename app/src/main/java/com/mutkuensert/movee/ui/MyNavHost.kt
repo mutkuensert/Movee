@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.mutkuensert.movee.ui.home.Movies
 import com.mutkuensert.movee.ui.moviedetails.MovieDetails
+import com.mutkuensert.movee.ui.movies.Movies
 import com.mutkuensert.movee.util.MOVIES
 import com.mutkuensert.movee.util.MOVIE_DETAILS
 import com.mutkuensert.movee.util.MOVIE_NAV_GRAPH

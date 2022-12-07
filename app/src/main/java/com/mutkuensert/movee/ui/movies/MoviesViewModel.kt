@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.ui.home
+package com.mutkuensert.movee.ui.movies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.ui.home
+package com.mutkuensert.movee.ui.movies
 
 import android.util.Log
 import androidx.compose.foundation.clickable
