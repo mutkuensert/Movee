@@ -44,10 +44,23 @@ fun Movies(
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            text = "Movies in Theaters",
+            color = Color.LightGray,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 20.sp
+        )
+
+        Spacer(Modifier.height(10.dp))
+
         MoviesNowPlayingDataObserver(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp),
             moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
             navigateToMovieDetails = navigateToMovieDetails
         )
@@ -62,10 +75,21 @@ fun Movies(
 
         Spacer(Modifier.height(10.dp))
 
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            text = "Popular Movies",
+            color = Color.LightGray,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 20.sp
+        )
+
+        Spacer(Modifier.height(10.dp))
+
         PopularMoviesDataObserver(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
             popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
             navigateToMovieDetails = navigateToMovieDetails
         )
@@ -106,7 +130,7 @@ fun MoviesNowPlayingDataObserver(
             }
         }
 
-        LazyRow(modifier = Modifier.padding(horizontal = 10.dp)) {
+        LazyRow {
             items(moviesNowPlayingLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     MoviesNowPlayingItem(
@@ -143,7 +167,7 @@ fun PopularMoviesDataObserver(
             Spacer(Modifier.height(50.dp))
         }
 
-        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+        LazyColumn {
             items(popularMoviesLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     PopularMoviesItem(
