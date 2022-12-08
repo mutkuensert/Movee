@@ -79,7 +79,7 @@ fun MyBottomAppBar(currentDestination: String?, navController: NavController) {
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.tvshow),
-                    contentDescription = "Go to movies icon"
+                    contentDescription = "Go to tv shows icon"
                 )
             })
     }
