@@ -27,7 +27,7 @@ class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) 
             if (response.isSuccessful && response.body() != null) {
                 _movieDetails.value = Resource.success(response.body()!!)
             } else {
-                _movieDetails.value = Resource.error("Unsuccessful Popular Movies Request", null)
+                _movieDetails.value = Resource.error("Unsuccessful Movie Details Request", null)
             }
         }
     }
