@@ -1,16 +1,21 @@
 package com.mutkuensert.movee.ui.movies
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,57 +48,83 @@ fun Movies(
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Movies in Theaters",
-            color = Color.LightGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        MoviesNowPlaying(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 10.dp),
-            moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
-            navigateToMovieDetails = navigateToMovieDetails
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        Divider(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Popular Movies",
-            color = Color.LightGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        PopularMovies(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
-            navigateToMovieDetails = navigateToMovieDetails
-        )
+    var previousIndex by remember { mutableStateOf(0) }
+    val state = rememberLazyListState()
+    val visible = remember {
+        derivedStateOf {
+            if(state.firstVisibleItemIndex > previousIndex){
+                false
+            }else{
+                true
+            }.also { previousIndex = state.firstVisibleItemIndex }
+        }
     }
+
+    Column {
+        AnimatedVisibility(
+            visible = visible.value,
+            enter = slideInVertically(),
+            exit = slideOutVertically()
+        ){
+            Column() {
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    text = "Movies in Theaters",
+                    color = Color.LightGray,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                MoviesNowPlaying(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 10.dp),
+                    moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
+                    navigateToMovieDetails = navigateToMovieDetails
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                Divider(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
+
+                Spacer(Modifier.height(10.dp))
+            }
+        }
+
+        Column {
+
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "Popular Movies",
+                color = Color.LightGray,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            PopularMovies(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
+                navigateToMovieDetails = navigateToMovieDetails,
+                state = state
+            )
+        }
+    }
+
+
 
 
 }
@@ -147,6 +178,7 @@ fun MoviesNowPlaying(
 fun PopularMovies(
     modifier: Modifier = Modifier,
     popularMoviesLazyPagingItems: LazyPagingItems<PopularMoviesResult>,
+    state: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
 
@@ -167,7 +199,7 @@ fun PopularMovies(
             Spacer(Modifier.height(50.dp))
         }
 
-        LazyColumn {
+        LazyColumn(state = state) {
             items(popularMoviesLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     PopularMoviesItem(
