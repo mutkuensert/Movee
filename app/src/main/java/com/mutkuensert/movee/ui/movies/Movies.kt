@@ -48,6 +48,8 @@ fun Movies(
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
+    val stateOfMoviesNowPlaying = rememberLazyListState()
+
     var previousFirstVisibleItemIndexOfPopularMovies by remember { mutableStateOf(0) }
     val stateOfPopularMovies = rememberLazyListState()
     val visibilityOfItemsAbove = remember {
@@ -85,7 +87,8 @@ fun Movies(
                         .wrapContentHeight()
                         .padding(horizontal = 10.dp),
                     moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
-                    navigateToMovieDetails = navigateToMovieDetails
+                    navigateToMovieDetails = navigateToMovieDetails,
+                    state = stateOfMoviesNowPlaying
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -133,6 +136,7 @@ fun Movies(
 fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlayingLazyPagingItems: LazyPagingItems<MoviesNowPlayingResult>,
+    state: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
 
@@ -161,7 +165,7 @@ fun MoviesNowPlaying(
             }
         }
 
-        LazyRow {
+        LazyRow(state = state) {
             items(moviesNowPlayingLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     MoviesNowPlayingItem(
