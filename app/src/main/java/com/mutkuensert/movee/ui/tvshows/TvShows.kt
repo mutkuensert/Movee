@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
@@ -16,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -169,13 +172,12 @@ fun TopRatedTvShowsDataObserver(
             }
         }
 
-        LazyColumn {
-            items(topRatedTvShowsLazyPagingItems) { item ->
-                item?.let { itemNonNull ->
-                    TopRatedTvShowsItem(
-                        topRatedTvShow = itemNonNull,
-                        onClick = { navigateToTvShowDetails(itemNonNull.id) }
-                    )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2)
+        ) {
+            items(topRatedTvShowsLazyPagingItems.itemCount){ index ->
+                topRatedTvShowsLazyPagingItems.get(index)?.let { topRatedTvShowNonNull ->
+                    TopRatedTvShowsItem(topRatedTvShow = topRatedTvShowNonNull, onClick = { navigateToTvShowDetails(topRatedTvShowNonNull.id) })
                 }
             }
         }
@@ -241,11 +243,14 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
+            .height(380.dp)
             .clickable { onClick() }) {
 
-            Row(
-                modifier = Modifier.padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Card(elevation = 10.dp) {
@@ -259,22 +264,22 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
-                            .height(150.dp),
+                            .height(250.dp),
                         contentDescription = "Movie Poster"
                     )
                 }
 
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.height(5.dp))
 
-                Column() {
+                Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxHeight()) {
                     Text(
                         text = topRatedTvShow.originalName,
                         color = Color.DarkGray,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
 
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(5.dp))
 
 
 
@@ -285,8 +290,24 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
                     )
                 }
 
+
+
             }
         }
+
+    }
+}
+
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun PreviewTopRatedTveShowsItem(){
+    TopRatedTvShowsItem(topRatedTvShow = TopRatedTvShowsResult(
+        posterPath = null,
+        id = 0,
+        voteAverage = 0.0,
+        originalName = "Tv Show Title"
+    )) {
 
     }
 }
