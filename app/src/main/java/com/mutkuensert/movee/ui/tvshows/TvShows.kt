@@ -2,7 +2,6 @@ package com.mutkuensert.movee.ui.tvshows
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -57,7 +56,7 @@ fun TvShows(
 
         Spacer(Modifier.height(10.dp))
 
-        PopularTvShowsDataObserver(
+        PopularTvShows(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -86,7 +85,7 @@ fun TvShows(
 
         Spacer(Modifier.height(10.dp))
 
-        TopRatedTvShowsDataObserver(
+        TopRatedTvShows(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
@@ -98,7 +97,7 @@ fun TvShows(
 }
 
 @Composable
-fun PopularTvShowsDataObserver(
+fun PopularTvShows(
     modifier: Modifier = Modifier,
     popularTvShowsLazyPagingItems: LazyPagingItems<PopularTvShowsResult>,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
@@ -143,7 +142,7 @@ fun PopularTvShowsDataObserver(
 }
 
 @Composable
-fun TopRatedTvShowsDataObserver(
+fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit

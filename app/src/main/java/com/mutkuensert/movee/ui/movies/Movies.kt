@@ -56,7 +56,7 @@ fun Movies(
 
         Spacer(Modifier.height(10.dp))
 
-        MoviesNowPlayingDataObserver(
+        MoviesNowPlaying(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -85,7 +85,7 @@ fun Movies(
 
         Spacer(Modifier.height(10.dp))
 
-        PopularMoviesDataObserver(
+        PopularMovies(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
@@ -99,7 +99,7 @@ fun Movies(
 }
 
 @Composable
-fun MoviesNowPlayingDataObserver(
+fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlayingLazyPagingItems: LazyPagingItems<MoviesNowPlayingResult>,
     navigateToMovieDetails: (movieId: Int) -> Unit
@@ -144,7 +144,7 @@ fun MoviesNowPlayingDataObserver(
 }
 
 @Composable
-fun PopularMoviesDataObserver(
+fun PopularMovies(
     modifier: Modifier = Modifier,
     popularMoviesLazyPagingItems: LazyPagingItems<PopularMoviesResult>,
     navigateToMovieDetails: (movieId: Int) -> Unit
