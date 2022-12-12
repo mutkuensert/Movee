@@ -48,21 +48,21 @@ fun Movies(
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
     val popularMoviesLazyPagingItems = viewModel.popularMovies.collectAsLazyPagingItems()
 
-    var previousIndex by remember { mutableStateOf(0) }
-    val state = rememberLazyListState()
-    val visible = remember {
+    var previousFirstVisibleItemIndexOfPopularMovies by remember { mutableStateOf(0) }
+    val stateOfPopularMovies = rememberLazyListState()
+    val visibilityOfItemsAbove = remember {
         derivedStateOf {
-            if(state.firstVisibleItemIndex > previousIndex){
+            if(stateOfPopularMovies.firstVisibleItemIndex > previousFirstVisibleItemIndexOfPopularMovies){
                 false
             }else{
                 true
-            }.also { previousIndex = state.firstVisibleItemIndex }
+            }.also { previousFirstVisibleItemIndexOfPopularMovies = stateOfPopularMovies.firstVisibleItemIndex }
         }
     }
 
     Column {
         AnimatedVisibility(
-            visible = visible.value,
+            visible = visibilityOfItemsAbove.value,
             enter = slideInVertically(),
             exit = slideOutVertically()
         ){
@@ -119,7 +119,7 @@ fun Movies(
                     .padding(horizontal = 10.dp),
                 popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
                 navigateToMovieDetails = navigateToMovieDetails,
-                state = state
+                state = stateOfPopularMovies
             )
         }
     }

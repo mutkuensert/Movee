@@ -5,7 +5,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -49,21 +48,21 @@ fun TvShows(
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
     val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
-    var previousIndex by remember { mutableStateOf(0) }
-    val state = rememberLazyGridState()
-    val visible = remember {
+    var previousFirstVisibleItemIndexOfTopRatedTvShows by remember { mutableStateOf(0) }
+    val stateOfTopRatedTvShows = rememberLazyGridState()
+    val visibilityOfItemsAbove = remember {
         derivedStateOf {
-            if(state.firstVisibleItemIndex > previousIndex){
+            if(stateOfTopRatedTvShows.firstVisibleItemIndex > previousFirstVisibleItemIndexOfTopRatedTvShows){
                 false
             }else{
                 true
-            }.also { previousIndex = state.firstVisibleItemIndex }
+            }.also { previousFirstVisibleItemIndexOfTopRatedTvShows = stateOfTopRatedTvShows.firstVisibleItemIndex }
         }
     }
 
     Column() {
         AnimatedVisibility(
-            visible = visible.value,
+            visible = visibilityOfItemsAbove.value,
             enter = slideInVertically(),
             exit = slideOutVertically()) {
             Column {
@@ -119,7 +118,7 @@ fun TvShows(
                     .padding(horizontal = 10.dp),
                 topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
                 navigateToTvShowDetails = navigateToTvShowDetails,
-                state = state
+                state = stateOfTopRatedTvShows
             )
         }
     }

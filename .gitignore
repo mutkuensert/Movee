@@ -19,3 +19,5 @@ ApiKey.kt
 local.properties
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/androidTestResultsUserPreferences.xml
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
