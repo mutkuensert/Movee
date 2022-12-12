@@ -1,16 +1,22 @@
 package com.mutkuensert.movee.ui.tvshows
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,57 +49,81 @@ fun TvShows(
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
     val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Popular Tv Shows",
-            color = Color.LightGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        PopularTvShows(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(horizontal = 10.dp),
-            popularTvShowsLazyPagingItems = popularTvShowsLazyPagingItems,
-            navigateToTvShowDetails = navigateToTvShowDetails
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        Divider(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            thickness = 1.dp,
-            color = Color.Black
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Top Rated Tv Shows",
-            color = Color.LightGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        TopRatedTvShows(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
-            navigateToTvShowDetails = navigateToTvShowDetails
-        )
+    var previousIndex by remember { mutableStateOf(0) }
+    val state = rememberLazyGridState()
+    val visible = remember {
+        derivedStateOf {
+            if(state.firstVisibleItemIndex > previousIndex){
+                false
+            }else{
+                true
+            }.also { previousIndex = state.firstVisibleItemIndex }
+        }
     }
+
+    Column() {
+        AnimatedVisibility(
+            visible = visible.value,
+            enter = slideInVertically(),
+            exit = slideOutVertically()) {
+            Column {
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    text = "Popular Tv Shows",
+                    color = Color.LightGray,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                PopularTvShows(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 10.dp),
+                    popularTvShowsLazyPagingItems = popularTvShowsLazyPagingItems,
+                    navigateToTvShowDetails = navigateToTvShowDetails
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                Divider(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    thickness = 1.dp,
+                    color = Color.Black
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+            }
+        }
+
+        Column{
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "Top Rated Tv Shows",
+                color = Color.LightGray,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp
+            )
+
+            Spacer(Modifier.height(10.dp))
+
+            TopRatedTvShows(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
+                navigateToTvShowDetails = navigateToTvShowDetails,
+                state = state
+            )
+        }
+    }
+
 }
 
 @Composable
@@ -145,6 +175,7 @@ fun PopularTvShows(
 fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
+    state: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
     Row(
@@ -172,7 +203,8 @@ fun TopRatedTvShows(
         }
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2)
+            columns = GridCells.Fixed(2),
+            state = state
         ) {
             items(topRatedTvShowsLazyPagingItems.itemCount){ index ->
                 topRatedTvShowsLazyPagingItems.get(index)?.let { topRatedTvShowNonNull ->
