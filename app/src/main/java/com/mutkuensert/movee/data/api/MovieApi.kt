@@ -3,6 +3,7 @@ package com.mutkuensert.movee.data.api
 import com.mutkuensert.movee.data.model.remote.movies.MovieDetailsModel
 import com.mutkuensert.movee.data.model.remote.movies.MoviesNowPlayingModel
 import com.mutkuensert.movee.data.model.remote.movies.PopularMoviesModel
+import com.mutkuensert.movee.data.model.remote.movies.credits.MovieCredits
 import com.mutkuensert.movee.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
@@ -28,4 +29,10 @@ interface MovieApi {
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): Response<MovieDetailsModel>
+
+    @GET("movie/{movie_id}/credits")
+    suspend fun getMovieCredits(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = API_KEY
+    ): Response<MovieCredits>
 }

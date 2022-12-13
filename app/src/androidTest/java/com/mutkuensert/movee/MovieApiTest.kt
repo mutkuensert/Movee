@@ -38,4 +38,15 @@ class MovieApiTest {
             }
         }
     }
+
+    @Test
+    fun getMovieCreditsHttpStatusCodeIs200(){
+        runTest {
+            val response = movieApi.getMovieCredits(550)
+            Assert.assertEquals(200, response.code())
+            response.body()?.let {
+                Log.i(TAG, response.body().toString())
+            }
+        }
+    }
 }
