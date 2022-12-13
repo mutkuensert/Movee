@@ -5,11 +5,13 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
@@ -48,6 +50,8 @@ fun TvShows(
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
     val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
+    val stateOfPopularTvShows = rememberLazyListState()
+
     var previousFirstVisibleItemIndexOfTopRatedTvShows by remember { mutableStateOf(0) }
     val stateOfTopRatedTvShows = rememberLazyGridState()
     val visibilityOfItemsAbove = remember {
@@ -84,7 +88,8 @@ fun TvShows(
                         .wrapContentHeight()
                         .padding(horizontal = 10.dp),
                     popularTvShowsLazyPagingItems = popularTvShowsLazyPagingItems,
-                    navigateToTvShowDetails = navigateToTvShowDetails
+                    navigateToTvShowDetails = navigateToTvShowDetails,
+                    lazyListState = stateOfPopularTvShows
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -118,7 +123,7 @@ fun TvShows(
                     .padding(horizontal = 10.dp),
                 topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
                 navigateToTvShowDetails = navigateToTvShowDetails,
-                state = stateOfTopRatedTvShows
+                lazyGridState = stateOfTopRatedTvShows
             )
         }
     }
@@ -129,6 +134,7 @@ fun TvShows(
 fun PopularTvShows(
     modifier: Modifier = Modifier,
     popularTvShowsLazyPagingItems: LazyPagingItems<PopularTvShowsResult>,
+    lazyListState: LazyListState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
     Row(
@@ -155,7 +161,7 @@ fun PopularTvShows(
             }
         }
 
-        LazyRow {
+        LazyRow(state = lazyListState) {
             items(popularTvShowsLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     PopularTvShowsItem(
@@ -174,7 +180,7 @@ fun PopularTvShows(
 fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
-    state: LazyGridState,
+    lazyGridState: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
     Row(
@@ -203,7 +209,7 @@ fun TopRatedTvShows(
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            state = state
+            state = lazyGridState
         ) {
             items(topRatedTvShowsLazyPagingItems.itemCount){ index ->
                 topRatedTvShowsLazyPagingItems.get(index)?.let { topRatedTvShowNonNull ->
