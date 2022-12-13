@@ -13,5 +13,5 @@ data class TopRatedTvShowsResult(
     @Json(name = "poster_path") val posterPath: String?,
     val id: Int,
     @Json(name = "vote_average") val voteAverage: Double,
-    @Json(name = "original_name") val originalName: String
+    val name: String
 )

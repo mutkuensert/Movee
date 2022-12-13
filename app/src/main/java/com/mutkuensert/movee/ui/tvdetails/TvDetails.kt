@@ -115,7 +115,7 @@ fun TvDetailsItem(tvDetails: TvDetailsModel) {
             Spacer(modifier = Modifier.height(15.dp))
 
             Text(
-                text = tvDetails.originalName,
+                text = tvDetails.name,
                 color = Color.DarkGray,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 30.sp

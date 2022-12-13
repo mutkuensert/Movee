@@ -11,7 +11,7 @@ data class PopularMoviesModel(
 
 data class PopularMoviesResult(
     @Json(name = "poster_path") val posterPath: String?,
-    @Json(name = "original_title") val originalTitle: String,
+    val title: String,
     val id: Int,
     @Json(name = "vote_average") val voteAverage: Double
 )

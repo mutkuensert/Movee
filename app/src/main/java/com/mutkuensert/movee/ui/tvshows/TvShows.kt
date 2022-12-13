@@ -253,7 +253,7 @@ fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit)
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = popularTvShow.originalName,
+                    text = popularTvShow.name,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp
@@ -309,7 +309,7 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
 
                 Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxHeight()) {
                     Text(
-                        text = topRatedTvShow.originalName,
+                        text = topRatedTvShow.name,
                         color = Color.DarkGray,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -342,7 +342,7 @@ fun PreviewTopRatedTveShowsItem(){
         posterPath = null,
         id = 0,
         voteAverage = 0.0,
-        originalName = "Tv Show Title"
+        name = "Tv Show Title"
     )) {
 
     }

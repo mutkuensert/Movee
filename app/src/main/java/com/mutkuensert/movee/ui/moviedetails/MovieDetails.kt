@@ -115,7 +115,7 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
             Spacer(modifier = Modifier.height(15.dp))
 
             Text(
-                text = movieDetails.originalTitle,
+                text = movieDetails.title,
                 color = Color.DarkGray,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 30.sp

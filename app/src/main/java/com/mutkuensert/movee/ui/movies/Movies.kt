@@ -248,7 +248,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = movie.originalTitle,
+                    text = movie.title,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp
@@ -307,7 +307,7 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
                 Column() {
 
                     Text(
-                        text = movie.originalTitle,
+                        text = movie.title,
                         color = Color.DarkGray,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 20.sp
