@@ -88,7 +88,7 @@ fun Movies(
                         .padding(horizontal = 10.dp),
                     moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
                     navigateToMovieDetails = navigateToMovieDetails,
-                    state = stateOfMoviesNowPlaying
+                    lazyListState = stateOfMoviesNowPlaying
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -122,7 +122,7 @@ fun Movies(
                     .padding(horizontal = 10.dp),
                 popularMoviesLazyPagingItems = popularMoviesLazyPagingItems,
                 navigateToMovieDetails = navigateToMovieDetails,
-                state = stateOfPopularMovies
+                lazyListState = stateOfPopularMovies
             )
         }
     }
@@ -136,7 +136,7 @@ fun Movies(
 fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlayingLazyPagingItems: LazyPagingItems<MoviesNowPlayingResult>,
-    state: LazyListState,
+    lazyListState: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
 
@@ -165,7 +165,7 @@ fun MoviesNowPlaying(
             }
         }
 
-        LazyRow(state = state) {
+        LazyRow(state = lazyListState) {
             items(moviesNowPlayingLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     MoviesNowPlayingItem(
@@ -182,7 +182,7 @@ fun MoviesNowPlaying(
 fun PopularMovies(
     modifier: Modifier = Modifier,
     popularMoviesLazyPagingItems: LazyPagingItems<PopularMoviesResult>,
-    state: LazyListState,
+    lazyListState: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
 
@@ -203,7 +203,7 @@ fun PopularMovies(
             Spacer(Modifier.height(50.dp))
         }
 
-        LazyColumn(state = state) {
+        LazyColumn(state = lazyListState) {
             items(popularMoviesLazyPagingItems) { item ->
                 item?.let { itemNonNull ->
                     PopularMoviesItem(
