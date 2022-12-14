@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -300,8 +301,9 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
-                            .height(250.dp),
-                        contentDescription = "Movie Poster"
+                            .fillMaxWidth(),
+                        contentDescription = "Movie Poster",
+                        contentScale = ContentScale.FillWidth
                     )
                 }
 
