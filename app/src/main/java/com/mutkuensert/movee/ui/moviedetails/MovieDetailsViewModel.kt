@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.api.MovieApi
 import com.mutkuensert.movee.data.model.remote.movies.MovieDetailsModel
+import com.mutkuensert.movee.data.model.remote.movies.credits.MovieCast
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,9 @@ class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) 
         MutableStateFlow(Resource.standby(null))
     val movieDetails: StateFlow<Resource<MovieDetailsModel>> get() = _movieDetails
 
+    private val _movieCast: MutableStateFlow<Resource<List<MovieCast>>> = MutableStateFlow(Resource.standby(null))
+    val movieCast: StateFlow<Resource<List<MovieCast>>> get() = _movieCast
+
     fun getMovieDetails(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieDetails.value = Resource.loading(null)
@@ -28,6 +32,20 @@ class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) 
                 _movieDetails.value = Resource.success(response.body()!!)
             } else {
                 _movieDetails.value = Resource.error("Unsuccessful Movie Details Request", null)
+            }
+        }
+    }
+
+    fun getMovieCast(movieId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieCast.value = Resource.loading(null)
+
+            val response = movieApi.getMovieCredits(movieId=movieId)
+
+            if(response.isSuccessful && response.body() != null){
+                _movieCast.value = Resource.success(response.body()!!.cast)
+            } else {
+                _movieCast.value = Resource.error("Unsuccessful Movie Credits Request", null)
             }
         }
     }
