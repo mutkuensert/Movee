@@ -14,4 +14,4 @@ const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
 
 const val POSTER_SIZE_W500 = "w500"
 
-const val POSTER_SIZE_ORIGINAL = "original"
+const val SIZE_ORIGINAL = "original"

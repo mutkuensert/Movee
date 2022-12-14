@@ -1,7 +1,6 @@
 package com.mutkuensert.movee.ui.moviedetails
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -139,7 +138,7 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$POSTER_SIZE_ORIGINAL${posterPathNonNull}")
+                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${posterPathNonNull}")
                     .crossfade(true)
                     .build(),
                 loading = {
@@ -225,7 +224,7 @@ fun MovieCastItem(cast: MovieCast){
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${cast.profilePath}")
+                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${cast.profilePath}")
                             .crossfade(true)
                             .build(),
                         loading = {

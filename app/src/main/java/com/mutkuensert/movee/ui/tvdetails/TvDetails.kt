@@ -24,7 +24,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.model.remote.tvshows.TvDetailsModel
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.POSTER_SIZE_ORIGINAL
+import com.mutkuensert.movee.util.SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.Status
 
@@ -89,7 +89,7 @@ fun TvDetailsItem(tvDetails: TvDetailsModel) {
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("$IMAGE_BASE_URL$POSTER_SIZE_ORIGINAL${posterPathNonNull}")
+                        .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${posterPathNonNull}")
                         .crossfade(true)
                         .build(),
                     loading = {
