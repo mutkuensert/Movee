@@ -1,6 +1,7 @@
 package com.mutkuensert.movee.ui.moviedetails
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -33,7 +34,7 @@ import com.mutkuensert.movee.util.*
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel()) {
+fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel(), navigateToPersonDetails: (personId: Int) -> Unit) {
 
     val movieDetails = viewModel.movieDetails.collectAsStateWithLifecycle()
     val movieCast = viewModel.movieCast.collectAsStateWithLifecycle()
@@ -51,7 +52,7 @@ fun MovieDetails(movieId: Int?, viewModel: MovieDetailsViewModel = hiltViewModel
                 data = movieDetails,
             loadCastIfSuccessful = { viewModel.getMovieCast(movieId!!) })
             Spacer(modifier = Modifier.height(15.dp))
-            MovieCastDataObserver(data = movieCast)
+            MovieCastDataObserver(data = movieCast, navigateToPersonDetails = navigateToPersonDetails)
             
         }
     }
@@ -92,7 +93,7 @@ fun MovieDetailsDataObserver(data: State<Resource<MovieDetailsModel>>, loadCastI
 }
 
 @Composable
-fun MovieCastDataObserver(data: State<Resource<List<MovieCast>>>) {
+fun MovieCastDataObserver(data: State<Resource<List<MovieCast>>>, navigateToPersonDetails: (personId: Int) -> Unit) {
 
     when (data.value.status) {
         Status.STANDBY -> {}
@@ -116,7 +117,7 @@ fun MovieCastDataObserver(data: State<Resource<List<MovieCast>>>) {
             data.value.data?.let { movieCast: List<MovieCast> ->
                 LazyRow{
                     items(movieCast){ item ->
-                        MovieCastItem(cast = item)
+                        MovieCastItem(cast = item, onClick = { navigateToPersonDetails(item.id) })
                     }
                 }
             }
@@ -212,10 +213,10 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
 
 
 @Composable
-fun MovieCastItem(cast: MovieCast){
+fun MovieCastItem(cast: MovieCast, onClick: () -> Unit){
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
-            //.clickable { onClick() }
+            .clickable { onClick() }
         ) {
 
             Column(

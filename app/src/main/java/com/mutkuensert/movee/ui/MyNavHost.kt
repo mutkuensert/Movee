@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mutkuensert.movee.ui.moviedetails.MovieDetails
 import com.mutkuensert.movee.ui.movies.Movies
+import com.mutkuensert.movee.ui.person.Person
 import com.mutkuensert.movee.ui.tvdetails.TvDetails
 import com.mutkuensert.movee.ui.tvshows.TvShows
 import com.mutkuensert.movee.util.*
@@ -38,7 +39,9 @@ fun MyNavHost(
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
-                MovieDetails(movieId = backStackEntry.arguments?.getInt("movieId"))
+                MovieDetails(movieId = backStackEntry.arguments?.getInt("movieId")){ personId ->
+                    navController.navigate("$PERSON/$personId")
+                }
             }
         }
 
@@ -54,6 +57,15 @@ fun MyNavHost(
                 arguments = listOf(navArgument("tvId"){type= NavType.IntType})
             ){ backStackEntry ->
                 TvDetails(tvId = backStackEntry.arguments?.getInt("tvId"))
+            }
+        }
+
+        composable(
+            "$PERSON/{personId}",
+        arguments = listOf(navArgument("personId"){type = NavType.IntType})
+        ){ backStackEntry ->
+            Person(personId = backStackEntry.arguments?.getInt("personId")) { movieId ->
+                navController.navigate("$MOVIE_DETAILS/$movieId")
             }
         }
     }
