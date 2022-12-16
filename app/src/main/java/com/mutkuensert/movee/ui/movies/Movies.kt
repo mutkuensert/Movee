@@ -1,6 +1,7 @@
 package com.mutkuensert.movee.ui.movies
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +20,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +61,7 @@ fun Movies(
 
     val itemsAboveHeight = remember { mutableStateOf(0.dp) }
 
-    val itemsAboveHeightPx = with(localDensity) { itemsAboveHeight.value.roundToPx().toFloat() }
+    val itemsAboveHeightPx = remember{ mutableStateOf(0f) }
     val itemsAboveOffsetHeightPx = remember { mutableStateOf(0f) }
 
     val nestedScrollConnection = remember {
@@ -67,7 +69,7 @@ fun Movies(
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
                 val newOffset = itemsAboveOffsetHeightPx.value + delta
-                itemsAboveOffsetHeightPx.value = newOffset.coerceIn(-itemsAboveHeightPx, 0f)
+                itemsAboveOffsetHeightPx.value = newOffset.coerceIn(-itemsAboveHeightPx.value, 0f)
                 return Offset.Zero
             }
         }
@@ -80,10 +82,14 @@ fun Movies(
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(top = itemsAboveHeight.value)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            state = stateOfPopularMovies) {
+            state = stateOfPopularMovies,
+            contentPadding = PaddingValues(top = itemsAboveHeight.value)) {
+            item {
+                Spacer(Modifier.height(10.dp))
+            }
+
             item {
                 Column(modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start) {
@@ -126,46 +132,40 @@ fun Movies(
         }
 
 
-        Column(modifier = Modifier
-            .wrapContentHeight()
-            .onGloballyPositioned { coordinates ->
-                itemsAboveHeight.value = with(localDensity) { coordinates.size.height.toDp() }
+        Card(elevation = 10.dp,
+            modifier = Modifier
+                .onSizeChanged {
+                    itemsAboveHeightPx.value = it.height.toFloat()
+                    itemsAboveHeight.value = with(localDensity) { it.height.toDp() }
+                }
+                .offset { IntOffset(x = 0, y = itemsAboveOffsetHeightPx.value.roundToInt()) }
+                .background(Color.White)) {
+            Column {
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    text = "Movies in Theaters",
+                    color = Color.LightGray,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                MoviesNowPlaying(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
+                    navigateToMovieDetails = navigateToMovieDetails,
+                    lazyListState = stateOfMoviesNowPlaying
+                )
+
+                Spacer(Modifier.height(10.dp))
+
             }
-            .offset { IntOffset(x = 0, y = itemsAboveOffsetHeightPx.value.roundToInt()) }
-        ) {
-            Spacer(Modifier.height(10.dp))
-
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                text = "Movies in Theaters",
-                color = Color.LightGray,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp
-            )
-
-            Spacer(Modifier.height(10.dp))
-
-            MoviesNowPlaying(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(horizontal = 10.dp),
-                moviesNowPlayingLazyPagingItems = moviesNowPlayingLazyPagingItems,
-                navigateToMovieDetails = navigateToMovieDetails,
-                lazyListState = stateOfMoviesNowPlaying
-            )
-
-            Spacer(Modifier.height(10.dp))
-
-            Divider(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                thickness = 1.dp,
-                color = Color.Black
-            )
-
-            Spacer(Modifier.height(10.dp))
         }
-
 
     }
 
@@ -183,6 +183,9 @@ fun MoviesNowPlaying(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
+        Spacer(modifier = Modifier.width(10.dp))
+
 
         if (moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading || moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading) {
 
