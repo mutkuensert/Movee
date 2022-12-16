@@ -271,10 +271,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
 @Composable
 fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
 
-    Log.i(
-        TAG,
-        "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}"
-    )
+    Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
@@ -297,7 +294,7 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
-                            .height(150.dp),
+                            .width(150.dp),
                         contentDescription = "Movie Poster"
                     )
                 }
