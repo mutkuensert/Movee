@@ -145,7 +145,42 @@ fun MoviesNowPlaying(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading || moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading) {
+        if (moviesNowPlayingLazyPagingItems.loadState.refresh == LoadState.Loading) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(50.dp))
+
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
+                    strokeWidth = 6.dp,
+                    color = Color.Gray
+                )
+
+                Spacer(Modifier.height(50.dp))
+            }
+
+            Spacer(Modifier.width(50.dp))
+        }
+
+        LazyRow(state = lazyListState) {
+            items(moviesNowPlayingLazyPagingItems) { item ->
+                item?.let { itemNonNull ->
+                    MoviesNowPlayingItem(
+                        movie = itemNonNull,
+                        onClick = { navigateToMovieDetails(itemNonNull.id) })
+                }
+            }
+        }
+
+
+        if (moviesNowPlayingLazyPagingItems.loadState.append == LoadState.Loading) {
+
+            Spacer(Modifier.width(50.dp))
 
             Column(
                 modifier = Modifier
@@ -165,16 +200,6 @@ fun MoviesNowPlaying(
             }
         }
 
-        LazyRow(state = lazyListState) {
-            items(moviesNowPlayingLazyPagingItems) { item ->
-                item?.let { itemNonNull ->
-                    MoviesNowPlayingItem(
-                        movie = itemNonNull,
-                        onClick = { navigateToMovieDetails(itemNonNull.id) })
-                }
-            }
-        }
-
     }
 }
 
@@ -191,7 +216,7 @@ fun PopularMovies(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        if (popularMoviesLazyPagingItems.loadState.refresh == LoadState.Loading || popularMoviesLazyPagingItems.loadState.append == LoadState.Loading) {
+        if (popularMoviesLazyPagingItems.loadState.refresh == LoadState.Loading) {
             Spacer(Modifier.height(50.dp))
 
             CircularProgressIndicator(
@@ -212,6 +237,18 @@ fun PopularMovies(
                 }
             }
 
+        }
+
+        if (popularMoviesLazyPagingItems.loadState.append == LoadState.Loading) {
+            Spacer(Modifier.height(50.dp))
+
+            CircularProgressIndicator(
+                modifier = Modifier.size(100.dp),
+                strokeWidth = 6.dp,
+                color = Color.Gray
+            )
+
+            Spacer(Modifier.height(50.dp))
         }
 
     }
