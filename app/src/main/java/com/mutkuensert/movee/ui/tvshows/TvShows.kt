@@ -1,16 +1,11 @@
 package com.mutkuensert.movee.ui.tvshows
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -21,11 +16,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +43,7 @@ import com.mutkuensert.movee.data.model.remote.tvshows.PopularTvShowsResult
 import com.mutkuensert.movee.data.model.remote.tvshows.TopRatedTvShowsResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
+import kotlin.math.roundToInt
 
 private const val TAG = "TvShows Composable"
 
@@ -52,24 +57,51 @@ fun TvShows(
     val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
     val stateOfPopularTvShows = rememberLazyListState()
-
-    var previousFirstVisibleItemIndexOfTopRatedTvShows by remember { mutableStateOf(0) }
     val stateOfTopRatedTvShows = rememberLazyGridState()
-    val visibilityOfItemsAbove = remember {
-        derivedStateOf {
-            if(stateOfTopRatedTvShows.firstVisibleItemIndex > previousFirstVisibleItemIndexOfTopRatedTvShows){
-                false
-            }else{
-                true
-            }.also { previousFirstVisibleItemIndexOfTopRatedTvShows = stateOfTopRatedTvShows.firstVisibleItemIndex }
+
+    val localDensity = LocalDensity.current
+
+
+    val itemsAboveHeight = remember { mutableStateOf(0.dp) }
+
+    val itemsAboveHeightPx = remember{ mutableStateOf(0f) }
+    val itemsAboveOffsetHeightPx = remember { mutableStateOf(0f) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                val newOffset = itemsAboveOffsetHeightPx.value + delta
+                itemsAboveOffsetHeightPx.value = newOffset.coerceIn(-itemsAboveHeightPx.value, 0f)
+                return Offset.Zero
+            }
         }
     }
 
-    Column() {
-        AnimatedVisibility(
-            visible = visibilityOfItemsAbove.value,
-            enter = slideInVertically(),
-            exit = slideOutVertically()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        TopRatedTvShows(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
+            navigateToTvShowDetails = navigateToTvShowDetails,
+            itemsAboveHeight = itemsAboveHeight,
+            lazyGridState = stateOfTopRatedTvShows
+        )
+
+
+        Card(elevation = 10.dp,
+            modifier = Modifier
+                .onSizeChanged {
+                    itemsAboveHeightPx.value = it.height.toFloat()
+                    itemsAboveHeight.value = with(localDensity) { it.height.toDp() }
+                }
+                .offset { IntOffset(x = 0, y = itemsAboveOffsetHeightPx.value.roundToInt()) }
+                .background(Color.White)) {
             Column {
                 Spacer(Modifier.height(10.dp))
 
@@ -95,38 +127,9 @@ fun TvShows(
 
                 Spacer(Modifier.height(10.dp))
 
-                Divider(
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                    thickness = 1.dp,
-                    color = Color.Black
-                )
-
-                Spacer(Modifier.height(10.dp))
-
             }
         }
 
-        Column{
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                text = "Top Rated Tv Shows",
-                color = Color.LightGray,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp
-            )
-
-            Spacer(Modifier.height(10.dp))
-
-            TopRatedTvShows(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
-                navigateToTvShowDetails = navigateToTvShowDetails,
-                lazyGridState = stateOfTopRatedTvShows
-            )
-        }
     }
 
 }
@@ -143,12 +146,13 @@ fun PopularTvShows(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        if (popularTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading || popularTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
+        if (popularTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Spacer(Modifier.height(50.dp))
 
@@ -160,6 +164,8 @@ fun PopularTvShows(
 
                 Spacer(Modifier.height(50.dp))
             }
+
+            Spacer(Modifier.width(50.dp))
         }
 
         LazyRow(state = lazyListState) {
@@ -173,6 +179,24 @@ fun PopularTvShows(
             }
         }
 
+
+        if (popularTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
+                    strokeWidth = 6.dp,
+                    color = Color.Gray
+                )
+            }
+        }
+
     }
 
 }
@@ -181,40 +205,96 @@ fun PopularTvShows(
 fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
+    itemsAboveHeight: MutableState<Dp>,
     lazyGridState: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        if (topRatedTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading || topRatedTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-
-                Spacer(Modifier.height(50.dp))
-            }
-        }
-
+        val spanCount = 2
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            state = lazyGridState
+            state = lazyGridState,
+            contentPadding = PaddingValues(top = itemsAboveHeight.value)
         ) {
+
+
+            item(
+                span = { GridItemSpan(spanCount) }
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Spacer(Modifier.height(10.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .fillMaxWidth(),
+                        text = "Top Rated Tv Shows",
+                        color = Color.LightGray,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 20.sp,
+                        maxLines = 1
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+                }
+
+            }
+
+            item(
+                span = { GridItemSpan(spanCount) }
+            ) {
+
+                if (topRatedTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(Modifier.height(40.dp))
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 6.dp,
+                            color = Color.Gray
+                        )
+
+                        Spacer(Modifier.height(50.dp))
+                    }
+                }
+            }
+
+
             items(topRatedTvShowsLazyPagingItems.itemCount){ index ->
                 topRatedTvShowsLazyPagingItems.get(index)?.let { topRatedTvShowNonNull ->
                     TopRatedTvShowsItem(topRatedTvShow = topRatedTvShowNonNull, onClick = { navigateToTvShowDetails(topRatedTvShowNonNull.id) })
+                }
+            }
+
+            item(
+                span = { GridItemSpan(spanCount) }
+            ) {
+                if (topRatedTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(Modifier.height(40.dp))
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 6.dp,
+                            color = Color.Gray
+                        )
+
+                        Spacer(Modifier.height(50.dp))
+                    }
                 }
             }
         }
