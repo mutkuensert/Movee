@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,7 +71,9 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
                     personDetails.value.data?.let { personDetails ->
                         PersonDetailsItem(personDetails = personDetails)
                     }
-                    viewModel.getPersonCast(personId = personId!!)
+                    LaunchedEffect(key1 = personMovieCast, key2 = personTvCast){
+                        viewModel.getPersonCast(personId = personId!!)
+                    }
                 }
             }
 
@@ -149,6 +151,7 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
 
 @Composable
 fun PersonDetailsItem(personDetails: PersonDetailsModel) {
+    val readMore = remember { mutableStateOf(false) }
 
     personDetails.profilePath?.let { posterPathNonNull ->
 
@@ -193,7 +196,15 @@ fun PersonDetailsItem(personDetails: PersonDetailsModel) {
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        Text(text = personDetails.biography)
+        if(readMore.value){
+            Text(text = personDetails.biography)
+            Text(text = "... read less", modifier = Modifier.clickable { readMore.value = false })
+        }else{
+            Text(text = personDetails.biography, maxLines = 4)
+            Text(text = "... read more", modifier = Modifier.clickable { readMore.value = true })
+        }
+
+
 
         Spacer(modifier = Modifier.height(15.dp))
 
