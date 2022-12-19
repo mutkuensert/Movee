@@ -11,7 +11,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +28,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.model.remote.person.PersonDetailsModel
 import com.mutkuensert.movee.data.model.remote.person.PersonMovieCastModel
+import com.mutkuensert.movee.data.model.remote.person.PersonTvCastModel
 import com.mutkuensert.movee.util.*
 
 private const val TAG = "Person screen composable"
@@ -37,7 +37,8 @@ private const val TAG = "Person screen composable"
 @Composable
 fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigateToMovieDetails: (movieId: Int) -> Unit){
     val personDetails = viewModel.personDetails.collectAsStateWithLifecycle()
-    val personCast = viewModel.personCast.collectAsStateWithLifecycle()
+    val personMovieCast = viewModel.personMovieCast.collectAsStateWithLifecycle()
+    val personTvCast = viewModel.personTvCast.collectAsStateWithLifecycle()
 
     if(personId != null){
         viewModel.getPersonDetails(personId!!)
@@ -45,6 +46,9 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
             modifier = Modifier
                 .fillMaxWidth()
         ){
+
+            //Person Details Section
+
             item{
                 if(personDetails.value.status == Status.LOADING){
                     Column(
@@ -77,8 +81,10 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
                 }
             }
 
+            //Person Movie Cast Section
+
             item {
-                if(personCast.value.status == Status.LOADING){
+                if(personMovieCast.value.status == Status.LOADING){
                     Column(modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -93,15 +99,47 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
                 }
             }
 
-            if(personCast.value.status == Status.SUCCESS && personCast.value.data != null){
-                items(personCast.value.data!!){ personMovieCastModel ->
-                    PersonCastItem(movie = personMovieCastModel)
+            if(personMovieCast.value.status == Status.SUCCESS && personMovieCast.value.data != null){
+                items(personMovieCast.value.data!!){ personMovieCastModel ->
+                    PersonMovieCastItem(movie = personMovieCastModel)
                 }
             }
 
             item{
-                if(personCast.value.status == Status.ERROR){
-                    Toast.makeText(LocalContext.current, "${personCast.value.message}", Toast.LENGTH_LONG).show()
+                if(personMovieCast.value.status == Status.ERROR){
+                    Toast.makeText(LocalContext.current, "${personMovieCast.value.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+
+
+            //Person Tv Cast Section
+
+
+            item {
+                if(personTvCast.value.status == Status.LOADING){
+                    Column(modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(Modifier.height(50.dp))
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 6.dp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+
+            if(personTvCast.value.status == Status.SUCCESS && personTvCast.value.data != null){
+                items(personTvCast.value.data!!){ personTvCastModel ->
+                    PersonTvCastItem(tv = personTvCastModel)
+                }
+            }
+
+            item{
+                if(personTvCast.value.status == Status.ERROR){
+                    Toast.makeText(LocalContext.current, "${personTvCast.value.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -164,7 +202,7 @@ fun PersonDetailsItem(personDetails: PersonDetailsModel) {
 }
 
 @Composable
-fun PersonCastItem(movie: PersonMovieCastModel){
+fun PersonMovieCastItem(movie: PersonMovieCastModel){
     Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -197,6 +235,51 @@ fun PersonCastItem(movie: PersonMovieCastModel){
 
                 Text(
                     text = movie.title,
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp
+                )
+
+            }
+        }
+
+    }
+}
+
+@Composable
+fun PersonTvCastItem(tv: PersonTvCastModel){
+    Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${tv.posterPath}")
+
+    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
+        Card(elevation = 10.dp, modifier = Modifier
+            .fillMaxWidth()
+            .clickable { }) {
+
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Card(elevation = 10.dp) {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${tv.posterPath}")
+                            .crossfade(true)
+                            .build(),
+                        loading = {
+                            CircularProgressIndicator(color = Color.Gray, modifier = Modifier.size(150.dp))
+                        },
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .width(150.dp),
+                        contentDescription = "Movie Poster"
+                    )
+                }
+
+                Spacer(Modifier.width(20.dp))
+
+                Text(
+                    text = tv.name,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp

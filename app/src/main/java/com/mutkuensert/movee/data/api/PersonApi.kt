@@ -2,6 +2,7 @@ package com.mutkuensert.movee.data.api
 
 import com.mutkuensert.movee.data.model.remote.person.PersonDetailsModel
 import com.mutkuensert.movee.data.model.remote.person.PersonMovieCreditsModel
+import com.mutkuensert.movee.data.model.remote.person.PersonTvCreditsModel
 import com.mutkuensert.movee.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,4 +22,10 @@ interface PersonApi {
         @Path("person_id") personId: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): Response<PersonMovieCreditsModel>
+
+    @GET("person/{person_id}/tv_credits")
+    suspend fun getPersonTvCredits(
+        @Path("person_id") personId: Int,
+        @Query("api_key") apiKey: String = API_KEY
+    ): Response<PersonTvCreditsModel>
 }

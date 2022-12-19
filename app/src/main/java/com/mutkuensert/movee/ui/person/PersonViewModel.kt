@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.api.PersonApi
 import com.mutkuensert.movee.data.model.remote.person.PersonDetailsModel
 import com.mutkuensert.movee.data.model.remote.person.PersonMovieCastModel
+import com.mutkuensert.movee.data.model.remote.person.PersonTvCastModel
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +23,13 @@ class PersonViewModel @Inject constructor(private val personApi: PersonApi): Vie
         Resource.standby(null))
     val personDetails: StateFlow<Resource<PersonDetailsModel>> get() = _personDetails
 
-    private val _personCast: MutableStateFlow<Resource<List<PersonMovieCastModel>>> = MutableStateFlow(
+    private val _personMovieCast: MutableStateFlow<Resource<List<PersonMovieCastModel>>> = MutableStateFlow(
         Resource.standby(null))
-    val personCast: StateFlow<Resource<List<PersonMovieCastModel>>> get() = _personCast
+    val personMovieCast: StateFlow<Resource<List<PersonMovieCastModel>>> get() = _personMovieCast
+
+    private val _personTvCast: MutableStateFlow<Resource<List<PersonTvCastModel>>> = MutableStateFlow(
+        Resource.standby(null))
+    val personTvCast: StateFlow<Resource<List<PersonTvCastModel>>> get() = _personTvCast
 
     fun getPersonDetails(personId: Int){
         viewModelScope.launch(Dispatchers.IO) {
@@ -43,16 +48,35 @@ class PersonViewModel @Inject constructor(private val personApi: PersonApi): Vie
 
     fun getPersonCast(personId: Int){
         viewModelScope.launch(Dispatchers.IO) {
-            _personCast.value = Resource.loading(null)
+            getPersonMovieCast(personId = personId)
+            getPersonTvCast(personId = personId)
+        }
+    }
 
-            val response = personApi.getPersonMovieCredits(personId = personId)
+    private suspend fun getPersonMovieCast(personId: Int){
+        _personMovieCast.value = Resource.loading(null)
 
-            if(response.isSuccessful && response.body() != null){
-                _personCast.value = Resource.success(response.body()!!.cast)
-            }else {
-                _personCast.value = Resource.error("Unsuccessful Person Cast Request", null)
-                Log.e(TAG, "Is response successful? ${response.isSuccessful}, Is response body null? ${response.body()}")
-            }
+        val response = personApi.getPersonMovieCredits(personId = personId)
+
+        if(response.isSuccessful && response.body() != null){
+            _personMovieCast.value = Resource.success(response.body()!!.cast)
+        }else {
+            _personMovieCast.value = Resource.error("Unsuccessful Person Movie Cast Request", null)
+            Log.e(TAG, "Is response successful? ${response.isSuccessful}, Is response body null? ${response.body()}")
+        }
+
+    }
+
+    private suspend fun getPersonTvCast(personId: Int){
+        _personTvCast.value = Resource.loading(null)
+
+        val response = personApi.getPersonTvCredits(personId = personId)
+
+        if(response.isSuccessful && response.body() != null){
+            _personTvCast.value = Resource.success(response.body()!!.cast)
+        }else {
+            _personTvCast.value = Resource.error("Unsuccessful Person Tv Cast Request", null)
+            Log.e(TAG, "Is response successful? ${response.isSuccessful}, Is response body null? ${response.body()}")
         }
     }
 }
