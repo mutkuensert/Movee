@@ -3,6 +3,7 @@ package com.mutkuensert.movee.data.api
 import com.mutkuensert.movee.data.model.remote.tvshows.PopularTvShowsModel
 import com.mutkuensert.movee.data.model.remote.tvshows.TopRatedTvShowsModel
 import com.mutkuensert.movee.data.model.remote.tvshows.TvDetailsModel
+import com.mutkuensert.movee.data.model.remote.tvshows.credits.TvShowCredits
 import com.mutkuensert.movee.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
@@ -28,4 +29,10 @@ interface TvShowsApi {
         @Path("tv_id") tvId: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): Response<TvDetailsModel>
+
+    @GET("tv/{tv_id}/credits")
+    suspend fun getTvShowCredits(
+        @Path("tv_id") tvId: Int,
+        @Query("api_key") apiKey: String = API_KEY
+    ): Response<TvShowCredits>
 }

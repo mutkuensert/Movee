@@ -1,8 +1,12 @@
 package com.mutkuensert.movee.ui.tvdetails
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
@@ -11,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -24,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.data.model.remote.tvshows.TvDetailsModel
+import com.mutkuensert.movee.data.model.remote.tvshows.credits.TvShowCast
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Resource
@@ -31,17 +37,33 @@ import com.mutkuensert.movee.util.Status
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun TvDetails(tvId: Int?, viewModel: TvDetailsViewModel = hiltViewModel()) {
+fun TvDetails(tvId: Int?, viewModel: TvDetailsViewModel = hiltViewModel(), navigateToPersonDetails: (personId: Int) -> Unit) {
 
-    val data = viewModel.tvDetails.collectAsStateWithLifecycle()
+    val tvDetails = viewModel.tvDetails.collectAsStateWithLifecycle()
+    val tvCast = viewModel.tvCast.collectAsStateWithLifecycle()
+
     if (tvId != null) {
         viewModel.getTvDetails(tvId!!)
-        TvDetailsDataObserver(data = data)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 25.dp)
+        ){
+            TvDetailsDataObserver(
+                data = tvDetails,
+                loadTvCastIfSuccessful = {viewModel.getTvCast(tvId = tvId!!)})
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            TvShowsCastDataObserver(data = tvCast , navigateToPersonDetails = navigateToPersonDetails)
+        }
+
     }
 }
 
 @Composable
-fun TvDetailsDataObserver(data: State<Resource<TvDetailsModel>>) {
+fun TvDetailsDataObserver(data: State<Resource<TvDetailsModel>>, loadTvCastIfSuccessful: () -> Unit) {
 
     when (data.value.status) {
         Status.STANDBY -> {}
@@ -64,6 +86,7 @@ fun TvDetailsDataObserver(data: State<Resource<TvDetailsModel>>) {
         Status.SUCCESS -> {
             data.value.data?.let { tvDetails: TvDetailsModel ->
                 TvDetailsItem(tvDetails)
+                loadTvCastIfSuccessful()
             }
         }
 
@@ -77,8 +100,6 @@ fun TvDetailsDataObserver(data: State<Resource<TvDetailsModel>>) {
 fun TvDetailsItem(tvDetails: TvDetailsModel) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(bottom = 30.dp)
     ) {
 
@@ -174,5 +195,95 @@ fun TvDetailsItem(tvDetails: TvDetailsModel) {
                 Text(text = tvDetails.overview)
             }
         }
+    }
+}
+
+@Composable
+fun TvShowsCastDataObserver(
+    data: State<Resource<List<TvShowCast>>>,
+    navigateToPersonDetails: (personId: Int) -> Unit){
+
+    when (data.value.status) {
+        Status.STANDBY -> {}
+
+        Status.LOADING -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(50.dp))
+
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
+                    strokeWidth = 6.dp,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        Status.SUCCESS -> {
+            data.value.data?.let { tvShowCast: List<TvShowCast> ->
+                LazyRow{
+                    items(tvShowCast){ item ->
+                        TvShowCastItem(cast = item, navigateToPersonDetails = { navigateToPersonDetails(item.id) })
+                    }
+                }
+            }
+        }
+
+        Status.ERROR -> {
+            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+}
+
+@Composable
+fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit){
+    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
+        Card(elevation = 10.dp, modifier = Modifier
+            .clickable { navigateToPersonDetails() }
+        ) {
+
+            Column(
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Card(elevation = 10.dp) {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${cast.profilePath}")
+                            .crossfade(true)
+                            .build(),
+                        loading = {
+                            CircularProgressIndicator(color = Color.Gray)
+                        },
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .height(150.dp),
+                        contentDescription = "Tv Show Poster"
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = cast.name,
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = cast.character,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Bold
+                )
+
+            }
+        }
+
     }
 }

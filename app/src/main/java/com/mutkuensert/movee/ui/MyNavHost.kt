@@ -56,7 +56,10 @@ fun MyNavHost(
                 "$TV_SHOW_DETAILS/{tvId}",
                 arguments = listOf(navArgument("tvId"){type= NavType.IntType})
             ){ backStackEntry ->
-                TvDetails(tvId = backStackEntry.arguments?.getInt("tvId"))
+                TvDetails(tvId = backStackEntry.arguments?.getInt("tvId"),
+                    navigateToPersonDetails = { personId ->
+                        navController.navigate("$PERSON/${personId}")
+                    })
             }
         }
 
