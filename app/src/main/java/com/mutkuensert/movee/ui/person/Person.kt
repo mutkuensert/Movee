@@ -6,9 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -20,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,52 +41,71 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
 
     if(personId != null){
         viewModel.getPersonDetails(personId!!)
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(LocalConfiguration.current.screenHeightDp.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 25.dp)
         ){
-            PersonDetailsDataObserver(data = personDetails, loadCastIfSuccessful = { viewModel.getPersonCast(personId=personId!!) })
-            Spacer(modifier = Modifier.height(15.dp))
-            PersonCastDataObserver(data = personCast, modifier = Modifier.height(LocalConfiguration.current.screenHeightDp.dp))
-        }
+            item{
+                if(personDetails.value.status == Status.LOADING){
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(Modifier.height(50.dp))
 
-    }
-}
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 6.dp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
 
-@Composable
-fun PersonDetailsDataObserver(data: State<Resource<PersonDetailsModel>>, loadCastIfSuccessful: () -> Unit) {
+            item{
+                if(personDetails.value.status == Status.SUCCESS){
+                    personDetails.value.data?.let { personDetails ->
+                        PersonDetailsItem(personDetails = personDetails)
+                    }
+                    viewModel.getPersonCast(personId = personId!!)
+                }
+            }
 
-    when (data.value.status) {
-        Status.STANDBY -> {}
+            item{
+                if(personDetails.value.status == Status.ERROR){
+                    Toast.makeText(LocalContext.current, "${personDetails.value.message}", Toast.LENGTH_LONG).show()
+                }
+            }
 
-        Status.LOADING -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
+            item {
+                if(personCast.value.status == Status.LOADING){
+                    Column(modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(Modifier.height(50.dp))
 
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(100.dp),
+                            strokeWidth = 6.dp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+
+            if(personCast.value.status == Status.SUCCESS && personCast.value.data != null){
+                items(personCast.value.data!!){ personMovieCastModel ->
+                    PersonCastItem(movie = personMovieCastModel)
+                }
+            }
+
+            item{
+                if(personCast.value.status == Status.ERROR){
+                    Toast.makeText(LocalContext.current, "${personCast.value.message}", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
-        Status.SUCCESS -> {
-            data.value.data?.let { personDetails: PersonDetailsModel ->
-                PersonDetailsItem(personDetails = personDetails)
-                loadCastIfSuccessful()
-            }
-        }
-
-        Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
-        }
     }
 }
 
@@ -144,48 +160,6 @@ fun PersonDetailsItem(personDetails: PersonDetailsModel) {
         Spacer(modifier = Modifier.height(15.dp))
 
     }
-
-}
-
-@Composable
-fun PersonCastDataObserver(data: State<Resource<List<PersonMovieCastModel>>>, modifier: Modifier = Modifier){
-    Column(modifier = modifier) {
-        when (data.value.status) {
-            Status.STANDBY -> {}
-
-            Status.LOADING -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(Modifier.height(50.dp))
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(100.dp),
-                        strokeWidth = 6.dp,
-                        color = Color.Gray
-                    )
-                }
-            }
-
-            Status.SUCCESS -> {
-                data.value.data?.let { castList: List<PersonMovieCastModel> ->
-                    LazyColumn {
-                        items(castList){ personMovieCastModel: PersonMovieCastModel ->
-                            PersonCastItem(movie = personMovieCastModel)
-                        }
-                    }
-                }
-
-            }
-
-            Status.ERROR -> {
-                Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG)
-                    .show()
-            }
-        }
-    }
-
 
 }
 
