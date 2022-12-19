@@ -35,7 +35,12 @@ private const val TAG = "Person screen composable"
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigateToMovieDetails: (movieId: Int) -> Unit){
+fun Person(
+    personId: Int?,
+    viewModel: PersonViewModel = hiltViewModel(),
+    navigateToMovieDetails: (movieId: Int) -> Unit,
+    navigateToTvDetails: (tvId: Int) -> Unit){
+
     val personDetails = viewModel.personDetails.collectAsStateWithLifecycle()
     val personMovieCast = viewModel.personMovieCast.collectAsStateWithLifecycle()
     val personTvCast = viewModel.personTvCast.collectAsStateWithLifecycle()
@@ -103,7 +108,7 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
 
             if(personMovieCast.value.status == Status.SUCCESS && personMovieCast.value.data != null){
                 items(personMovieCast.value.data!!){ personMovieCastModel ->
-                    PersonMovieCastItem(movie = personMovieCastModel)
+                    PersonMovieCastItem(movie = personMovieCastModel, navigateToMovieDetails= navigateToMovieDetails)
                 }
             }
 
@@ -135,7 +140,7 @@ fun Person(personId: Int?, viewModel: PersonViewModel = hiltViewModel(), navigat
 
             if(personTvCast.value.status == Status.SUCCESS && personTvCast.value.data != null){
                 items(personTvCast.value.data!!){ personTvCastModel ->
-                    PersonTvCastItem(tv = personTvCastModel)
+                    PersonTvCastItem(tv = personTvCastModel, navigateToTvDetails = navigateToTvDetails)
                 }
             }
 
@@ -213,13 +218,13 @@ fun PersonDetailsItem(personDetails: PersonDetailsModel) {
 }
 
 @Composable
-fun PersonMovieCastItem(movie: PersonMovieCastModel){
+fun PersonMovieCastItem(movie: PersonMovieCastModel, navigateToMovieDetails: (movieId: Int) -> Unit){
     Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
-            .clickable { }) {
+            .clickable { navigateToMovieDetails(movie.id) }) {
 
             Row(
                 modifier = Modifier.padding(10.dp),
@@ -258,13 +263,13 @@ fun PersonMovieCastItem(movie: PersonMovieCastModel){
 }
 
 @Composable
-fun PersonTvCastItem(tv: PersonTvCastModel){
+fun PersonTvCastItem(tv: PersonTvCastModel, navigateToTvDetails: (tvId: Int) -> Unit){
     Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${tv.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
-            .clickable { }) {
+            .clickable { navigateToTvDetails(tv.id) }) {
 
             Row(
                 modifier = Modifier.padding(10.dp),
