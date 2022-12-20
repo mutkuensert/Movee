@@ -46,7 +46,9 @@ fun Person(
     val personTvCast = viewModel.personTvCast.collectAsStateWithLifecycle()
 
     if(personId != null){
-        viewModel.getPersonDetails(personId!!)
+        LaunchedEffect(key1 = true){
+            viewModel.getPersonDetails(personId!!)
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
