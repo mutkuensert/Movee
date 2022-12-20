@@ -219,7 +219,6 @@ fun PersonDetailsItem(personDetails: PersonDetailsModel) {
 
 @Composable
 fun PersonMovieCastItem(movie: PersonMovieCastModel, navigateToMovieDetails: (movieId: Int) -> Unit){
-    Log.i(TAG, "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
 
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
