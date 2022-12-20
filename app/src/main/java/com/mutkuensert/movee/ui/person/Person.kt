@@ -76,7 +76,7 @@ fun Person(
                     personDetails.value.data?.let { personDetails ->
                         PersonDetailsItem(personDetails = personDetails)
                     }
-                    LaunchedEffect(key1 = personMovieCast, key2 = personTvCast){
+                    LaunchedEffect(key1 = personDetails){
                         viewModel.getPersonCast(personId = personId!!)
                     }
                 }
