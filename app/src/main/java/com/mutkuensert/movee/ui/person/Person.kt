@@ -47,8 +47,15 @@ fun Person(
 
     if(personId != null){
         LaunchedEffect(key1 = true){
+            Log.i(TAG, "viewModel.getPersonDetails(personId = personId!!)")
             viewModel.getPersonDetails(personId!!)
         }
+        if(personDetails.value.status == Status.SUCCESS){
+            LaunchedEffect(key1 = personDetails){
+                viewModel.getPersonCast(personId = personId!!)
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,9 +84,6 @@ fun Person(
                 if(personDetails.value.status == Status.SUCCESS){
                     personDetails.value.data?.let { personDetails ->
                         PersonDetailsItem(personDetails = personDetails)
-                    }
-                    LaunchedEffect(key1 = personDetails){
-                        viewModel.getPersonCast(personId = personId!!)
                     }
                 }
             }
