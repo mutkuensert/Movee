@@ -46,7 +46,16 @@ fun Person(
     val personTvCast = viewModel.personTvCast.collectAsStateWithLifecycle()
 
     if(personId != null){
-        viewModel.getPersonDetails(personId!!)
+        LaunchedEffect(key1 = true){
+            Log.i(TAG, "viewModel.getPersonDetails(personId = personId!!)")
+            viewModel.getPersonDetails(personId!!)
+        }
+        if(personDetails.value.status == Status.SUCCESS){
+            LaunchedEffect(key1 = personDetails){
+                viewModel.getPersonCast(personId = personId!!)
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,9 +84,6 @@ fun Person(
                 if(personDetails.value.status == Status.SUCCESS){
                     personDetails.value.data?.let { personDetails ->
                         PersonDetailsItem(personDetails = personDetails)
-                    }
-                    LaunchedEffect(key1 = personMovieCast, key2 = personTvCast){
-                        viewModel.getPersonCast(personId = personId!!)
                     }
                 }
             }
