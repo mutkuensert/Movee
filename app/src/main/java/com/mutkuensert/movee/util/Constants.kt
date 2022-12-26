@@ -10,6 +10,8 @@ const val TV_SHOWS_NAV_GRAPH = "tvShowsNavGraph"
 
 const val PERSON = "person"
 
+const val MULTI_SEARCH_ROUTE = "multiSearchRoute"
+
 const val BASE_URL = "https://api.themoviedb.org/3/"
 
 const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"

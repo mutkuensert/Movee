@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mutkuensert.movee.ui.moviedetails.MovieDetails
 import com.mutkuensert.movee.ui.movies.Movies
+import com.mutkuensert.movee.ui.multisearch.MultiSearch
 import com.mutkuensert.movee.ui.person.Person
 import com.mutkuensert.movee.ui.tvdetails.TvDetails
 import com.mutkuensert.movee.ui.tvshows.TvShows
@@ -74,6 +75,21 @@ fun MyNavHost(
                 navigateToTvDetails = { tvId ->
                     navController.navigate("$TV_SHOW_DETAILS/$tvId")
                 })
+        }
+        
+        
+        composable(route = MULTI_SEARCH_ROUTE){
+            MultiSearch(
+                navigateToMovieDetails = { movieId ->
+                                         navController.navigate("$MOVIE_DETAILS/$movieId")
+                },
+                navigateToTvDetails = { tvId ->
+                                      navController.navigate("$TV_SHOW_DETAILS/$tvId")
+                },
+                navigateToPersonDetails = { personId ->
+                    navController.navigate("$PERSON/$personId")
+                }
+            )
         }
     }
 }

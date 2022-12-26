@@ -17,10 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.mutkuensert.movee.ui.MyNavHost
 import com.mutkuensert.movee.ui.theme.MoveeTheme
-import com.mutkuensert.movee.util.MOVIES
-import com.mutkuensert.movee.util.MOVIE_NAV_GRAPH
-import com.mutkuensert.movee.util.TV_SHOWS
-import com.mutkuensert.movee.util.TV_SHOWS_NAV_GRAPH
+import com.mutkuensert.movee.util.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -80,6 +77,16 @@ fun MyBottomAppBar(currentDestination: String?, navController: NavController) {
                 Icon(
                     painter = painterResource(id = R.drawable.tvshow),
                     contentDescription = "Go to tv shows icon"
+                )
+            })
+
+        BottomNavigationItem(
+            selected = currentDestination == MULTI_SEARCH_ROUTE,
+            onClick = { navController.navigate(MULTI_SEARCH_ROUTE) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.search),
+                    contentDescription = "Go to search icon"
                 )
             })
     }

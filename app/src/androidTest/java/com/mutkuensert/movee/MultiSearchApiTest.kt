@@ -34,6 +34,7 @@ class MultiSearchApiTest {
             Assert.assertEquals(200, response.code())
             response.body()?.let { multiSearchModel ->
                 Log.i(TAG, "$multiSearchModel")
+                Log.i(TAG, "Results Size: ${multiSearchModel.results.size}")
             }
         }
     }
