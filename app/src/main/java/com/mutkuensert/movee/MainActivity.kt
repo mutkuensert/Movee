@@ -81,8 +81,8 @@ fun MyBottomAppBar(currentDestination: String?, navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentDestination == MULTI_SEARCH_ROUTE,
-            onClick = { navController.navigate(MULTI_SEARCH_ROUTE) },
+            selected = currentDestination == MULTI_SEARCH,
+            onClick = { navController.navigate(MULTI_SEARCH) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.search),

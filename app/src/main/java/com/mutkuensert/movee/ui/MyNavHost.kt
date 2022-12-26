@@ -78,7 +78,7 @@ fun MyNavHost(
         }
         
         
-        composable(route = MULTI_SEARCH_ROUTE){
+        composable(route = MULTI_SEARCH){
             MultiSearch(
                 navigateToMovieDetails = { movieId ->
                                          navController.navigate("$MOVIE_DETAILS/$movieId")
