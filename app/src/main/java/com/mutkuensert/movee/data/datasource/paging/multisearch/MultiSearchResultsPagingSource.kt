@@ -18,7 +18,6 @@ class MultiSearchResultsPagingSource(val multiSearchApi: MultiSearchApi, val sea
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MultiSearchResultMediaType> {
 
         try {
-            if(searchQuery == "") return LoadResult.Page(data = listOf(), prevKey = null, nextKey = null)
 
             val nextPageNumber = params.key ?: 1
             val response = multiSearchApi.multiSearch(query = searchQuery, page = nextPageNumber)
