@@ -1,7 +1,7 @@
 package com.mutkuensert.movee
 
 import android.util.Log
-import com.mutkuensert.movee.data.api.MovieApi
+import com.mutkuensert.movee.data.movie.MovieApi
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -40,7 +40,7 @@ class MovieApiTest {
     }
 
     @Test
-    fun getMovieCreditsHttpStatusCodeIs200(){
+    fun getMovieCreditsHttpStatusCodeIs200() {
         runTest {
             val response = movieApi.getMovieCredits(550)
             Assert.assertEquals(200, response.code())

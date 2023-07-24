@@ -1,7 +1,7 @@
 package com.mutkuensert.movee
 
 import android.util.Log
-import com.mutkuensert.movee.data.api.TvShowsApi
+import com.mutkuensert.movee.data.tvshow.TvShowsApi
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest

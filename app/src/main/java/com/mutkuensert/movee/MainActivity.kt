@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.mutkuensert.movee.ui.MyNavHost
-import com.mutkuensert.movee.ui.theme.MoveeTheme
+import com.mutkuensert.movee.feature.MyNavHost
+import com.mutkuensert.movee.theme.MoveeTheme
 import com.mutkuensert.movee.util.*
 import dagger.hilt.android.AndroidEntryPoint
 

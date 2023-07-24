@@ -1,7 +1,7 @@
 package com.mutkuensert.movee
 
 import android.util.Log
-import com.mutkuensert.movee.data.api.MultiSearchApi
+import com.mutkuensert.movee.data.search.MultiSearchApi
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -23,12 +23,12 @@ class MultiSearchApiTest {
     lateinit var multiSearchApi: MultiSearchApi
 
     @Before
-    fun init(){
+    fun init() {
         hiltRule.inject()
     }
 
     @Test
-    fun multiSearchRequestHttpStatusCodeIs200(){
+    fun multiSearchRequestHttpStatusCodeIs200() {
         runTest {
             val response = multiSearchApi.multiSearch("Avengers")
             Assert.assertEquals(200, response.code())

@@ -1,15 +1,7 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/misc.xml
-/.idea/deploymentTargetDropDown.xml
-/.idea/render.experimental.xml
+.idea
 ApiKey.kt
 .DS_Store
 /build
@@ -17,7 +9,3 @@ ApiKey.kt
 .externalNativeBuild
 .cxx
 local.properties
-/.idea/inspectionProfiles/Project_Default.xml
-/.idea/androidTestResultsUserPreferences.xml
-/.idea/codeStyles/codeStyleConfig.xml
-/.idea/codeStyles/Project.xml
