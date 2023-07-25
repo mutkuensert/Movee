@@ -9,6 +9,7 @@ import com.mutkuensert.movee.data.search.model.MultiSearchResultMediaType
 import com.mutkuensert.movee.data.search.model.PersonResulItemModel
 import com.mutkuensert.movee.data.search.model.TvResultItemModel
 import com.mutkuensert.movee.data.tvshow.TvShowsApi
+import com.mutkuensert.movee.network.ApiKeyInterceptor
 import com.mutkuensert.movee.util.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
@@ -18,6 +19,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -39,7 +41,6 @@ object NetworkModule {
     @MultiSearchResultMoshi
     @Provides
     fun provideMoshiWithMultiSearchResultFactory(): Moshi {
-
         val multiSearchResultFactory =
             PolymorphicJsonAdapterFactory.of(MultiSearchResultMediaType::class.java, "media_type")
                 .withSubtype(MovieResultItemModel::class.java, MediaType.MOVIE)
@@ -55,39 +56,49 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMovieApi(@GenericMoshi moshi: Moshi): MovieApi {
-
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+    fun provideClient(): OkHttpClient {
+        return OkHttpClient()
+            .newBuilder()
+            .addNetworkInterceptor(ApiKeyInterceptor())
             .build()
-            .create(MovieApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideTvShowsApi(@GenericMoshi moshi: Moshi): TvShowsApi {
+    fun provideRetrofit(@GenericMoshi moshi: Moshi, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
+            .client(client)
             .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(TvShowsApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun providePersonApi(@GenericMoshi moshi: Moshi): PersonApi {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-            .create(PersonApi::class.java)
+    fun provideMovieApi(retrofit: Retrofit): MovieApi {
+        return retrofit.create(MovieApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideMultiSearchApi(@MultiSearchResultMoshi moshi: Moshi): MultiSearchApi {
+    fun provideTvShowsApi(retrofit: Retrofit): TvShowsApi {
+        return retrofit.create(TvShowsApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePersonApi(retrofit: Retrofit): PersonApi {
+        return retrofit.create(PersonApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMultiSearchApi(
+        @MultiSearchResultMoshi moshi: Moshi,
+        client: OkHttpClient
+    ): MultiSearchApi {
         return Retrofit.Builder()
+            .client(client)
             .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
