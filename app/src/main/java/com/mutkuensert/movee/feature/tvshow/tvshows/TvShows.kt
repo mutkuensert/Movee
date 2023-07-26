@@ -72,7 +72,7 @@ fun TvShows(
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
-    val topRatedTvShowsLazyPagingItems = viewModel.topRatedTvShows.collectAsLazyPagingItems()
+    val topRatedTvShows = viewModel.topRatedTvShows.collectAsLazyPagingItems()
 
     val stateOfPopularTvShows = rememberLazyListState()
     val stateOfTopRatedTvShows = rememberLazyGridState()
@@ -105,7 +105,7 @@ fun TvShows(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            topRatedTvShows = topRatedTvShowsLazyPagingItems,
+            topRatedTvShows = topRatedTvShows,
             navigateToTvShowDetails = navigateToTvShowDetails,
             itemsAboveHeight = itemsAboveHeight,
             lazyGridState = stateOfTopRatedTvShows
@@ -150,7 +150,7 @@ fun TvShows(
 }
 
 @Composable
-fun PopularTvShows(
+private fun PopularTvShows(
     modifier: Modifier = Modifier,
     popularTvShows: LazyPagingItems<PopularTvShowsResult>,
     lazyListState: LazyListState,
@@ -216,7 +216,7 @@ fun PopularTvShows(
 }
 
 @Composable
-fun TopRatedTvShows(
+private fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShows: LazyPagingItems<TopRatedTvShowsResult>,
     itemsAboveHeight: MutableState<Dp>,
@@ -316,7 +316,7 @@ fun TopRatedTvShows(
 }
 
 @Composable
-fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit) {
+private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { onClick() }) {
@@ -363,7 +363,7 @@ fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit)
 }
 
 @Composable
-fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Unit) {
+private fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
@@ -421,7 +421,7 @@ fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Un
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewTopRatedTveShowsItem() {
+private fun PreviewTopRatedTveShowsItem() {
     TopRatedTvShowsItem(
         topRatedTvShow = TopRatedTvShowsResult(
             posterPath = null,

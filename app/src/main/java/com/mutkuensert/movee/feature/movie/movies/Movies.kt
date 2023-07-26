@@ -137,7 +137,7 @@ fun Movies(
 }
 
 @Composable
-fun MoviesNowPlaying(
+private fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlaying: LazyPagingItems<MoviesNowPlayingResult>,
     lazyListState: LazyListState,
@@ -204,7 +204,7 @@ fun MoviesNowPlaying(
 }
 
 @Composable
-fun PopularMovies(
+private fun PopularMovies(
     modifier: Modifier = Modifier,
     popularMovies: LazyPagingItems<PopularMoviesResult>,
     lazyListState: LazyListState,
@@ -286,7 +286,10 @@ fun PopularMovies(
 }
 
 @Composable
-fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, navigateToMovieDetails: () -> Unit) {
+private fun MoviesNowPlayingItem(
+    movie: MoviesNowPlayingResult,
+    navigateToMovieDetails: () -> Unit
+) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier.clickable(onClick = navigateToMovieDetails)) {
             Column(
@@ -331,7 +334,7 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, navigateToMovieDetails: 
 }
 
 @Composable
-fun PopularMoviesItem(movie: PopularMoviesResult, navigateToMovieDetails: () -> Unit) {
+private fun PopularMoviesItem(movie: PopularMoviesResult, navigateToMovieDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(
             elevation = 10.dp, modifier = Modifier
@@ -342,7 +345,6 @@ fun PopularMoviesItem(movie: PopularMoviesResult, navigateToMovieDetails: () -> 
                 modifier = Modifier.padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -384,7 +386,7 @@ fun PopularMoviesItem(movie: PopularMoviesResult, navigateToMovieDetails: () -> 
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewPopularMoviesItem() {
+private fun PreviewPopularMoviesItem() {
     PopularMoviesItem(
         movie = PopularMoviesResult(null, "Title", 0, 5.0),
         navigateToMovieDetails = {})
@@ -392,7 +394,7 @@ fun PreviewPopularMoviesItem() {
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewMoviesNowPlayingItem() {
+private fun PreviewMoviesNowPlayingItem() {
     MoviesNowPlayingItem(
         movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),
         navigateToMovieDetails = {})
@@ -400,7 +402,7 @@ fun PreviewMoviesNowPlayingItem() {
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PreviewPopularMovies() {
+private fun PreviewPopularMovies() {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingItem(
             movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),

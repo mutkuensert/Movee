@@ -158,7 +158,7 @@ fun MultiSearch(
 }
 
 @Composable
-fun SearchResultItem(
+private fun SearchResultItem(
     name: String,
     picturePath: String?,
     navigateToItemDetails: () -> Unit

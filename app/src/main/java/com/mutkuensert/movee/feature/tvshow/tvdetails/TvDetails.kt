@@ -19,6 +19,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,12 +48,12 @@ fun TvDetails(
     viewModel: TvDetailsViewModel = hiltViewModel(),
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-
     val tvDetails = viewModel.tvDetails.collectAsStateWithLifecycle()
     val tvCast = viewModel.tvCast.collectAsStateWithLifecycle()
 
     if (tvId != null) {
-        viewModel.getTvDetails(tvId)
+        LaunchedEffect(true) { viewModel.getTvDetails(tvId) }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,7 +75,7 @@ fun TvDetails(
 }
 
 @Composable
-fun TvDetailsDataObserver(
+private fun TvDetailsDataObserver(
     data: State<Resource<TvDetailsModel>>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
@@ -111,7 +112,7 @@ fun TvDetailsDataObserver(
 }
 
 @Composable
-fun TvDetailsItem(tvDetails: TvDetailsModel) {
+private fun TvDetailsItem(tvDetails: TvDetailsModel) {
     Column(
         modifier = Modifier
             .padding(bottom = 30.dp)
@@ -211,11 +212,10 @@ fun TvDetailsItem(tvDetails: TvDetailsModel) {
 }
 
 @Composable
-fun TvShowsCastDataObserver(
+private fun TvShowsCastDataObserver(
     data: State<Resource<List<TvShowCast>>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-
     when (data.value.status) {
         Status.STANDBY -> {}
 
@@ -253,7 +253,7 @@ fun TvShowsCastDataObserver(
 }
 
 @Composable
-fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
+private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { navigateToPersonDetails() }
@@ -296,9 +296,7 @@ fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
-
             }
         }
-
     }
 }

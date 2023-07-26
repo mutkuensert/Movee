@@ -19,7 +19,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,11 +48,11 @@ fun MovieDetails(
     viewModel: MovieDetailsViewModel = hiltViewModel(),
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    val movieDetails = viewModel.movieDetails.collectAsStateWithLifecycle()
-    val movieCast = viewModel.movieCast.collectAsStateWithLifecycle()
+    val movieDetails by viewModel.movieDetails.collectAsStateWithLifecycle()
+    val movieCast by viewModel.movieCast.collectAsStateWithLifecycle()
 
     if (movieId != null) {
-        viewModel.getMovieDetails(movieId)
+        LaunchedEffect(true) { viewModel.getMovieDetails(movieId) }
 
         Column(
             modifier = Modifier
@@ -74,11 +75,11 @@ fun MovieDetails(
 }
 
 @Composable
-fun MovieDetailsDataObserver(
-    data: State<Resource<MovieDetailsModel>>,
+private fun MovieDetailsDataObserver(
+    data: Resource<MovieDetailsModel>,
     loadCastIfSuccessful: () -> Unit
 ) {
-    when (data.value.status) {
+    when (data.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
@@ -97,25 +98,25 @@ fun MovieDetailsDataObserver(
         }
 
         Status.SUCCESS -> {
-            if (data.value.data != null) {
-                MovieDetailsItem(data.value.data!!)
+            if (data.data != null) {
+                MovieDetailsItem(data.data)
 
                 loadCastIfSuccessful()
             }
         }
 
         Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
 
 @Composable
-fun MovieCastDataObserver(
-    data: State<Resource<List<MovieCast>>>,
+private fun MovieCastDataObserver(
+    data: Resource<List<MovieCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    when (data.value.status) {
+    when (data.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
@@ -134,9 +135,9 @@ fun MovieCastDataObserver(
         }
 
         Status.SUCCESS -> {
-            if (data.value.data != null) {
+            if (data.data != null) {
                 LazyRow {
-                    items(data.value.data!!) { item ->
+                    items(data.data) { item ->
                         MovieCastItem(
                             cast = item,
                             navigateToPersonDetails = { navigateToPersonDetails(item.id) })
@@ -146,13 +147,13 @@ fun MovieCastDataObserver(
         }
 
         Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
 
 @Composable
-fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
+private fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
     if (movieDetails.posterPath != null) {
         Card(
             elevation = 10.dp,
@@ -233,7 +234,7 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
 
 
 @Composable
-fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) {
+private fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { navigateToPersonDetails() }
