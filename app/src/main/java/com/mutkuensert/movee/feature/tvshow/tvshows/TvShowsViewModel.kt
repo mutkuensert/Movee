@@ -24,6 +24,4 @@ class TvShowsViewModel @Inject constructor(private val tvShowsApi: TvShowsApi) :
     ) {
         TopRatedTvShowsPagingSource(tvShowsApi::getTopRatedTvShows)
     }.flow.cachedIn(viewModelScope)
-
-
 }

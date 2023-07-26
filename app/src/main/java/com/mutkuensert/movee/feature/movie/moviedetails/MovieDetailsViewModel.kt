@@ -7,21 +7,21 @@ import com.mutkuensert.movee.data.movie.model.MovieDetailsModel
 import com.mutkuensert.movee.data.movie.model.credits.MovieCast
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) : ViewModel() {
     private val _movieDetails: MutableStateFlow<Resource<MovieDetailsModel>> =
         MutableStateFlow(Resource.standby(null))
-    val movieDetails: StateFlow<Resource<MovieDetailsModel>> get() = _movieDetails
+    val movieDetails = _movieDetails.asStateFlow()
 
     private val _movieCast: MutableStateFlow<Resource<List<MovieCast>>> =
         MutableStateFlow(Resource.standby(null))
-    val movieCast: StateFlow<Resource<List<MovieCast>>> get() = _movieCast
+    val movieCast = _movieCast.asStateFlow()
 
     fun getMovieDetails(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -26,8 +27,10 @@ class MultiSearchViewModel @Inject constructor(private val multiSearchApi: Multi
         LoadState.NotLoading(true),
         LoadState.NotLoading(true)
     )
-    var multiSearchResults =
+    private val _multiSearchResults =
         MutableStateFlow<PagingData<MultiSearchResultMediaType>>(PagingData.empty(loadStates))
+    val multiSearchResults = _multiSearchResults.asStateFlow()
+
     val searchTextField = MutableStateFlow<String>("")
 
 
@@ -44,10 +47,10 @@ class MultiSearchViewModel @Inject constructor(private val multiSearchApi: Multi
                     multiSearchApi.multiSearch(query, page)
                 }
             }.flow.cachedIn(viewModelScope).collectLatest {
-                multiSearchResults.value = it
+                _multiSearchResults.value = it
             }
         } else {
-            multiSearchResults.value = PagingData.empty(loadStates)
+            _multiSearchResults.value = PagingData.empty(loadStates)
         }
     }
 }

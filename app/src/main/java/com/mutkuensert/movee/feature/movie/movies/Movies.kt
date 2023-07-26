@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.feature.movie.movies
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -338,12 +337,6 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
 
 @Composable
 fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
-
-    Log.i(
-        TAG,
-        "PopularMoviesItem composable image url: $IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}"
-    )
-
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()

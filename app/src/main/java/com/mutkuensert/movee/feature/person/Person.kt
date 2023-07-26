@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.feature.person
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -42,6 +41,7 @@ import com.mutkuensert.movee.data.person.model.PersonTvCastModel
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Status
+import timber.log.Timber
 
 private const val TAG = "Person screen composable"
 
@@ -58,7 +58,7 @@ fun Person(
 
     if (personId != null) {
         LaunchedEffect(key1 = true) {
-            Log.i(TAG, "viewModel.getPersonDetails(personId = personId!!)")
+            Timber.d("viewModel.getPersonDetails(personId = personId!!)")
             viewModel.getPersonDetails(personId)
         }
         if (personDetails.value.status == Status.SUCCESS) {
