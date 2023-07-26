@@ -6,7 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,13 +22,22 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.mutkuensert.movee.feature.MyNavHost
 import com.mutkuensert.movee.theme.MoveeTheme
-import com.mutkuensert.movee.util.*
+import com.mutkuensert.movee.util.MOVIES
+import com.mutkuensert.movee.util.MOVIE_NAV_GRAPH
+import com.mutkuensert.movee.util.MULTI_SEARCH
+import com.mutkuensert.movee.util.TV_SHOWS
+import com.mutkuensert.movee.util.TV_SHOWS_NAV_GRAPH
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import timber.log.Timber.Forest.plant
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        plantTimber()
+
         setContent {
             val navController = rememberNavController()
             val currentDestination = navController.currentDestination?.route
@@ -46,9 +60,14 @@ class MainActivity : ComponentActivity() {
                             navController = navController
                         )
                     }
-
                 }
             }
+        }
+    }
+
+    private fun plantTimber() {
+        if (BuildConfig.DEBUG) {
+            plant(Timber.DebugTree())
         }
     }
 }

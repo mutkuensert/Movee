@@ -90,7 +90,6 @@ dependencies {
     // ViewModel utilities for Compose
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
-    //https://medium.com/androiddevelopers/consuming-flows-safely-in-jetpack-compose-cde014d0d5a3
     implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
 
     implementation("io.coil-kt:coil-compose:2.4.0")
@@ -98,6 +97,13 @@ dependencies {
     implementation "androidx.paging:paging-runtime:$paging_version"
     implementation "androidx.paging:paging-compose:$paging_version"
 
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.18")
+
+    implementation "androidx.security:security-crypto:1.0.0"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:4.11.0"
 }
 
 kapt {

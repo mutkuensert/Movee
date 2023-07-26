@@ -1,5 +1,6 @@
 package com.mutkuensert.movee.data.di
 
+import com.mutkuensert.movee.data.login.AuthenticationApi
 import com.mutkuensert.movee.data.movie.MovieApi
 import com.mutkuensert.movee.data.person.PersonApi
 import com.mutkuensert.movee.data.search.MultiSearchApi
@@ -9,7 +10,7 @@ import com.mutkuensert.movee.data.search.model.MultiSearchResultMediaType
 import com.mutkuensert.movee.data.search.model.PersonResulItemModel
 import com.mutkuensert.movee.data.search.model.TvResultItemModel
 import com.mutkuensert.movee.data.tvshow.TvShowsApi
-import com.mutkuensert.movee.network.ApiKeyInterceptor
+import com.mutkuensert.movee.network.AuthenticationInterceptor
 import com.mutkuensert.movee.util.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
@@ -20,6 +21,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -59,7 +61,10 @@ object NetworkModule {
     fun provideClient(): OkHttpClient {
         return OkHttpClient()
             .newBuilder()
-            .addNetworkInterceptor(ApiKeyInterceptor())
+            .addInterceptor(AuthenticationInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
     }
 
@@ -89,6 +94,12 @@ object NetworkModule {
     @Provides
     fun providePersonApi(retrofit: Retrofit): PersonApi {
         return retrofit.create(PersonApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthenticationApi(retrofit: Retrofit): AuthenticationApi {
+        return retrofit.create(AuthenticationApi::class.java)
     }
 
     @Singleton
