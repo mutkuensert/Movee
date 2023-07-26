@@ -1,16 +1,16 @@
-package com.mutkuensert.movee.data.login
+package com.mutkuensert.movee.data.authentication
 
-import com.mutkuensert.movee.data.login.dto.AccountDetailsDto
-import com.mutkuensert.movee.data.login.dto.DeleteSessionDto
-import com.mutkuensert.movee.data.login.dto.LoginDto
-import com.mutkuensert.movee.data.login.dto.RequestTokenDto
-import com.mutkuensert.movee.data.login.dto.SessionDto
-import com.mutkuensert.movee.data.login.dto.SessionIdDto
-import com.mutkuensert.movee.data.login.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.data.authentication.dto.AccountDetailsDto
+import com.mutkuensert.movee.data.authentication.dto.DeleteSessionDto
+import com.mutkuensert.movee.data.authentication.dto.LoginDto
+import com.mutkuensert.movee.data.authentication.dto.RequestTokenDto
+import com.mutkuensert.movee.data.authentication.dto.SessionDto
+import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
+import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 
 interface AuthenticationApi {
@@ -26,7 +26,7 @@ interface AuthenticationApi {
         @Body validRequestTokenDto: ValidRequestTokenDto
     ): Response<SessionDto>
 
-    @DELETE("authentication/session")
+    @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     suspend fun deleteSession(@Body sessionIdDto: SessionIdDto): Response<DeleteSessionDto>
 
     @GET("account")

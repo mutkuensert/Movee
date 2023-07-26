@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.login.dto
+package com.mutkuensert.movee.data.authentication.dto
 
 import com.squareup.moshi.Json
 

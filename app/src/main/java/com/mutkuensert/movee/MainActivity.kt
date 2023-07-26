@@ -13,6 +13,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -21,12 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.mutkuensert.movee.feature.MyNavHost
+import com.mutkuensert.movee.theme.AppColors
 import com.mutkuensert.movee.theme.MoveeTheme
-import com.mutkuensert.movee.util.MOVIES
-import com.mutkuensert.movee.util.MOVIE_NAV_GRAPH
-import com.mutkuensert.movee.util.MULTI_SEARCH
-import com.mutkuensert.movee.util.TV_SHOWS
-import com.mutkuensert.movee.util.TV_SHOWS_NAV_GRAPH
+import com.mutkuensert.movee.util.GRAPH_MOVIE
+import com.mutkuensert.movee.util.GRAPH_TV_SHOWS
+import com.mutkuensert.movee.util.ROUTE_LOGIN
+import com.mutkuensert.movee.util.ROUTE_MOVIES
+import com.mutkuensert.movee.util.ROUTE_MULTI_SEARCH
+import com.mutkuensert.movee.util.ROUTE_TV_SHOWS
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
@@ -40,7 +46,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val currentDestination = navController.currentDestination?.route
             MoveeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -49,10 +54,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         bottomBar = {
-                            MyBottomAppBar(
-                                currentDestination = currentDestination,
-                                navController = navController
-                            )
+                            MyBottomAppBar(navController = navController)
                         }
                     ) { padding ->
                         MyNavHost(
@@ -73,42 +75,82 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyBottomAppBar(currentDestination: String?, navController: NavController) {
+private fun MyBottomAppBar(navController: NavController) {
+    val currentRoute = navController.currentParentRouteAsState().value
+
     BottomNavigation(
         modifier = Modifier.border(width = 1.dp, color = Color.LightGray),
         backgroundColor = Color.White,
         contentColor = Color.DarkGray
     ) {
         BottomNavigationItem(
-            selected = currentDestination == MOVIE_NAV_GRAPH,
-            onClick = { navController.navigate(MOVIES) },
+            selected = currentRoute == GRAPH_MOVIE,
+            unselectedContentColor = Color.Gray,
+            selectedContentColor = AppColors.DarkCyan,
+            onClick = { navController.navigate(ROUTE_MOVIES) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.movie),
-                    contentDescription = "Go to movies icon"
+                    painter = painterResource(id = R.drawable.ic_movie),
+                    contentDescription = "Go to movies button icon"
                 )
             })
 
         BottomNavigationItem(
-            selected = currentDestination == TV_SHOWS_NAV_GRAPH,
-            onClick = { navController.navigate(TV_SHOWS) },
+            selected = currentRoute == GRAPH_TV_SHOWS,
+            unselectedContentColor = Color.Gray,
+            selectedContentColor = AppColors.DarkCyan,
+            onClick = { navController.navigate(ROUTE_TV_SHOWS) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.tvshow),
-                    contentDescription = "Go to tv shows icon"
+                    painter = painterResource(id = R.drawable.ic_tvshow),
+                    contentDescription = "Go to tv shows button icon"
                 )
             })
 
         BottomNavigationItem(
-            selected = currentDestination == MULTI_SEARCH,
-            onClick = { navController.navigate(MULTI_SEARCH) },
+            selected = currentRoute == ROUTE_MULTI_SEARCH,
+            unselectedContentColor = Color.Gray,
+            selectedContentColor = AppColors.DarkCyan,
+            onClick = { navController.navigate(ROUTE_MULTI_SEARCH) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.search),
-                    contentDescription = "Go to search icon"
+                    painter = painterResource(id = R.drawable.ic_search),
+                    contentDescription = "Go to search button icon"
+                )
+            })
+
+        BottomNavigationItem(
+            selected = currentRoute == ROUTE_LOGIN,
+            unselectedContentColor = Color.Gray,
+            selectedContentColor = AppColors.DarkCyan,
+            onClick = { navController.navigate(ROUTE_LOGIN) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_account),
+                    contentDescription = "Go to account button icon"
                 )
             })
     }
+}
+
+@Composable
+private fun NavController.currentParentRouteAsState(): State<String?> {
+    val destination = remember { mutableStateOf<String?>(null) }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { navController, _, _ ->
+            destination.value = navController.currentDestination?.parent?.route
+                ?: navController.currentDestination?.route
+        }
+
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return destination
 }
 
 @Preview(showBackground = true, showSystemUi = true)

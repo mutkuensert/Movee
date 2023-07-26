@@ -20,7 +20,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,8 +48,8 @@ fun TvDetails(
     viewModel: TvDetailsViewModel = hiltViewModel(),
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    val tvDetails = viewModel.tvDetails.collectAsStateWithLifecycle()
-    val tvCast = viewModel.tvCast.collectAsStateWithLifecycle()
+    val tvDetails by viewModel.tvDetails.collectAsStateWithLifecycle()
+    val tvCast by viewModel.tvCast.collectAsStateWithLifecycle()
 
     if (tvId != null) {
         LaunchedEffect(true) { viewModel.getTvDetails(tvId) }
@@ -76,10 +76,10 @@ fun TvDetails(
 
 @Composable
 private fun TvDetailsDataObserver(
-    data: State<Resource<TvDetailsModel>>,
+    data: Resource<TvDetailsModel>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
-    when (data.value.status) {
+    when (data.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
@@ -98,15 +98,15 @@ private fun TvDetailsDataObserver(
         }
 
         Status.SUCCESS -> {
-            if (data.value.data != null) {
-                TvDetailsItem(data.value.data!!)
+            if (data.data != null) {
+                TvDetailsItem(data.data)
 
                 loadTvCastIfSuccessful()
             }
         }
 
         Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
@@ -213,10 +213,10 @@ private fun TvDetailsItem(tvDetails: TvDetailsModel) {
 
 @Composable
 private fun TvShowsCastDataObserver(
-    data: State<Resource<List<TvShowCast>>>,
+    data: Resource<List<TvShowCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    when (data.value.status) {
+    when (data.status) {
         Status.STANDBY -> {}
 
         Status.LOADING -> {
@@ -235,9 +235,9 @@ private fun TvShowsCastDataObserver(
         }
 
         Status.SUCCESS -> {
-            if (data.value.data != null) {
+            if (data.data != null) {
                 LazyRow {
-                    items(data.value.data!!) { item ->
+                    items(data.data) { item ->
                         TvShowCastItem(
                             cast = item,
                             navigateToPersonDetails = { navigateToPersonDetails(item.id) })
@@ -247,7 +247,7 @@ private fun TvShowsCastDataObserver(
         }
 
         Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.value.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
@@ -255,10 +255,10 @@ private fun TvShowsCastDataObserver(
 @Composable
 private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .clickable { navigateToPersonDetails() }
+        Card(
+            elevation = 10.dp, modifier = Modifier
+                .clickable(onClick = navigateToPersonDetails)
         ) {
-
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally

@@ -1,6 +1,6 @@
 package com.mutkuensert.movee.data.di
 
-import com.mutkuensert.movee.data.login.AuthenticationApi
+import com.mutkuensert.movee.data.authentication.AuthenticationApi
 import com.mutkuensert.movee.data.movie.MovieApi
 import com.mutkuensert.movee.data.person.PersonApi
 import com.mutkuensert.movee.data.search.MultiSearchApi

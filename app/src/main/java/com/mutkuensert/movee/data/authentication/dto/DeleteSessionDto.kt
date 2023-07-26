@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.login.dto
+package com.mutkuensert.movee.data.authentication.dto
 
 data class DeleteSessionDto(
     val success: Boolean

@@ -1,19 +1,21 @@
-package com.mutkuensert.movee.data.login
+package com.mutkuensert.movee.data.authentication
 
 import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.onSuccess
-import com.mutkuensert.movee.data.login.dto.LoginDto
-import com.mutkuensert.movee.data.login.dto.SessionIdDto
-import com.mutkuensert.movee.data.login.dto.ValidRequestTokenDto
-import com.mutkuensert.movee.domain.login.LoginRepository
-import com.mutkuensert.movee.library.authentication.SessionIdManager
+import com.mutkuensert.movee.data.authentication.dto.LoginDto
+import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
+import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.domain.login.AuthenticationRepository
+import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.network.toResult
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-class LoginRepositoryImpl @Inject constructor(
+class AuthenticationRepositoryImpl @Inject constructor(
     private val authenticationApi: AuthenticationApi,
-    private val sessionIdManager: SessionIdManager,
-) : LoginRepository {
+    private val sessionManager: SessionManager,
+) : AuthenticationRepository {
+
     override suspend fun login(username: String, password: String): Boolean {
         val requestToken = authenticationApi.getRequestToken()
             .toResult()
@@ -39,20 +41,20 @@ class LoginRepositoryImpl @Inject constructor(
             .onSuccess { if (!it.success) return false }
             .getOrElse { return false }
 
-        sessionIdManager.insertSessionId(session.sessionId)
+        sessionManager.insertSessionId(session.sessionId)
 
         return true
     }
 
     override suspend fun logout(): Boolean {
-        val sessionId = sessionIdManager.getSessionId()
+        val sessionId = sessionManager.getSessionId()
 
         if (sessionId != null) {
             authenticationApi.deleteSession(SessionIdDto(sessionId))
                 .toResult()
                 .onSuccess {
                     if (it.success) {
-                        sessionIdManager.removeSessionId()
+                        sessionManager.removeSession()
                         return true
                     }
                 }
@@ -60,5 +62,9 @@ class LoginRepositoryImpl @Inject constructor(
         }
 
         return false
+    }
+
+    override suspend fun isLoggedIn(): Flow<Boolean> {
+        return sessionManager.isLoggedIn()
     }
 }

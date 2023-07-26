@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.library.authentication
+package com.mutkuensert.movee.library.session
 
 import android.content.Context
 import dagger.Module
@@ -10,11 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AuthenticationModule {
+object SessionModule {
 
     @Singleton
     @Provides
-    fun provideAuthStateManager(@ApplicationContext context: Context): SessionIdManager {
-        return SessionIdManager(context)
+    fun provideSessionManager(@ApplicationContext context: Context): SessionManager {
+        return SessionManager(context)
     }
 }

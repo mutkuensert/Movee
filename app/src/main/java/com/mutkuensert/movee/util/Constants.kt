@@ -1,16 +1,18 @@
 package com.mutkuensert.movee.util
 
-const val MOVIES = "movies"
-const val MOVIE_DETAILS = "movieDetails"
-const val MOVIE_NAV_GRAPH = "movieNavGraph"
+const val ROUTE_MOVIES = "moviesRoute"
+const val ROUTE_MOVIE_DETAILS = "movieDetailsRoute"
+const val GRAPH_MOVIE = "movieNavGraph"
 
-const val TV_SHOWS = "tvShows"
-const val TV_SHOW_DETAILS = "tvShowDetails"
-const val TV_SHOWS_NAV_GRAPH = "tvShowsNavGraph"
+const val ROUTE_TV_SHOWS = "tvShowsRoute"
+const val ROUTE_TV_SHOW_DETAILS = "tvShowDetailsRoute"
+const val GRAPH_TV_SHOWS = "tvShowsNavGraph"
 
-const val PERSON = "person"
+const val ROUTE_PERSON = "personRoute"
 
-const val MULTI_SEARCH = "multiSearch"
+const val ROUTE_MULTI_SEARCH = "multiSearchRoute"
+
+const val ROUTE_LOGIN = "loginRoute"
 
 const val BASE_URL = "https://api.themoviedb.org/3/"
 
