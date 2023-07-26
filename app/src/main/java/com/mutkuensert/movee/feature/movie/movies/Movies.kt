@@ -60,8 +60,6 @@ import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
 
-private const val TAG = "Movies Composable"
-
 @Composable
 fun Movies(
     viewModel: MoviesViewModel = hiltViewModel(),
@@ -166,7 +164,6 @@ fun MoviesNowPlaying(
 
                 Spacer(Modifier.height(50.dp))
             }
-
             Spacer(Modifier.width(50.dp))
         }
 
@@ -177,7 +174,7 @@ fun MoviesNowPlaying(
                 if (item != null) {
                     MoviesNowPlayingItem(
                         movie = item,
-                        onClick = { navigateToMovieDetails(item.id) })
+                        navigateToMovieDetails = { navigateToMovieDetails(item.id) })
                 }
             }
         }
@@ -267,7 +264,7 @@ fun PopularMovies(
                 if (item != null) {
                     PopularMoviesItem(
                         movie = item,
-                        onClick = { navigateToMovieDetails(item.id) })
+                        navigateToMovieDetails = { navigateToMovieDetails(item.id) })
                 }
             }
 
@@ -289,11 +286,9 @@ fun PopularMovies(
 }
 
 @Composable
-fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
+fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, navigateToMovieDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .clickable { onClick() }) {
-
+        Card(elevation = 10.dp, modifier = Modifier.clickable(onClick = navigateToMovieDetails)) {
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -336,12 +331,13 @@ fun MoviesNowPlayingItem(movie: MoviesNowPlayingResult, onClick: () -> Unit) {
 }
 
 @Composable
-fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
+fun PopularMoviesItem(movie: PopularMoviesResult, navigateToMovieDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }) {
-
+        Card(
+            elevation = 10.dp, modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = navigateToMovieDetails)
+        ) {
             Row(
                 modifier = Modifier.padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -389,21 +385,29 @@ fun PopularMoviesItem(movie: PopularMoviesResult, onClick: () -> Unit) {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewPopularMoviesItem() {
-    PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
+    PopularMoviesItem(
+        movie = PopularMoviesResult(null, "Title", 0, 5.0),
+        navigateToMovieDetails = {})
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewMoviesNowPlayingItem() {
-    MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
+    MoviesNowPlayingItem(
+        movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),
+        navigateToMovieDetails = {})
 }
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewPopularMovies() {
     Column(modifier = Modifier.fillMaxSize()) {
-        MoviesNowPlayingItem(movie = MoviesNowPlayingResult(null, "Title", 0, 5.0), onClick = {})
+        MoviesNowPlayingItem(
+            movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),
+            navigateToMovieDetails = {})
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
-        PopularMoviesItem(movie = PopularMoviesResult(null, "Title", 0, 5.0), onClick = {})
+        PopularMoviesItem(
+            movie = PopularMoviesResult(null, "Title", 0, 5.0),
+            navigateToMovieDetails = {})
     }
 }

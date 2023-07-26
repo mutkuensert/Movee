@@ -107,41 +107,35 @@ fun MultiSearch(
 
                 when (item) {
                     is MovieResultItemModel -> {
-                        item.let { movieResultItemModel ->
-                            SearchResultItem(
-                                name = movieResultItemModel.title,
-                                picturePath = movieResultItemModel.posterPath,
-                                navigateToItemDetails = {
-                                    navigateToMovieDetails(
-                                        movieResultItemModel.id
-                                    )
-                                }
-                            )
-                        }
+                        SearchResultItem(
+                            name = item.title,
+                            picturePath = item.posterPath,
+                            navigateToItemDetails = {
+                                navigateToMovieDetails(
+                                    item.id
+                                )
+                            }
+                        )
                     }
 
                     is TvResultItemModel -> {
-                        item.let { tvResultItemModel ->
-                            SearchResultItem(
-                                name = tvResultItemModel.name,
-                                picturePath = tvResultItemModel.posterPath,
-                                navigateToItemDetails = { navigateToTvDetails(tvResultItemModel.id) }
-                            )
-                        }
+                        SearchResultItem(
+                            name = item.name,
+                            picturePath = item.posterPath,
+                            navigateToItemDetails = { navigateToTvDetails(item.id) }
+                        )
                     }
 
                     is PersonResulItemModel -> {
-                        item.let { personResulItemModel ->
-                            SearchResultItem(
-                                name = personResulItemModel.name,
-                                picturePath = personResulItemModel.profilePath,
-                                navigateToItemDetails = {
-                                    navigateToPersonDetails(
-                                        personResulItemModel.id
-                                    )
-                                }
-                            )
-                        }
+                        SearchResultItem(
+                            name = item.name,
+                            picturePath = item.profilePath,
+                            navigateToItemDetails = {
+                                navigateToPersonDetails(
+                                    item.id
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -169,22 +163,20 @@ fun SearchResultItem(
     picturePath: String?,
     navigateToItemDetails: () -> Unit
 ) {
-
     Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { navigateToItemDetails() }
         ) {
-
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Card(elevation = 10.dp) {
-                    picturePath?.let { picturePathNonNull ->
+                    if (picturePath != null) {
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${picturePathNonNull}")
+                                .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${picturePath}")
                                 .crossfade(true)
                                 .build(),
                             loading = {
@@ -206,9 +198,7 @@ fun SearchResultItem(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp
                 )
-
             }
         }
-
     }
 }

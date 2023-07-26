@@ -105,7 +105,7 @@ fun TvShows(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
-            topRatedTvShowsLazyPagingItems = topRatedTvShowsLazyPagingItems,
+            topRatedTvShows = topRatedTvShowsLazyPagingItems,
             navigateToTvShowDetails = navigateToTvShowDetails,
             itemsAboveHeight = itemsAboveHeight,
             lazyGridState = stateOfTopRatedTvShows
@@ -218,7 +218,7 @@ fun PopularTvShows(
 @Composable
 fun TopRatedTvShows(
     modifier: Modifier = Modifier,
-    topRatedTvShowsLazyPagingItems: LazyPagingItems<TopRatedTvShowsResult>,
+    topRatedTvShows: LazyPagingItems<TopRatedTvShowsResult>,
     itemsAboveHeight: MutableState<Dp>,
     lazyGridState: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
@@ -258,7 +258,7 @@ fun TopRatedTvShows(
             item(
                 span = { GridItemSpan(spanCount) }
             ) {
-                if (topRatedTvShowsLazyPagingItems.loadState.refresh == LoadState.Loading) {
+                if (topRatedTvShows.loadState.refresh == LoadState.Loading) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -279,18 +279,20 @@ fun TopRatedTvShows(
             }
 
 
-            items(topRatedTvShowsLazyPagingItems.itemCount) { index ->
-                topRatedTvShowsLazyPagingItems[index]?.let { topRatedTvShowNonNull ->
+            items(topRatedTvShows.itemCount) { index ->
+                val tvShow = topRatedTvShows[index]
+
+                if (tvShow != null) {
                     TopRatedTvShowsItem(
-                        topRatedTvShow = topRatedTvShowNonNull,
-                        onClick = { navigateToTvShowDetails(topRatedTvShowNonNull.id) })
+                        topRatedTvShow = tvShow,
+                        onClick = { navigateToTvShowDetails(tvShow.id) })
                 }
             }
 
             item(
                 span = { GridItemSpan(spanCount) }
             ) {
-                if (topRatedTvShowsLazyPagingItems.loadState.append == LoadState.Loading) {
+                if (topRatedTvShows.loadState.append == LoadState.Loading) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()

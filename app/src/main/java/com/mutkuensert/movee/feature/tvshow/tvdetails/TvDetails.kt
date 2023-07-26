@@ -97,8 +97,9 @@ fun TvDetailsDataObserver(
         }
 
         Status.SUCCESS -> {
-            data.value.data?.let { tvDetails: TvDetailsModel ->
-                TvDetailsItem(tvDetails)
+            if (data.value.data != null) {
+                TvDetailsItem(data.value.data!!)
+
                 loadTvCastIfSuccessful()
             }
         }
@@ -115,15 +116,14 @@ fun TvDetailsItem(tvDetails: TvDetailsModel) {
         modifier = Modifier
             .padding(bottom = 30.dp)
     ) {
-        tvDetails.posterPath?.let { posterPathNonNull ->
-
+        if (tvDetails.posterPath != null) {
             Card(
                 elevation = 10.dp,
                 shape = RectangleShape
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${posterPathNonNull}")
+                        .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${tvDetails.posterPath}")
                         .crossfade(true)
                         .build(),
                     loading = {
@@ -235,9 +235,9 @@ fun TvShowsCastDataObserver(
         }
 
         Status.SUCCESS -> {
-            data.value.data?.let { tvShowCast: List<TvShowCast> ->
+            if (data.value.data != null) {
                 LazyRow {
-                    items(tvShowCast) { item ->
+                    items(data.value.data!!) { item ->
                         TvShowCastItem(
                             cast = item,
                             navigateToPersonDetails = { navigateToPersonDetails(item.id) })

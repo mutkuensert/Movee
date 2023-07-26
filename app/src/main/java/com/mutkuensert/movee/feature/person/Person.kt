@@ -43,8 +43,6 @@ import com.mutkuensert.movee.util.SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Status
 import timber.log.Timber
 
-private const val TAG = "Person screen composable"
-
 @Composable
 fun Person(
     personId: Int?,
@@ -92,10 +90,8 @@ fun Person(
             }
 
             item {
-                if (personDetails.value.status == Status.SUCCESS) {
-                    personDetails.value.data?.let { personDetails ->
-                        PersonDetailsItem(personDetails = personDetails)
-                    }
+                if (personDetails.value.status == Status.SUCCESS && personDetails.value.data != null) {
+                    PersonDetailsItem(personDetails = personDetails.value.data!!)
                 }
             }
 
@@ -195,14 +191,14 @@ fun Person(
 fun PersonDetailsItem(personDetails: PersonDetailsModel) {
     val readMore = remember { mutableStateOf(false) }
 
-    personDetails.profilePath?.let { posterPathNonNull ->
+    if (personDetails.profilePath != null) {
         Card(
             elevation = 10.dp,
             shape = RectangleShape
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${posterPathNonNull}")
+                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${personDetails.profilePath}")
                     .crossfade(true)
                     .build(),
                 loading = {

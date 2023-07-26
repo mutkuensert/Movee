@@ -62,12 +62,13 @@ fun MovieDetails(
             MovieDetailsDataObserver(
                 data = movieDetails,
                 loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
+
             Spacer(modifier = Modifier.height(15.dp))
+
             MovieCastDataObserver(
                 data = movieCast,
                 navigateToPersonDetails = navigateToPersonDetails
             )
-
         }
     }
 }
@@ -77,7 +78,6 @@ fun MovieDetailsDataObserver(
     data: State<Resource<MovieDetailsModel>>,
     loadCastIfSuccessful: () -> Unit
 ) {
-
     when (data.value.status) {
         Status.STANDBY -> {}
 
@@ -97,8 +97,9 @@ fun MovieDetailsDataObserver(
         }
 
         Status.SUCCESS -> {
-            data.value.data?.let { movieDetails: MovieDetailsModel ->
-                MovieDetailsItem(movieDetails)
+            if (data.value.data != null) {
+                MovieDetailsItem(data.value.data!!)
+
                 loadCastIfSuccessful()
             }
         }
@@ -114,7 +115,6 @@ fun MovieCastDataObserver(
     data: State<Resource<List<MovieCast>>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-
     when (data.value.status) {
         Status.STANDBY -> {}
 
@@ -134,10 +134,12 @@ fun MovieCastDataObserver(
         }
 
         Status.SUCCESS -> {
-            data.value.data?.let { movieCast: List<MovieCast> ->
+            if (data.value.data != null) {
                 LazyRow {
-                    items(movieCast) { item ->
-                        MovieCastItem(cast = item, onClick = { navigateToPersonDetails(item.id) })
+                    items(data.value.data!!) { item ->
+                        MovieCastItem(
+                            cast = item,
+                            navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                     }
                 }
             }
@@ -151,16 +153,14 @@ fun MovieCastDataObserver(
 
 @Composable
 fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
-
-    movieDetails.posterPath?.let { posterPathNonNull ->
-
+    if (movieDetails.posterPath != null) {
         Card(
             elevation = 10.dp,
             shape = RectangleShape
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${posterPathNonNull}")
+                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${movieDetails.posterPath}")
                     .crossfade(true)
                     .build(),
                 loading = {
@@ -204,7 +204,7 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        Row() {
+        Row {
             Text(
                 text = "Runtime(min): ",
                 color = Color.DarkGray,
@@ -223,8 +223,8 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
         Spacer(modifier = Modifier.height(15.dp))
 
         Column {
-            movieDetails.overview?.let { overviewNonNull ->
-                Text(text = overviewNonNull)
+            if (movieDetails.overview != null) {
+                Text(text = movieDetails.overview)
             }
         }
     }
@@ -233,12 +233,11 @@ fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
 
 
 @Composable
-fun MovieCastItem(cast: MovieCast, onClick: () -> Unit) {
+fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
-            .clickable { onClick() }
+            .clickable { navigateToPersonDetails() }
         ) {
-
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -276,9 +275,7 @@ fun MovieCastItem(cast: MovieCast, onClick: () -> Unit) {
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
-
             }
         }
-
     }
 }
