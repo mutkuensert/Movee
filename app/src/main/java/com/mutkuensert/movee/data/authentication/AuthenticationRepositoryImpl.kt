@@ -1,10 +1,12 @@
 package com.mutkuensert.movee.data.authentication
 
 import com.github.michaelbull.result.getOrElse
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.mutkuensert.movee.data.authentication.dto.LoginDto
 import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
 import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.domain.login.AuthenticationError
 import com.mutkuensert.movee.domain.login.AuthenticationRepository
 import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.network.toResult
@@ -21,7 +23,6 @@ class AuthenticationRepositoryImpl @Inject constructor(
             .toResult()
             .onSuccess { if (!it.success) return false }
             .getOrElse { return false }
-
 
         val validToken = authenticationApi.getValidatedRequestTokenWithLogin(
             loginDto = LoginDto(
@@ -58,7 +59,14 @@ class AuthenticationRepositoryImpl @Inject constructor(
                         return true
                     }
                 }
-                .getOrElse { return false }
+                .onFailure {
+                    if (it.statusCode == AuthenticationError.RESOURCE_NOT_FOUND.statusCode) {
+                        sessionManager.removeSession()
+                        return true
+                    }
+
+                    return false
+                }
         }
 
         return false
