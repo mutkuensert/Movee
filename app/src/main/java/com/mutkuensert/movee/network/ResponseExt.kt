@@ -32,7 +32,6 @@ fun ResponseBody?.toFailure(): Failure {
         val jsonObject = JSONObject(this.string())
 
         Failure(
-            success = jsonObject.getBoolean("success"),
             statusCode = jsonObject.getInt("status_code"),
             statusMessage = jsonObject.getString("status_message")
         )

@@ -11,7 +11,6 @@ import com.mutkuensert.movee.domain.login.AuthenticationRepository
 import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.network.toResult
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepositoryImpl @Inject constructor(
     private val authenticationApi: AuthenticationApi,
@@ -70,9 +69,5 @@ class AuthenticationRepositoryImpl @Inject constructor(
         }
 
         return false
-    }
-
-    override suspend fun isLoggedIn(): Flow<Boolean> {
-        return sessionManager.isLoggedIn()
     }
 }

@@ -95,14 +95,14 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "androidx.paging:paging-compose:$paging_version"
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.18")
 
-    implementation "androidx.security:security-crypto:1.0.0"
+    implementation "androidx.security:security-crypto-ktx:1.1.0-alpha06"
 
     implementation "com.squareup.okhttp3:logging-interceptor:4.11.0"
 

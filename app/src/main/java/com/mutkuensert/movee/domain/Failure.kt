@@ -1,13 +1,12 @@
 package com.mutkuensert.movee.domain
 
 data class Failure(
-    val success: Boolean,
-    val statusCode: Int,
+    val statusCode: Int? = null,
     val statusMessage: String,
 ) {
     companion object {
         fun empty(): Failure {
-            return Failure(success = false, statusCode = -1, statusMessage = "Unknown")
+            return Failure(statusMessage = "Unknown")
         }
     }
 }

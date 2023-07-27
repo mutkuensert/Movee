@@ -1,5 +1,6 @@
 package com.mutkuensert.movee.data.di
 
+import com.mutkuensert.movee.data.account.AccountApi
 import com.mutkuensert.movee.data.authentication.AuthenticationApi
 import com.mutkuensert.movee.data.movie.MovieApi
 import com.mutkuensert.movee.data.person.PersonApi
@@ -10,6 +11,7 @@ import com.mutkuensert.movee.data.search.model.MultiSearchResultMediaType
 import com.mutkuensert.movee.data.search.model.PersonResulItemModel
 import com.mutkuensert.movee.data.search.model.TvResultItemModel
 import com.mutkuensert.movee.data.tvshow.TvShowsApi
+import com.mutkuensert.movee.network.AccountIdInterceptor
 import com.mutkuensert.movee.network.AuthenticationInterceptor
 import com.mutkuensert.movee.util.BASE_URL
 import com.squareup.moshi.Moshi
@@ -58,10 +60,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideClient(): OkHttpClient {
+    fun provideClient(accountIdInterceptor: AccountIdInterceptor): OkHttpClient {
         return OkHttpClient()
             .newBuilder()
             .addInterceptor(AuthenticationInterceptor())
+            .addInterceptor(accountIdInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -100,6 +103,12 @@ object NetworkModule {
     @Provides
     fun provideAuthenticationApi(retrofit: Retrofit): AuthenticationApi {
         return retrofit.create(AuthenticationApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAccountApi(retrofit: Retrofit): AccountApi {
+        return retrofit.create(AccountApi::class.java)
     }
 
     @Singleton

@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.data.authentication
 
-import com.mutkuensert.movee.data.authentication.dto.AccountDetailsDto
 import com.mutkuensert.movee.data.authentication.dto.DeleteSessionDto
 import com.mutkuensert.movee.data.authentication.dto.LoginDto
 import com.mutkuensert.movee.data.authentication.dto.RequestTokenDto
@@ -28,7 +27,4 @@ interface AuthenticationApi {
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
     suspend fun deleteSession(@Body sessionIdDto: SessionIdDto): Response<DeleteSessionDto>
-
-    @GET("account")
-    suspend fun getAccountDetails(): Response<AccountDetailsDto>
 }
