@@ -1,25 +1,20 @@
 package com.mutkuensert.movee.library.session
 
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
+import com.mutkuensert.movee.library.security.EncryptedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-private const val PREFS_SESSION: String = "session"
-private const val KEY_SESSION_ID: String = "sessionId"
+private const val PREFS_SESSION: String = "sessionPreferences"
+private const val KEY_SESSION_ID: String = "sessionIdKey"
 
 @Singleton
-class SessionManager(private val context: Context) {
-    private val encryptedSharedPreferences = EncryptedSharedPreferences.create(
-        PREFS_SESSION,
-        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+class SessionManager @Inject constructor(@ApplicationContext private val context: Context) {
+    private val encryptedSharedPreferences = EncryptedPreferences.create(PREFS_SESSION, context)
     private val _isLoggedIn = MutableStateFlow<Boolean>(
         encryptedSharedPreferences.contains(KEY_SESSION_ID)
     )
