@@ -1,11 +1,13 @@
 package com.mutkuensert.movee.data.authentication
 
-import com.github.michaelbull.result.getOrElse
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.mutkuensert.movee.data.authentication.dto.LoginDto
 import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
 import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.login.AuthenticationError
 import com.mutkuensert.movee.domain.login.AuthenticationRepository
 import com.mutkuensert.movee.library.session.SessionManager
@@ -17,33 +19,35 @@ class AuthenticationRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager,
 ) : AuthenticationRepository {
 
-    override suspend fun login(username: String, password: String): Boolean {
-        val requestToken = authenticationApi.getRequestToken()
+    override suspend fun fetchRequestToken(): Result<String, Failure> {
+        authenticationApi.getRequestToken()
             .toResult()
-            .onSuccess { if (!it.success) return false }
-            .getOrElse { return false }
+            .onSuccess {
+                return if (!it.success) {
+                    Err(Failure(statusMessage = "Unsuccessful request token"))
+                } else {
+                    Ok(it.requestToken)
+                }
+            }
 
-        val validToken = authenticationApi.getValidatedRequestTokenWithLogin(
-            loginDto = LoginDto(
-                username = username,
-                password = password,
-                requestToken = requestToken.requestToken
-            )
-        ).toResult()
-            .onSuccess { if (!it.success) return false }
-            .getOrElse { return false }
+        return Err(Failure(statusMessage = ""))
+    }
 
-        val session = authenticationApi.getSessionWithValidatedRequestToken(
+    override suspend fun fetchSessionIdWithValidatedRequestToken(requestToken: String): Result<String, Failure> {
+        authenticationApi.getSessionWithValidatedRequestToken(
             validRequestTokenDto = ValidRequestTokenDto(
-                validRequestToken = validToken.requestToken
+                validRequestToken = requestToken
             )
         ).toResult()
-            .onSuccess { if (!it.success) return false }
-            .getOrElse { return false }
+            .onSuccess {
+                return if (!it.success) {
+                    Err(Failure(statusMessage = "Unsuccessful request token validation."))
+                } else {
+                    Ok(it.sessionId)
+                }
+            }
 
-        sessionManager.insertSessionId(session.sessionId)
-
-        return true
+        return Err(Failure(statusMessage = ""))
     }
 
     override suspend fun logout(): Boolean {

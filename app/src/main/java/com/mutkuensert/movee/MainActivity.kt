@@ -27,12 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mutkuensert.movee.feature.MyNavHost
 import com.mutkuensert.movee.theme.AppColors
 import com.mutkuensert.movee.theme.MoveeTheme
-import com.mutkuensert.movee.util.GRAPH_MOVIE
-import com.mutkuensert.movee.util.GRAPH_TV_SHOWS
-import com.mutkuensert.movee.util.ROUTE_LOGIN
-import com.mutkuensert.movee.util.ROUTE_MOVIES
-import com.mutkuensert.movee.util.ROUTE_MULTI_SEARCH
-import com.mutkuensert.movee.util.ROUTE_TV_SHOWS
+import com.mutkuensert.movee.util.NavConstants
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
@@ -84,10 +79,10 @@ private fun MyBottomAppBar(navController: NavController) {
         contentColor = Color.DarkGray
     ) {
         BottomNavigationItem(
-            selected = currentRoute == GRAPH_MOVIE,
+            selected = currentRoute == NavConstants.Movie.GRAPH_MOVIE,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(ROUTE_MOVIES) },
+            onClick = { navController.navigate(NavConstants.Movie.ROUTE_MOVIES) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_movie),
@@ -96,10 +91,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == GRAPH_TV_SHOWS,
+            selected = currentRoute == NavConstants.TvShow.GRAPH_TV_SHOWS,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(ROUTE_TV_SHOWS) },
+            onClick = { navController.navigate(NavConstants.TvShow.ROUTE_TV_SHOWS) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_tvshow),
@@ -108,10 +103,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == ROUTE_MULTI_SEARCH,
+            selected = currentRoute == NavConstants.Search.ROUTE_MULTI_SEARCH,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(ROUTE_MULTI_SEARCH) },
+            onClick = { navController.navigate(NavConstants.Search.ROUTE_MULTI_SEARCH) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
@@ -120,10 +115,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == ROUTE_LOGIN,
+            selected = currentRoute == NavConstants.Login.ROUTE_LOGIN,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(ROUTE_LOGIN) },
+            onClick = { navController.navigate(NavConstants.Login.ROUTE_LOGIN) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_account),

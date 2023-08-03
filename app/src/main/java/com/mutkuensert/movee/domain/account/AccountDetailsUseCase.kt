@@ -1,8 +1,7 @@
-package com.mutkuensert.movee.domain.login
+package com.mutkuensert.movee.domain.account
 
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.mutkuensert.movee.domain.account.AccountRepository
 import com.mutkuensert.movee.library.user.UserDetails
 import com.mutkuensert.movee.library.user.UserManager
 import javax.inject.Inject
@@ -10,17 +9,13 @@ import javax.inject.Singleton
 import timber.log.Timber
 
 @Singleton
-class LoginUseCase @Inject constructor(
-    private val authenticationRepository: AuthenticationRepository,
+class AccountDetailsUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val userManager: UserManager,
+    private val userManager: UserManager
 ) {
-
-    suspend fun execute(user: String, password: String): Boolean {
-        val isLoggedIn = authenticationRepository.login(user, password)
-
-        if (isLoggedIn) {
-            accountRepository.getAccountDetails().onSuccess {
+    suspend fun execute(): Boolean {
+        accountRepository.getAccountDetails()
+            .onSuccess {
                 userManager.setCurrentUser(
                     user = UserDetails(
                         avatarPath = it.avatar.tmdb.avatarPath,
@@ -33,13 +28,12 @@ class LoginUseCase @Inject constructor(
                         username = it.username
                     )
                 )
-            }
-                .onFailure {
-                    Timber.e(it.statusMessage)
-                }
 
-            return true
-        }
+                return true
+            }
+            .onFailure {
+                Timber.e(it.statusMessage)
+            }
 
         return false
     }

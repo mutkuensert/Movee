@@ -1,46 +1,36 @@
 package com.mutkuensert.movee.feature.login
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mutkuensert.movee.R
+import com.mutkuensert.movee.util.APP_DEEP_LINK
+import com.mutkuensert.movee.util.NavConstants
 
 @Composable
 fun Login(viewModel: LoginViewModel = hiltViewModel()) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle(null)
+    val requestToken by viewModel.requestToken.collectAsStateWithLifecycle()
 
     if (isLoggedIn != null) {
         if (!isLoggedIn!!) {
-            LoggedOutScreen(login = viewModel::login)
+            LoggedOutScreen(login = viewModel::login, requestToken = requestToken)
         } else {
             LoggedInScreen(logout = viewModel::logout)
         }
@@ -59,93 +49,59 @@ fun Login(viewModel: LoginViewModel = hiltViewModel()) {
 
 @Composable
 private fun LoggedInScreen(logout: () -> Unit) {
-    IconButton(onClick = logout) {
-        Icon(painter = painterResource(R.drawable.ic_logout), contentDescription = null)
-    }
-}
-
-@Composable
-private fun LoggedOutScreen(login: (user: String, password: String) -> Unit) {
-    val (user, onUserChange) = remember { mutableStateOf("") }
-    val (password, onPasswordChange) = remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        OutlinedTextField(value = user, onValueChange = onUserChange)
-
-        Spacer(Modifier.height(10.dp))
-
-        PasswordTextField(value = password, onValueChange = onPasswordChange)
-
-        Spacer(Modifier.height(10.dp))
-
-        IconButton(onClick = { login.invoke(user, password) }) {
-            Icon(painter = painterResource(R.drawable.ic_login), contentDescription = null)
+        IconButton(onClick = logout) {
+            Icon(painter = painterResource(R.drawable.ic_logout), contentDescription = null)
         }
     }
 }
 
 @Composable
-private fun PasswordTextField(
-    value: String,
-    modifier: Modifier = Modifier,
-    labelText: String = "",
-    hasError: Boolean = false,
-    onValueChange: (text: String) -> Unit,
-) {
-    val focusManager = LocalFocusManager.current
-    val showPassword = remember { mutableStateOf(false) }
+private fun LoggedOutScreen(login: () -> Unit, requestToken: String?) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        IconButton(onClick = login) {
+            Icon(painter = painterResource(R.drawable.ic_login), contentDescription = null)
+        }
+    }
 
-    OutlinedTextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = {
-            Text(
-                text = labelText,
-                color = Color.White,
-                fontSize = 16.sp
-            )
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            autoCorrect = true,
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                focusManager.clearFocus()
-            }
-        ),
-        singleLine = true,
-        isError = hasError,
-        visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val (icon, iconColor) = if (showPassword.value) {
-                Pair(
-                    R.drawable.ic_visibility_on,
-                    Color.Gray
+    DirectToLoginPage(requestToken = requestToken)
+}
+
+@Composable
+private fun DirectToLoginPage(requestToken: String?) {
+    val context = LocalContext.current
+
+    LaunchedEffect(requestToken) {
+        if (requestToken != null) {
+            val intent = CustomTabsIntent.Builder()
+                .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                .build()
+
+            intent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            var uri =
+                Uri.parse(
+                    "https://www.themoviedb.org/authenticate/" +
+                            requestToken +
+                            "?redirect_to" +
+                            "=$APP_DEEP_LINK${NavConstants.Login.getRouteLoginWithEntity(true)}"
                 )
-            } else {
-                Pair(R.drawable.ic_visibility_off, Color.Gray)
+            if (uri.scheme == null) {
+                uri = uri
+                    .buildUpon()
+                    .scheme("https")
+                    .build()
             }
 
-            IconButton(onClick = { showPassword.value = !showPassword.value }) {
-                Icon(
-                    painterResource(icon),
-                    contentDescription = "Visibility",
-                    tint = iconColor
-                )
-            }
-        }/*,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.White,
-            unfocusedBorderColor = Color.White,
-            textColor = Color.White,
-            cursorColor = Color.White,
-        )*/
-    )
+            intent.launchUrl(context, uri)
+        }
+    }
 }

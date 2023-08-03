@@ -1,5 +1,6 @@
 package com.mutkuensert.movee.library.session
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.mutkuensert.movee.library.security.EncryptedPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 private const val PREFS_SESSION: String = "sessionPreferences"
 private const val KEY_SESSION_ID: String = "sessionIdKey"
+private const val KEY_REQUEST_TOKEN: String = "requestTokenKey"
 
 @Singleton
 class SessionManager @Inject constructor(@ApplicationContext private val context: Context) {
@@ -18,6 +20,20 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
     private val _isLoggedIn = MutableStateFlow<Boolean>(
         encryptedSharedPreferences.contains(KEY_SESSION_ID)
     )
+
+    @SuppressLint("ApplySharedPref")
+    fun insertRequestToken(token: String) {
+        encryptedSharedPreferences.edit().putString(KEY_REQUEST_TOKEN, token).commit()
+    }
+
+    fun getRequestToken(): String? {
+        return encryptedSharedPreferences.getString(KEY_REQUEST_TOKEN, null)
+    }
+
+    @SuppressLint("ApplySharedPref")
+    fun removeRequestToken() {
+        encryptedSharedPreferences.edit().remove(KEY_REQUEST_TOKEN).commit()
+    }
 
     fun insertSessionId(id: String) {
         val isInserted = encryptedSharedPreferences.edit().putString(KEY_SESSION_ID, id).commit()

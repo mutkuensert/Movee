@@ -1,11 +1,11 @@
 package com.mutkuensert.movee.domain.login
 
-interface AuthenticationRepository {
+import com.github.michaelbull.result.Result
+import com.mutkuensert.movee.domain.Failure
 
-    /**
-     * @return true if the use successfully logged in, otherwise false.
-     */
-    suspend fun login(username: String, password: String): Boolean
+interface AuthenticationRepository {
+    suspend fun fetchRequestToken(): Result<String, Failure>
+    suspend fun fetchSessionIdWithValidatedRequestToken(requestToken: String): Result<String, Failure>
 
     /**
      * @return true if the use successfully logged out, otherwise false
