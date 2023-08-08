@@ -1,10 +1,10 @@
-package com.mutkuensert.movee.data.movie.model
+package com.mutkuensert.movee.data.movie.remote.model
 
 import com.squareup.moshi.Json
 
-data class MoviesNowPlayingModel(
+data class PopularMoviesResponseModel(
     val page: Int,
-    val results: List<MoviesNowPlayingResult>,
+    val results: List<PopularMoviesResultResponseModel>,
     @Json(name = "total_results") val totalResults: Int,
     @Json(name = "total_pages") val totalPages: Int
 )

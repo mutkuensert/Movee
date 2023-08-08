@@ -2,8 +2,8 @@ package com.mutkuensert.movee.data.movie.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mutkuensert.movee.data.movie.model.MoviesNowPlayingModel
-import com.mutkuensert.movee.data.movie.model.MoviesNowPlayingResult
+import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingModel
+import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResult
 import com.mutkuensert.movee.util.UnsuccessfulResponseException
 import retrofit2.HttpException
 import retrofit2.Response

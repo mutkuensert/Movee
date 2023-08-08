@@ -7,18 +7,16 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.mutkuensert.movee.data.movie.MovieApi
 import com.mutkuensert.movee.data.movie.source.MoviesNowPlayingPagingSource
-import com.mutkuensert.movee.data.movie.source.PopularMoviesPagingSource
+import com.mutkuensert.movee.domain.movie.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MoviesViewModel @Inject constructor(private val movieApi: MovieApi) : ViewModel() {
-    val popularMovies = Pager(
-        PagingConfig(pageSize = 20)
-    ) {
-        PopularMoviesPagingSource(movieApi::getPopularMovies)
-    }.flow.cachedIn(viewModelScope)
-
+class MoviesViewModel @Inject constructor(
+    private val movieApi: MovieApi,
+    private val movieRepository: MovieRepository,
+) : ViewModel() {
+    val popularMovies = movieRepository.getPopularMoviesFlow()
 
     val moviesNowPlaying = Pager(
         PagingConfig(pageSize = 20)

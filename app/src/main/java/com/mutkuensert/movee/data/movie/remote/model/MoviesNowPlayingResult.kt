@@ -1,8 +1,8 @@
-package com.mutkuensert.movee.data.movie.model
+package com.mutkuensert.movee.data.movie.remote.model
 
 import com.squareup.moshi.Json
 
-data class PopularMoviesResult(
+data class MoviesNowPlayingResult(
     @Json(name = "poster_path") val posterPath: String?,
     val title: String,
     val id: Int,

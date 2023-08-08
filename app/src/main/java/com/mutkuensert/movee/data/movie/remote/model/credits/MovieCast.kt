@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.movie.model.credits
+package com.mutkuensert.movee.data.movie.remote.model.credits
 
 import com.squareup.moshi.Json
 

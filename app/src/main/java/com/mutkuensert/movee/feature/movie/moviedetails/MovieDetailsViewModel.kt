@@ -3,8 +3,8 @@ package com.mutkuensert.movee.feature.movie.moviedetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.movie.MovieApi
-import com.mutkuensert.movee.data.movie.model.MovieDetailsModel
-import com.mutkuensert.movee.data.movie.model.credits.MovieCast
+import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsModel
+import com.mutkuensert.movee.data.movie.remote.model.credits.MovieCast
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

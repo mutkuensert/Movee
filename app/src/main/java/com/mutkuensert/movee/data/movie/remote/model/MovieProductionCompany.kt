@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.movie.model
+package com.mutkuensert.movee.data.movie.remote.model
 
 import com.squareup.moshi.Json
 

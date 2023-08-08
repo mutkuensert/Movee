@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.movie.model.credits
+package com.mutkuensert.movee.data.movie.remote.model.credits
 
 data class MovieCredits(
     val id: Int,

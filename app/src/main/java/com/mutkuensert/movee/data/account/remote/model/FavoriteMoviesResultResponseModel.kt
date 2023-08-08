@@ -1,8 +1,8 @@
-package com.mutkuensert.movee.data.account.dto
+package com.mutkuensert.movee.data.account.remote.model
 
 import com.squareup.moshi.Json
 
-data class FavoriteMoviesResult(
+data class FavoriteMoviesResultResponseModel(
     val adult: Boolean,
     @Json(name = "backdrop_path") val backdropPath: String,
     @Json(name = "genre_ids") val genreIds: List<Int>,

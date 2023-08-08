@@ -35,8 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.movie.model.MovieDetailsModel
-import com.mutkuensert.movee.data.movie.model.credits.MovieCast
+import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsModel
+import com.mutkuensert.movee.data.movie.remote.model.credits.MovieCast
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
