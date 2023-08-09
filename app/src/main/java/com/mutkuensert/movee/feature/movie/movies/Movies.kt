@@ -22,6 +22,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -41,7 +44,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -52,8 +57,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.movie.local.entity.PopularMovieEntity
+import com.mutkuensert.movee.R
 import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResult
+import com.mutkuensert.movee.domain.movie.model.PopularMovie
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
@@ -67,7 +73,6 @@ fun Movies(
     val popularMovies = viewModel.popularMovies.collectAsLazyPagingItems()
 
     val stateOfMoviesNowPlaying = rememberLazyListState()
-    val stateOfPopularMovies = rememberLazyListState()
 
     val localDensity = LocalDensity.current
 
@@ -94,7 +99,6 @@ fun Movies(
         PopularMovies(
             modifier = Modifier.wrapContentHeight(),
             popularMovies = popularMovies,
-            lazyListState = stateOfPopularMovies,
             itemsAboveHeight = itemsAboveHeight,
             navigateToMovieDetails = navigateToMovieDetails
         )
@@ -205,8 +209,7 @@ private fun MoviesNowPlaying(
 @Composable
 private fun PopularMovies(
     modifier: Modifier = Modifier,
-    popularMovies: LazyPagingItems<PopularMovieEntity>,
-    lazyListState: LazyListState,
+    popularMovies: LazyPagingItems<PopularMovie>,
     itemsAboveHeight: MutableState<Dp>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
@@ -218,7 +221,6 @@ private fun PopularMovies(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            state = lazyListState,
             contentPadding = PaddingValues(top = itemsAboveHeight.value)
         ) {
             item {
@@ -334,7 +336,7 @@ private fun MoviesNowPlayingItem(
 
 @Composable
 private fun PopularMoviesItem(
-    movie: PopularMovieEntity,
+    movie: PopularMovie,
     navigateToMovieDetails: () -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -380,18 +382,33 @@ private fun PopularMoviesItem(
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
                     )
+
+                    if (movie.isFavorite != null) {
+                        Spacer(Modifier.height(10.dp))
+
+                        IconButton(onClick = { TODO("Will be implemented.") }) {
+                            val iconId = if (movie.isFavorite) {
+                                R.drawable.ic_star_filled
+                            } else {
+                                R.drawable.ic_star_unfilled
+                            }
+                            Icon(
+                                painter = painterResource(id = iconId),
+                                contentDescription = null
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-/*
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun PreviewPopularMoviesItem() {
     PopularMoviesItem(
-        movie = PopularMovie(null, "Title", 0, 1, isFavorite = false, voteAverage = 1.0),
+        movie = PopularMovie(null, "Title", 0, isFavorite = false, voteAverage = 1.0),
         navigateToMovieDetails = {})
 }
 
@@ -412,7 +429,7 @@ private fun PreviewPopularMovies() {
             navigateToMovieDetails = {})
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
         PopularMoviesItem(
-            movie = PopularMovie(null, "Title", 0, 1, isFavorite = false, voteAverage = 1.0),
+            movie = PopularMovie(null, "Title", 0, isFavorite = false, voteAverage = 1.0),
             navigateToMovieDetails = {})
     }
-}*/
+}

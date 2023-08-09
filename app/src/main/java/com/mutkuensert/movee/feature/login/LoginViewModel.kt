@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
     val isLoggedIn: StateFlow<Boolean?>
         get() {
             viewModelScope.launch {
-                sessionManager.isLoggedIn().collectLatest {
+                sessionManager.isLoggedInFlow().collectLatest {
                     _isLoggedIn.value = it
                 }
             }

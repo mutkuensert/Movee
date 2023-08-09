@@ -13,6 +13,7 @@ import com.mutkuensert.movee.domain.login.AuthenticationRepository
 import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.network.toResult
 import javax.inject.Inject
+import timber.log.Timber
 
 class AuthenticationRepositoryImpl @Inject constructor(
     private val authenticationApi: AuthenticationApi,
@@ -59,12 +60,14 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 .onSuccess {
                     if (it.success) {
                         sessionManager.removeSession()
+                        Timber.e("User session has been removed.")
                         return true
                     }
                 }
                 .onFailure {
                     if (it.statusCode == AuthenticationError.RESOURCE_NOT_FOUND.statusCode) {
                         sessionManager.removeSession()
+                        Timber.e("User session has been removed.")
                         return true
                     }
 

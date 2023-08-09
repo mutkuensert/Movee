@@ -9,6 +9,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
 
+/**
+ * @return Returns Ok if response is successful and body isn't null,
+ * otherwise Failure.
+ */
 fun <T> Response<T>.toResult(): Result<T, Failure> {
     return if (isSuccessful && body() != null) {
         Ok(body()!!)
@@ -17,6 +21,10 @@ fun <T> Response<T>.toResult(): Result<T, Failure> {
     }
 }
 
+/**
+ * @return Returns mapped Ok if response is successful and body isn't null,
+ * otherwise Failure.
+ */
 fun <T, R> Response<T>.toResult(mapper: (T) -> R): Result<R, Failure> {
     return if (isSuccessful && body() != null) {
         Ok(mapper(body()!!))

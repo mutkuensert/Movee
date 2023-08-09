@@ -4,7 +4,6 @@ data class PopularMovie(
     val posterPath: String?,
     val title: String,
     val id: Int,
-    val page: Int,
     val isFavorite: Boolean?,
     val voteAverage: Double
 )

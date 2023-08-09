@@ -45,8 +45,12 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
         _isLoggedIn.value = !isRemoved
     }
 
-    fun isLoggedIn(): Flow<Boolean> {
+    fun isLoggedInFlow(): Flow<Boolean> {
         return _isLoggedIn.asStateFlow()
+    }
+
+    fun isLoggedIn(): Boolean {
+        return _isLoggedIn.value
     }
 
     fun getSessionId(): String? {

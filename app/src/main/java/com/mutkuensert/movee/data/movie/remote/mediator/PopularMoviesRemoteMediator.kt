@@ -28,7 +28,7 @@ class PopularMoviesRemoteMediator(
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     withContext(Dispatchers.IO) { movieDao.clearAllPopularMovies() }
-                    ApiConstants.Movie.DEFAULT_FIRST_PAGE
+                    ApiConstants.General.DEFAULT_FIRST_PAGE
                 }
 
                 LoadType.PREPEND ->

@@ -5,7 +5,6 @@ import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.library.user.UserManager
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.last
 import timber.log.Timber
 
 @Singleton
@@ -18,9 +17,7 @@ class CompleteAnyUnfinishedLoginTaskUseCase @Inject constructor(
 ) {
 
     suspend fun execute() {
-        val isLoggedIn = sessionManager.isLoggedIn().last()
-
-        if (!isLoggedIn) {
+        if (!sessionManager.isLoggedIn()) {
             val requestToken = sessionManager.getRequestToken()
 
             if (requestToken != null) completeLoginUseCase.execute()
