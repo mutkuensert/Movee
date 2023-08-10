@@ -99,7 +99,8 @@ fun Movies(
         PopularMovies(
             popularMovies = popularMovies,
             itemsAboveHeight = itemsAboveHeight,
-            navigateToMovieDetails = navigateToMovieDetails
+            navigateToMovieDetails = navigateToMovieDetails,
+            onAddToFavorite = viewModel::addMovieToFavorites
         )
 
         Card(elevation = 10.dp,
@@ -210,7 +211,8 @@ private fun PopularMovies(
     modifier: Modifier = Modifier,
     popularMovies: LazyPagingItems<PopularMovie>,
     itemsAboveHeight: MutableState<Dp>,
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    navigateToMovieDetails: (movieId: Int) -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -264,7 +266,9 @@ private fun PopularMovies(
                 if (item != null) {
                     PopularMoviesItem(
                         movie = item,
-                        navigateToMovieDetails = { navigateToMovieDetails(item.id) })
+                        navigateToMovieDetails = { navigateToMovieDetails(item.id) },
+                        onAddToFavorite = onAddToFavorite
+                    )
                 }
             }
 
@@ -336,7 +340,8 @@ private fun MoviesNowPlayingItem(
 @Composable
 private fun PopularMoviesItem(
     movie: PopularMovie,
-    navigateToMovieDetails: () -> Unit
+    navigateToMovieDetails: () -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(
@@ -385,7 +390,12 @@ private fun PopularMoviesItem(
                     if (movie.isFavorite != null) {
                         Spacer(Modifier.height(10.dp))
 
-                        IconButton(onClick = { TODO("Will be implemented.") }) {
+                        IconButton(onClick = {
+                            onAddToFavorite.invoke(
+                                !movie.isFavorite,
+                                movie.id
+                            )
+                        }) {
                             val iconId = if (movie.isFavorite) {
                                 R.drawable.ic_star_filled
                             } else {
@@ -408,7 +418,8 @@ private fun PopularMoviesItem(
 private fun PreviewPopularMoviesItem() {
     PopularMoviesItem(
         movie = PopularMovie(null, "Title", 0, isFavorite = false, voteAverage = 1.0),
-        navigateToMovieDetails = {})
+        navigateToMovieDetails = {},
+        onAddToFavorite = { _, _ -> })
 }
 
 @Preview(showSystemUi = true, showBackground = true)
@@ -429,6 +440,7 @@ private fun PreviewPopularMovies() {
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
         PopularMoviesItem(
             movie = PopularMovie(null, "Title", 0, isFavorite = false, voteAverage = 1.0),
-            navigateToMovieDetails = {})
+            navigateToMovieDetails = {},
+            onAddToFavorite = { _, _ -> })
     }
 }

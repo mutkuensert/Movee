@@ -8,19 +8,24 @@ import com.mutkuensert.movee.data.ApiConstants
 import com.mutkuensert.movee.data.account.local.AccountDao
 import com.mutkuensert.movee.data.account.local.entity.FavoriteMovieEntity
 import com.mutkuensert.movee.data.account.remote.AccountApi
+import com.mutkuensert.movee.data.account.remote.model.FavoriteMovieRequestModel
 import com.mutkuensert.movee.data.account.remote.model.FavoriteMoviesResultResponseModel
 import com.mutkuensert.movee.data.authentication.dto.AccountDetailsDto
+import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.account.AccountRepository
 import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.library.user.UserDetails
 import com.mutkuensert.movee.network.toResult
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class AccountRepositoryImpl @Inject constructor(
     private val accountApi: AccountApi,
     private val sessionManager: SessionManager,
     private val accountDao: AccountDao,
+    private val movieDao: MovieDao,
 ) : AccountRepository {
 
     override suspend fun getUserDetails(): Result<UserDetails, Failure> {
@@ -52,6 +57,42 @@ class AccountRepositoryImpl @Inject constructor(
                 return
             }
         }
+    }
+
+    override suspend fun addMovieToFavorites(isFavorite: Boolean, movieId: Int) {
+        if (isFavorite) {
+            insertFavoriteMovieInCache(movieId)
+
+            accountApi.postFavoriteMovie(
+                FavoriteMovieRequestModel(
+                    favorite = true,
+                    mediaId = movieId
+                )
+            ).toResult().onFailure {
+                deleteFavoriteFromMovie(movieId)
+            }
+        } else {
+            deleteFavoriteFromMovie(movieId = movieId)
+
+            accountApi.postFavoriteMovie(
+                FavoriteMovieRequestModel(
+                    favorite = false,
+                    mediaId = movieId
+                )
+            ).toResult().onFailure {
+                insertFavoriteMovieInCache(movieId = movieId)
+            }
+        }
+    }
+
+    private suspend fun insertFavoriteMovieInCache(movieId: Int) = withContext(Dispatchers.IO) {
+        accountDao.insertFavoriteMovies(FavoriteMovieEntity(movieId))
+        movieDao.update(movieDao.getPopularMovie(movieId).copyWithPrimaryKey(isFavorite = true))
+    }
+
+    private suspend fun deleteFavoriteFromMovie(movieId: Int) = withContext(Dispatchers.IO) {
+        accountDao.deleteFavoriteMovies(FavoriteMovieEntity(movieId))
+        movieDao.update(movieDao.getPopularMovie(movieId).copyWithPrimaryKey(isFavorite = false))
     }
 }
 
