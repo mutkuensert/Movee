@@ -1,4 +1,4 @@
-package com.mutkuensert.movee
+package com.mutkuensert.movee.feature
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.mutkuensert.movee.feature.MyNavHost
+import com.mutkuensert.movee.BuildConfig
+import com.mutkuensert.movee.R
 import com.mutkuensert.movee.theme.AppColors
 import com.mutkuensert.movee.theme.MoveeTheme
 import com.mutkuensert.movee.util.NavConstants

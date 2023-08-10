@@ -10,6 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 @Singleton
 class GetPopularMoviesUseCase @Inject constructor(
@@ -18,11 +19,11 @@ class GetPopularMoviesUseCase @Inject constructor(
     private val sessionManager: SessionManager,
 ) {
     private val favoriteMovies = mutableListOf<FavoriteMovie>()
-    suspend fun execute(): Flow<PagingData<PopularMovie>> {
-        favoriteMovies.clear()
-        favoriteMovies.addAll(accountDao.getFavoriteMovies().map { it.toFavoriteMovie() })
-
-        return movieRepository.getPopularMoviesFlow().map { pagingData ->
+    fun execute(): Flow<PagingData<PopularMovie>> {
+        return movieRepository.getPopularMoviesFlow().onStart {
+            favoriteMovies.clear()
+            favoriteMovies.addAll(accountDao.getFavoriteMovies().map { it.toFavoriteMovie() })
+        }.map { pagingData ->
             pagingData.map {
                 it.copy(isFavorite = getIsFavoriteIfLoggedIn(movieId = it.id))
             }

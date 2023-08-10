@@ -97,7 +97,6 @@ fun Movies(
             .nestedScroll(nestedScrollConnection)
     ) {
         PopularMovies(
-            modifier = Modifier.wrapContentHeight(),
             popularMovies = popularMovies,
             itemsAboveHeight = itemsAboveHeight,
             navigateToMovieDetails = navigateToMovieDetails
