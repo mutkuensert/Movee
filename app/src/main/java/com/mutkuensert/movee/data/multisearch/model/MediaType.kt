@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data.search.model
+package com.mutkuensert.movee.data.multisearch.model
 
 class MediaType {
     companion object {

@@ -1,6 +1,6 @@
 package com.mutkuensert.movee.domain.login
 
-import com.mutkuensert.movee.domain.ClearAccountRelatedCacheUseCase
+import com.mutkuensert.movee.domain.account.ClearAccountRelatedCacheUseCase
 import com.mutkuensert.movee.library.user.UserManager
 import javax.inject.Inject
 import javax.inject.Singleton

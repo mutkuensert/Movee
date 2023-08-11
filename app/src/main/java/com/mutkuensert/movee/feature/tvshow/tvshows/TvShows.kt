@@ -60,14 +60,14 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResultDto
-import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResultDto
+import com.mutkuensert.movee.domain.tvshow.model.PopularTvShow
+import com.mutkuensert.movee.domain.tvshow.model.TopRatedTvShow
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
 
 @Composable
-fun TvShows(
+fun TvShowsScreen(
     viewModel: TvShowsViewModel = hiltViewModel(),
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
@@ -152,7 +152,7 @@ fun TvShows(
 @Composable
 private fun PopularTvShows(
     modifier: Modifier = Modifier,
-    popularTvShows: LazyPagingItems<PopularTvShowsResultDto>,
+    popularTvShows: LazyPagingItems<PopularTvShow>,
     lazyListState: LazyListState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
@@ -218,7 +218,7 @@ private fun PopularTvShows(
 @Composable
 private fun TopRatedTvShows(
     modifier: Modifier = Modifier,
-    topRatedTvShows: LazyPagingItems<TopRatedTvShowsResultDto>,
+    topRatedTvShows: LazyPagingItems<TopRatedTvShow>,
     itemsAboveHeight: MutableState<Dp>,
     lazyGridState: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
@@ -316,7 +316,7 @@ private fun TopRatedTvShows(
 }
 
 @Composable
-private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResultDto, onClick: () -> Unit) {
+private fun PopularTvShowsItem(popularTvShow: PopularTvShow, onClick: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { onClick() }) {
@@ -364,7 +364,7 @@ private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResultDto, onClick: 
 
 @Composable
 private fun TopRatedTvShowsItem(
-    topRatedTvShow: TopRatedTvShowsResultDto,
+    topRatedTvShow: TopRatedTvShow,
     onClick: () -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -426,7 +426,7 @@ private fun TopRatedTvShowsItem(
 @Composable
 private fun PreviewTopRatedTveShowsItem() {
     TopRatedTvShowsItem(
-        topRatedTvShow = TopRatedTvShowsResultDto(
+        topRatedTvShow = TopRatedTvShow(
             posterPath = null,
             id = 0,
             voteAverage = 0.0,

@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.domain
+package com.mutkuensert.movee.domain.account
 
 import com.mutkuensert.movee.data.account.local.AccountDao
 import com.mutkuensert.movee.data.movie.local.MovieDao

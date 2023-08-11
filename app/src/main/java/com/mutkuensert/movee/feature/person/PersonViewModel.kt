@@ -2,10 +2,11 @@ package com.mutkuensert.movee.feature.person
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutkuensert.movee.data.person.PersonApi
-import com.mutkuensert.movee.data.person.model.PersonDetailsResponse
-import com.mutkuensert.movee.data.person.model.PersonMovieCastDto
-import com.mutkuensert.movee.data.person.model.PersonTvCastDto
+import com.mutkuensert.movee.domain.GetResourceFlowUseCase
+import com.mutkuensert.movee.domain.person.PersonRepository
+import com.mutkuensert.movee.domain.person.model.PersonDetails
+import com.mutkuensert.movee.domain.person.model.PersonMovieCast
+import com.mutkuensert.movee.domain.person.model.PersonTvCast
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,29 +16,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class PersonViewModel @Inject constructor(private val personApi: PersonApi) : ViewModel() {
-    private val _personDetails: MutableStateFlow<Resource<PersonDetailsResponse>> =
-        MutableStateFlow(Resource.standby(null))
+class PersonViewModel @Inject constructor(
+    private val personRepository: PersonRepository
+) : ViewModel() {
+    private val _personDetails = MutableStateFlow(Resource.standby<PersonDetails>(null))
     val personDetails = _personDetails.asStateFlow()
 
-    private val _personMovieCast: MutableStateFlow<Resource<List<PersonMovieCastDto>>> =
-        MutableStateFlow(Resource.standby(null))
+    private val _personMovieCast =
+        MutableStateFlow(Resource.standby<List<PersonMovieCast>>(null))
     val personMovieCast = _personMovieCast.asStateFlow()
 
-    private val _personTvCast: MutableStateFlow<Resource<List<PersonTvCastDto>>> =
-        MutableStateFlow(Resource.standby(null))
+    private val _personTvCast = MutableStateFlow(Resource.standby<List<PersonTvCast>>(null))
     val personTvCast = _personTvCast.asStateFlow()
 
     fun getPersonDetails(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _personDetails.value = Resource.loading(null)
-
-            val response = personApi.getPersonDetails(personId = personId)
-
-            if (response.isSuccessful && response.body() != null) {
-                _personDetails.value = Resource.success(response.body()!!)
-            } else {
-                _personDetails.value = Resource.error("Unsuccessful Person Details Request", null)
+            GetResourceFlowUseCase<PersonDetails>().execute {
+                personRepository.getPersonDetails(personId)
+            }.collect {
+                _personDetails.value = it
             }
         }
     }
@@ -50,26 +47,22 @@ class PersonViewModel @Inject constructor(private val personApi: PersonApi) : Vi
     }
 
     private suspend fun getPersonMovieCast(personId: Int) {
-        _personMovieCast.value = Resource.loading(null)
-
-        val response = personApi.getPersonMovieCredits(personId = personId)
-
-        if (response.isSuccessful && response.body() != null) {
-            _personMovieCast.value = Resource.success(response.body()!!.cast)
-        } else {
-            _personMovieCast.value = Resource.error("Unsuccessful Person Movie Cast Request", null)
+        viewModelScope.launch {
+            GetResourceFlowUseCase<List<PersonMovieCast>>().execute {
+                personRepository.getPersonMovieCast(personId)
+            }.collect {
+                _personMovieCast.value = it
+            }
         }
     }
 
     private suspend fun getPersonTvCast(personId: Int) {
-        _personTvCast.value = Resource.loading(null)
-
-        val response = personApi.getPersonTvCredits(personId = personId)
-
-        if (response.isSuccessful && response.body() != null) {
-            _personTvCast.value = Resource.success(response.body()!!.cast)
-        } else {
-            _personTvCast.value = Resource.error("Unsuccessful Person Tv Cast Request", null)
+        viewModelScope.launch {
+            GetResourceFlowUseCase<List<PersonTvCast>>().execute {
+                personRepository.getPersonTvCast(personId)
+            }.collect {
+                _personTvCast.value = it
+            }
         }
     }
 }

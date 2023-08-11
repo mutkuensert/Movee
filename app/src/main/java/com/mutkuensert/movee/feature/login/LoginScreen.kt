@@ -23,7 +23,7 @@ import com.mutkuensert.movee.util.APP_DEEP_LINK
 import com.mutkuensert.movee.util.NavConstants
 
 @Composable
-fun Login(viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle(null)
     val requestToken by viewModel.requestToken.collectAsStateWithLifecycle()

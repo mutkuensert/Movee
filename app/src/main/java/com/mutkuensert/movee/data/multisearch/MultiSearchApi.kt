@@ -1,6 +1,6 @@
-package com.mutkuensert.movee.data.search
+package com.mutkuensert.movee.data.multisearch
 
-import com.mutkuensert.movee.data.search.model.MultiSearchResponse
+import com.mutkuensert.movee.data.multisearch.model.MultiSearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

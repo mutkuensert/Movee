@@ -4,53 +4,43 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.mutkuensert.movee.data.search.MultiSearchApi
-import com.mutkuensert.movee.data.search.MultiSearchResultsPagingSource
-import com.mutkuensert.movee.data.search.model.MultiSearchResultDto
+import com.mutkuensert.movee.domain.multisearch.MultiSearchRepository
+import com.mutkuensert.movee.domain.multisearch.model.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MultiSearchViewModel @Inject constructor(private val multiSearchApi: MultiSearchApi) :
-    ViewModel() {
-    private val loadStates = LoadStates(
-        LoadState.NotLoading(true),
-        LoadState.NotLoading(true),
-        LoadState.NotLoading(true)
+class MultiSearchViewModel @Inject constructor(
+    private val multiSearchRepository: MultiSearchRepository
+) : ViewModel() {
+    private var _multiSearchResults = MutableStateFlow<PagingData<SearchResult>>(
+        PagingData.empty(
+            LoadStates(
+                refresh = LoadState.NotLoading(true),
+                prepend = LoadState.NotLoading(true),
+                append = LoadState.NotLoading(true)
+            )
+        )
     )
-    private val _multiSearchResults =
-        MutableStateFlow<PagingData<MultiSearchResultDto>>(PagingData.empty(loadStates))
     val multiSearchResults = _multiSearchResults.asStateFlow()
 
-    val searchTextField = MutableStateFlow<String>("")
+    val searchTextField = MutableStateFlow("")
 
 
-    fun multiSearch(query: String) = viewModelScope.launch {
-        searchTextField.value = query
+    fun multiSearch(query: String) {
+        viewModelScope.launch {
+            searchTextField.value = query
 
-        if (query.length > 2) {
-            delay(1000)
-
-            Pager(
-                PagingConfig(pageSize = 20)
-            ) {
-                MultiSearchResultsPagingSource { page ->
-                    multiSearchApi.multiSearch(query, page)
-                }
-            }.flow.cachedIn(viewModelScope).collectLatest {
+            multiSearchRepository.getSearchFlow(query)
+                .cachedIn(viewModelScope)
+                .collect {
                 _multiSearchResults.value = it
             }
-        } else {
-            _multiSearchResults.value = PagingData.empty(loadStates)
         }
     }
 }

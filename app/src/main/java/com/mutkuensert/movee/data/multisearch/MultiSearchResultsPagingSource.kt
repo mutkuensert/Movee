@@ -1,9 +1,9 @@
-package com.mutkuensert.movee.data.search
+package com.mutkuensert.movee.data.multisearch
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mutkuensert.movee.data.search.model.MultiSearchResponse
-import com.mutkuensert.movee.data.search.model.MultiSearchResultDto
+import com.mutkuensert.movee.data.multisearch.model.MultiSearchResponse
+import com.mutkuensert.movee.data.multisearch.model.MultiSearchResultDto
 import com.mutkuensert.movee.util.UnsuccessfulResponseException
 import retrofit2.HttpException
 import retrofit2.Response

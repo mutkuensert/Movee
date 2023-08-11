@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.feature.movie.moviedetails
+package com.mutkuensert.movee.feature.tvshow.tvshowdetails
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -35,24 +35,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.movie.remote.model.MovieCastDto
-import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsResponse
+import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
+import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
 import com.mutkuensert.movee.util.Status
 
 @Composable
-fun MovieDetails(
-    movieId: Int?,
-    viewModel: MovieDetailsViewModel = hiltViewModel(),
+fun TvDetailsScreen(
+    tvId: Int?,
+    viewModel: TvShowDetailsViewModel = hiltViewModel(),
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    val movieDetails by viewModel.movieDetails.collectAsStateWithLifecycle()
-    val movieCast by viewModel.movieCast.collectAsStateWithLifecycle()
+    val tvShowDetails by viewModel.tvShowDetails.collectAsStateWithLifecycle()
+    val tvCast by viewModel.tvCast.collectAsStateWithLifecycle()
 
-    if (movieId != null) {
-        LaunchedEffect(true) { viewModel.getMovieDetails(movieId) }
+    if (tvId != null) {
+        LaunchedEffect(true) { viewModel.getTvDetails(tvId) }
 
         Column(
             modifier = Modifier
@@ -60,14 +60,14 @@ fun MovieDetails(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 25.dp)
         ) {
-            MovieDetailsDataObserver(
-                data = movieDetails,
-                loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
+            TvDetailsDataObserver(
+                data = tvShowDetails,
+                loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvId = tvId) })
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            MovieCastDataObserver(
-                data = movieCast,
+            TvShowsCastDataObserver(
+                data = tvCast,
                 navigateToPersonDetails = navigateToPersonDetails
             )
         }
@@ -75,9 +75,9 @@ fun MovieDetails(
 }
 
 @Composable
-private fun MovieDetailsDataObserver(
-    data: Resource<MovieDetailsResponse>,
-    loadCastIfSuccessful: () -> Unit
+private fun TvDetailsDataObserver(
+    data: Resource<TvShowDetails>,
+    loadTvCastIfSuccessful: () -> Unit
 ) {
     when (data.status) {
         Status.STANDBY -> {}
@@ -99,9 +99,9 @@ private fun MovieDetailsDataObserver(
 
         Status.SUCCESS -> {
             if (data.data != null) {
-                MovieDetailsItem(data.data)
+                TvDetailsItem(data.data)
 
-                loadCastIfSuccessful()
+                loadTvCastIfSuccessful()
             }
         }
 
@@ -112,8 +112,108 @@ private fun MovieDetailsDataObserver(
 }
 
 @Composable
-private fun MovieCastDataObserver(
-    data: Resource<List<MovieCastDto>>,
+private fun TvDetailsItem(tvDetails: TvShowDetails) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = 30.dp)
+    ) {
+        if (tvDetails.posterPath != null) {
+            Card(
+                elevation = 10.dp,
+                shape = RectangleShape
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${tvDetails.posterPath}")
+                        .crossfade(true)
+                        .build(),
+                    loading = {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(Modifier.height(50.dp))
+                            CircularProgressIndicator(
+                                color = Color.Gray,
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Spacer(Modifier.height(50.dp))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentDescription = "Tv Poster",
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+        }
+
+        Column(modifier = Modifier.padding(horizontal = 15.dp)) {
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Text(
+                text = tvDetails.name,
+                color = Color.DarkGray,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 30.sp
+            )
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Text(
+                text = tvDetails.voteAverage.toString(),
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Row {
+                Text(
+                    text = "Seasons: ",
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+
+                Text(
+                    text = tvDetails.totalEpisodeNumber.toString(),
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Row {
+                Text(
+                    text = "Episodes: ",
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+
+                Text(
+                    text = tvDetails.totalEpisodeNumber.toString(),
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Column {
+                Text(text = tvDetails.overview)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvShowsCastDataObserver(
+    data: Resource<List<TvShowCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
     when (data.status) {
@@ -138,7 +238,7 @@ private fun MovieCastDataObserver(
             if (data.data != null) {
                 LazyRow {
                     items(data.data) { item ->
-                        MovieCastItem(
+                        TvShowCastItem(
                             cast = item,
                             navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                     }
@@ -153,91 +253,11 @@ private fun MovieCastDataObserver(
 }
 
 @Composable
-private fun MovieDetailsItem(movieDetails: MovieDetailsResponse) {
-    if (movieDetails.posterPath != null) {
-        Card(
-            elevation = 10.dp,
-            shape = RectangleShape
-        ) {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${movieDetails.posterPath}")
-                    .crossfade(true)
-                    .build(),
-                loading = {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.height(50.dp))
-                        CircularProgressIndicator(
-                            color = Color.Gray,
-                            modifier = Modifier.size(100.dp)
-                        )
-                        Spacer(Modifier.height(50.dp))
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                contentDescription = "Movie Poster",
-                contentScale = ContentScale.FillWidth
-            )
-        }
-    }
-
-    Column(modifier = Modifier.padding(horizontal = 15.dp)) {
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Text(
-            text = movieDetails.title,
-            color = Color.DarkGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 30.sp
-        )
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Text(
-            text = movieDetails.voteAverage.toString(),
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
-        )
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Row {
-            Text(
-                text = "Runtime(min): ",
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-
-            Text(
-                text = movieDetails.runtime.toString(),
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        Column {
-            if (movieDetails.overview != null) {
-                Text(text = movieDetails.overview)
-            }
-        }
-    }
-
-}
-
-
-@Composable
-private fun MovieCastItem(cast: MovieCastDto, navigateToPersonDetails: () -> Unit) {
+private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .clickable { navigateToPersonDetails() }
+        Card(
+            elevation = 10.dp, modifier = Modifier
+                .clickable(onClick = navigateToPersonDetails)
         ) {
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
@@ -256,7 +276,7 @@ private fun MovieCastItem(cast: MovieCastDto, navigateToPersonDetails: () -> Uni
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
                             .height(150.dp),
-                        contentDescription = "Movie Poster"
+                        contentDescription = "Tv Show Poster"
                     )
                 }
 

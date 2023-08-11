@@ -36,15 +36,13 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.search.model.MovieResultItemDto
-import com.mutkuensert.movee.data.search.model.PersonResulItemDto
-import com.mutkuensert.movee.data.search.model.TvResultItemDto
+import com.mutkuensert.movee.domain.multisearch.model.SearchResult
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MultiSearch(
+fun MultiSearchScreen(
     viewModel: MultiSearchViewModel = hiltViewModel(),
     navigateToMovieDetails: (movieId: Int) -> Unit,
     navigateToTvDetails: (tvId: Int) -> Unit,
@@ -87,7 +85,6 @@ fun MultiSearch(
             horizontalAlignment = Alignment.CenterHorizontally,
             state = lazyListState
         ) {
-
             item {
                 if (searchResults.loadState.refresh == LoadState.Loading) {
                     Spacer(Modifier.height(50.dp))
@@ -105,11 +102,11 @@ fun MultiSearch(
             items(count = searchResults.itemCount) { index ->
                 val item = searchResults[index]
 
-                when (item) {
-                    is MovieResultItemDto -> {
+                when (item?.type) {
+                    SearchResult.Type.MOVIE -> {
                         SearchResultItem(
                             name = item.title,
-                            picturePath = item.posterPath,
+                            picturePath = item.picturePath,
                             navigateToItemDetails = {
                                 navigateToMovieDetails(
                                     item.id
@@ -118,18 +115,18 @@ fun MultiSearch(
                         )
                     }
 
-                    is TvResultItemDto -> {
+                    SearchResult.Type.TV -> {
                         SearchResultItem(
-                            name = item.name,
-                            picturePath = item.posterPath,
+                            name = item.title,
+                            picturePath = item.picturePath,
                             navigateToItemDetails = { navigateToTvDetails(item.id) }
                         )
                     }
 
-                    is PersonResulItemDto -> {
+                    SearchResult.Type.PERSON -> {
                         SearchResultItem(
-                            name = item.name,
-                            picturePath = item.profilePath,
+                            name = item.title,
+                            picturePath = item.picturePath,
                             navigateToItemDetails = {
                                 navigateToPersonDetails(
                                     item.id
@@ -137,6 +134,8 @@ fun MultiSearch(
                             }
                         )
                     }
+
+                    else -> {}
                 }
             }
 

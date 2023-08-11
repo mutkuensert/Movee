@@ -2,7 +2,7 @@ package com.mutkuensert.movee.data.tvshow.model
 
 import com.squareup.moshi.Json
 
-data class TvDetailsResponse(
+data class TvShowDetailsResponse(
     val id: Int,
     val name: String,
     val overview: String,

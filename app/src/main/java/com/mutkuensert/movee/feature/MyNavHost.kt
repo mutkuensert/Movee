@@ -10,13 +10,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.mutkuensert.movee.feature.login.Login
-import com.mutkuensert.movee.feature.movie.moviedetails.MovieDetails
-import com.mutkuensert.movee.feature.movie.movies.Movies
-import com.mutkuensert.movee.feature.multisearch.MultiSearch
-import com.mutkuensert.movee.feature.person.Person
-import com.mutkuensert.movee.feature.tvshow.tvdetails.TvDetails
-import com.mutkuensert.movee.feature.tvshow.tvshows.TvShows
+import com.mutkuensert.movee.feature.login.LoginScreen
+import com.mutkuensert.movee.feature.movie.moviedetails.MovieDetailsScreen
+import com.mutkuensert.movee.feature.movie.movies.MoviesScreen
+import com.mutkuensert.movee.feature.multisearch.MultiSearchScreen
+import com.mutkuensert.movee.feature.person.PersonScreen
+import com.mutkuensert.movee.feature.tvshow.tvshowdetails.TvDetailsScreen
+import com.mutkuensert.movee.feature.tvshow.tvshows.TvShowsScreen
 import com.mutkuensert.movee.util.APP_DEEP_LINK
 import com.mutkuensert.movee.util.NavConstants
 
@@ -36,7 +36,7 @@ fun MyNavHost(
             route = NavConstants.Movie.GRAPH_MOVIE
         ) {
             composable(NavConstants.Movie.ROUTE_MOVIES) {
-                Movies() { movieId: Int ->
+                MoviesScreen() { movieId: Int ->
                     navController.navigate("${NavConstants.Movie.ROUTE_MOVIE_DETAILS}/$movieId")
                 }
             }
@@ -46,7 +46,7 @@ fun MyNavHost(
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
-                MovieDetails(movieId = backStackEntry.arguments?.getInt("movieId")) { personId ->
+                MovieDetailsScreen(movieId = backStackEntry.arguments?.getInt("movieId")) { personId ->
                     navController.navigate("${NavConstants.Person.ROUTE_PERSON}/$personId")
                 }
             }
@@ -57,7 +57,7 @@ fun MyNavHost(
             route = NavConstants.TvShow.GRAPH_TV_SHOWS
         ) {
             composable(NavConstants.TvShow.ROUTE_TV_SHOWS) {
-                TvShows() { tvId ->
+                TvShowsScreen() { tvId ->
                     navController.navigate("${NavConstants.TvShow.ROUTE_TV_SHOW_DETAILS}/$tvId")
                 }
             }
@@ -66,7 +66,7 @@ fun MyNavHost(
                 "${NavConstants.TvShow.ROUTE_TV_SHOW_DETAILS}/{tvId}",
                 arguments = listOf(navArgument("tvId") { type = NavType.IntType })
             ) { backStackEntry ->
-                TvDetails(tvId = backStackEntry.arguments?.getInt("tvId"),
+                TvDetailsScreen(tvId = backStackEntry.arguments?.getInt("tvId"),
                     navigateToPersonDetails = { personId ->
                         navController.navigate("${NavConstants.Person.ROUTE_PERSON}/${personId}")
                     })
@@ -77,7 +77,7 @@ fun MyNavHost(
             "${NavConstants.Person.ROUTE_PERSON}/{personId}",
             arguments = listOf(navArgument("personId") { type = NavType.IntType })
         ) { backStackEntry ->
-            Person(personId = backStackEntry.arguments?.getInt("personId"),
+            PersonScreen(personId = backStackEntry.arguments?.getInt("personId"),
                 navigateToMovieDetails = { movieId ->
                     navController.navigate("${NavConstants.Movie.ROUTE_MOVIE_DETAILS}/$movieId")
                 },
@@ -88,7 +88,7 @@ fun MyNavHost(
 
 
         composable(route = NavConstants.Search.ROUTE_MULTI_SEARCH) {
-            MultiSearch(
+            MultiSearchScreen(
                 navigateToMovieDetails = { movieId ->
                     navController.navigate("${NavConstants.Movie.ROUTE_MOVIE_DETAILS}/$movieId")
                 },
@@ -108,7 +108,7 @@ fun MyNavHost(
             }),
             deepLinks = listOf(NavDeepLink(APP_DEEP_LINK + NavConstants.Login.ROUTE_LOGIN))
         ) {
-            Login()
+            LoginScreen()
         }
     }
 }
