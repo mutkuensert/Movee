@@ -5,12 +5,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.mutkuensert.movee.data.account.local.AccountDao
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.data.movie.remote.mediator.PopularMoviesRemoteMediator
 import com.mutkuensert.movee.domain.movie.MovieRepository
 import com.mutkuensert.movee.domain.movie.model.PopularMovie
-import com.mutkuensert.movee.library.session.SessionManager
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,8 +16,7 @@ import kotlinx.coroutines.flow.map
 class MovieRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val movieDao: MovieDao,
-    private val accountDao: AccountDao,
-    private val sessionManager: SessionManager,
+    private val popularMoviesResultMapper: PopularMoviesResultMapper,
 ) : MovieRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -29,8 +26,7 @@ class MovieRepositoryImpl @Inject constructor(
             remoteMediator = PopularMoviesRemoteMediator(
                 getPopularMovies = movieApi::getPopularMovies,
                 movieDao = movieDao,
-                accountDao = accountDao,
-                sessionManager = sessionManager
+                popularMoviesResultMapper = popularMoviesResultMapper
             ),
             pagingSourceFactory = { movieDao.getPopularMoviesPagingSource() }
         ).flow.map { pagingData ->

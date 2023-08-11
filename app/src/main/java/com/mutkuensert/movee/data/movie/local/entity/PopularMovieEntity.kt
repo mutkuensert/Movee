@@ -4,6 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ *@param isFavorite is null if the user is not logged in.
+ */
 @Entity
 data class PopularMovieEntity(
     val id: Int,

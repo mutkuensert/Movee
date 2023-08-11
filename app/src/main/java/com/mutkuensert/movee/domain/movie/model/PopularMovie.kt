@@ -1,5 +1,8 @@
 package com.mutkuensert.movee.domain.movie.model
 
+/**
+ *@param isFavorite is null if the user is not logged in.
+ */
 data class PopularMovie(
     val posterPath: String?,
     val title: String,

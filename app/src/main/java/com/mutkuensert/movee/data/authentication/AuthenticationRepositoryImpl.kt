@@ -60,14 +60,14 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 .onSuccess {
                     if (it.success) {
                         sessionManager.removeSession()
-                        Timber.e("User session has been removed.")
+                        Timber.d("User session has been removed.")
                         return true
                     }
                 }
                 .onFailure {
                     if (it.statusCode == AuthenticationError.RESOURCE_NOT_FOUND.statusCode) {
                         sessionManager.removeSession()
-                        Timber.e("User session has been removed.")
+                        Timber.e("User session has been removed. Error Message: ${it.statusMessage}")
                         return true
                     }
 
