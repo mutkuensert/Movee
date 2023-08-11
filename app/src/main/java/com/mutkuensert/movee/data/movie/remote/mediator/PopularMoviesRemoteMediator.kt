@@ -7,8 +7,8 @@ import androidx.paging.RemoteMediator
 import com.mutkuensert.movee.data.ApiConstants
 import com.mutkuensert.movee.data.movie.PopularMoviesResultMapper
 import com.mutkuensert.movee.data.movie.local.MovieDao
-import com.mutkuensert.movee.data.movie.local.entity.PopularMovieEntity
-import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponseModel
+import com.mutkuensert.movee.data.movie.local.model.PopularMovieEntity
+import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -17,7 +17,7 @@ import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class PopularMoviesRemoteMediator(
-    private val getPopularMovies: suspend (page: Int) -> Response<PopularMoviesResponseModel>,
+    private val getPopularMovies: suspend (page: Int) -> Response<PopularMoviesResponse>,
     private val movieDao: MovieDao,
     private val popularMoviesResultMapper: PopularMoviesResultMapper,
 ) : RemoteMediator<Int, PopularMovieEntity>() {

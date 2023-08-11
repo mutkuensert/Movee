@@ -10,7 +10,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.mutkuensert.movee.data.search.MultiSearchApi
 import com.mutkuensert.movee.data.search.MultiSearchResultsPagingSource
-import com.mutkuensert.movee.data.search.model.MultiSearchResultMediaType
+import com.mutkuensert.movee.data.search.model.MultiSearchResultDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.delay
@@ -28,7 +28,7 @@ class MultiSearchViewModel @Inject constructor(private val multiSearchApi: Multi
         LoadState.NotLoading(true)
     )
     private val _multiSearchResults =
-        MutableStateFlow<PagingData<MultiSearchResultMediaType>>(PagingData.empty(loadStates))
+        MutableStateFlow<PagingData<MultiSearchResultDto>>(PagingData.empty(loadStates))
     val multiSearchResults = _multiSearchResults.asStateFlow()
 
     val searchTextField = MutableStateFlow<String>("")

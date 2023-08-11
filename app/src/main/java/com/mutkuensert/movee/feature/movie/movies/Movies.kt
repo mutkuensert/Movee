@@ -58,7 +58,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.R
-import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResult
+import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResultDto
 import com.mutkuensert.movee.domain.movie.model.PopularMovie
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
@@ -142,7 +142,7 @@ fun Movies(
 @Composable
 private fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
-    moviesNowPlaying: LazyPagingItems<MoviesNowPlayingResult>,
+    moviesNowPlaying: LazyPagingItems<MoviesNowPlayingResultDto>,
     lazyListState: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
@@ -291,7 +291,7 @@ private fun PopularMovies(
 
 @Composable
 private fun MoviesNowPlayingItem(
-    movie: MoviesNowPlayingResult,
+    movie: MoviesNowPlayingResultDto,
     navigateToMovieDetails: () -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -426,7 +426,7 @@ private fun PreviewPopularMoviesItem() {
 @Composable
 private fun PreviewMoviesNowPlayingItem() {
     MoviesNowPlayingItem(
-        movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),
+        movie = MoviesNowPlayingResultDto(null, "Title", 0, 5.0),
         navigateToMovieDetails = {})
 }
 
@@ -435,7 +435,7 @@ private fun PreviewMoviesNowPlayingItem() {
 private fun PreviewPopularMovies() {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingItem(
-            movie = MoviesNowPlayingResult(null, "Title", 0, 5.0),
+            movie = MoviesNowPlayingResultDto(null, "Title", 0, 5.0),
             navigateToMovieDetails = {})
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
         PopularMoviesItem(

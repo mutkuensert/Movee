@@ -1,9 +1,9 @@
 package com.mutkuensert.movee.data.movie
 
-import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsModel
-import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingModel
-import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponseModel
-import com.mutkuensert.movee.data.movie.remote.model.credits.MovieCredits
+import com.mutkuensert.movee.data.movie.remote.model.MovieCreditsResponse
+import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsResponse
+import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResponse
+import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,20 +14,20 @@ interface MovieApi {
     @GET("movie/popular")
     suspend fun getPopularMovies(
         @Query("page") page: Int = 1
-    ): Response<PopularMoviesResponseModel>
+    ): Response<PopularMoviesResponse>
 
     @GET("movie/now_playing")
     suspend fun getMoviesNowPlaying(
         @Query("page") page: Int = 1
-    ): Response<MoviesNowPlayingModel>
+    ): Response<MoviesNowPlayingResponse>
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int
-    ): Response<MovieDetailsModel>
+    ): Response<MovieDetailsResponse>
 
     @GET("movie/{movie_id}/credits")
     suspend fun getMovieCredits(
         @Path("movie_id") movieId: Int
-    ): Response<MovieCredits>
+    ): Response<MovieCreditsResponse>
 }

@@ -36,9 +36,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.search.model.MovieResultItemModel
-import com.mutkuensert.movee.data.search.model.PersonResulItemModel
-import com.mutkuensert.movee.data.search.model.TvResultItemModel
+import com.mutkuensert.movee.data.search.model.MovieResultItemDto
+import com.mutkuensert.movee.data.search.model.PersonResulItemDto
+import com.mutkuensert.movee.data.search.model.TvResultItemDto
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
 
@@ -106,7 +106,7 @@ fun MultiSearch(
                 val item = searchResults[index]
 
                 when (item) {
-                    is MovieResultItemModel -> {
+                    is MovieResultItemDto -> {
                         SearchResultItem(
                             name = item.title,
                             picturePath = item.posterPath,
@@ -118,7 +118,7 @@ fun MultiSearch(
                         )
                     }
 
-                    is TvResultItemModel -> {
+                    is TvResultItemDto -> {
                         SearchResultItem(
                             name = item.name,
                             picturePath = item.posterPath,
@@ -126,7 +126,7 @@ fun MultiSearch(
                         )
                     }
 
-                    is PersonResulItemModel -> {
+                    is PersonResulItemDto -> {
                         SearchResultItem(
                             name = item.name,
                             picturePath = item.profilePath,

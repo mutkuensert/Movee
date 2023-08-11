@@ -3,8 +3,8 @@ package com.mutkuensert.movee.feature.movie.moviedetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.movie.MovieApi
-import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsModel
-import com.mutkuensert.movee.data.movie.remote.model.credits.MovieCast
+import com.mutkuensert.movee.data.movie.remote.model.MovieCastDto
+import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsResponse
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,13 +15,13 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) : ViewModel() {
-    private val _movieDetails: MutableStateFlow<Resource<MovieDetailsModel>> =
+    private val _movieDetails: MutableStateFlow<Resource<MovieDetailsResponse>> =
         MutableStateFlow(Resource.standby(null))
     val movieDetails = _movieDetails.asStateFlow()
 
-    private val _movieCast: MutableStateFlow<Resource<List<MovieCast>>> =
+    private val _movieCastDto: MutableStateFlow<Resource<List<MovieCastDto>>> =
         MutableStateFlow(Resource.standby(null))
-    val movieCast = _movieCast.asStateFlow()
+    val movieCast = _movieCastDto.asStateFlow()
 
     fun getMovieDetails(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,14 +39,15 @@ class MovieDetailsViewModel @Inject constructor(private val movieApi: MovieApi) 
 
     fun getMovieCast(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _movieCast.value = Resource.loading(null)
+            _movieCastDto.value = Resource.loading(null)
 
             val response = movieApi.getMovieCredits(movieId = movieId)
 
             if (response.isSuccessful && response.body() != null) {
-                _movieCast.value = Resource.success(response.body()!!.cast)
+                _movieCastDto.value = Resource.success(response.body()!!.cast)
             } else {
-                _movieCast.value = Resource.error("Unsuccessful Movie Credits Request", null)
+                _movieCastDto.value =
+                    Resource.error("Unsuccessful Movie Credits Request", null)
             }
         }
     }

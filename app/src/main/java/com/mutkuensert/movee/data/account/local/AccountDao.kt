@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.mutkuensert.movee.data.account.local.entity.FavoriteMovieEntity
+import com.mutkuensert.movee.data.account.local.model.FavoriteMovieEntity
 
 @Dao
 interface AccountDao {

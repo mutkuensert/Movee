@@ -35,8 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.tvshow.model.TvDetailsModel
-import com.mutkuensert.movee.data.tvshow.model.credits.TvShowCast
+import com.mutkuensert.movee.data.tvshow.model.TvDetailsResponse
+import com.mutkuensert.movee.data.tvshow.model.TvShowCastDto
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
@@ -76,7 +76,7 @@ fun TvDetails(
 
 @Composable
 private fun TvDetailsDataObserver(
-    data: Resource<TvDetailsModel>,
+    data: Resource<TvDetailsResponse>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
     when (data.status) {
@@ -112,7 +112,7 @@ private fun TvDetailsDataObserver(
 }
 
 @Composable
-private fun TvDetailsItem(tvDetails: TvDetailsModel) {
+private fun TvDetailsItem(tvDetails: TvDetailsResponse) {
     Column(
         modifier = Modifier
             .padding(bottom = 30.dp)
@@ -195,7 +195,7 @@ private fun TvDetailsItem(tvDetails: TvDetailsModel) {
                 )
 
                 Text(
-                    text = tvDetails.seasons.sumOf { it.episode_count }.toString(),
+                    text = tvDetails.seasons.sumOf { it.episodeCount }.toString(),
                     color = Color.DarkGray,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
@@ -213,7 +213,7 @@ private fun TvDetailsItem(tvDetails: TvDetailsModel) {
 
 @Composable
 private fun TvShowsCastDataObserver(
-    data: Resource<List<TvShowCast>>,
+    data: Resource<List<TvShowCastDto>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
     when (data.status) {
@@ -253,7 +253,7 @@ private fun TvShowsCastDataObserver(
 }
 
 @Composable
-private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
+private fun TvShowCastItem(cast: TvShowCastDto, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(
             elevation = 10.dp, modifier = Modifier

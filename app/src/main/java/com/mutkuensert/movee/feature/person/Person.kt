@@ -36,9 +36,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.person.model.PersonDetailsModel
-import com.mutkuensert.movee.data.person.model.PersonMovieCastModel
-import com.mutkuensert.movee.data.person.model.PersonTvCastModel
+import com.mutkuensert.movee.data.person.model.PersonDetailsResponse
+import com.mutkuensert.movee.data.person.model.PersonMovieCastDto
+import com.mutkuensert.movee.data.person.model.PersonTvCastDto
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
@@ -107,7 +107,7 @@ private fun Loading(status: Status) {
 }
 
 @Composable
-private fun PersonDetails(personDetails: Resource<PersonDetailsModel>) {
+private fun PersonDetails(personDetails: Resource<PersonDetailsResponse>) {
     val readMore = remember { mutableStateOf(false) }
 
     Column {
@@ -193,7 +193,7 @@ private fun PersonDetails(personDetails: Resource<PersonDetailsModel>) {
 
 @Composable
 private fun PersonMovieCast(
-    cast: Resource<List<PersonMovieCastModel>>,
+    cast: Resource<List<PersonMovieCastDto>>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
     Column {
@@ -220,7 +220,7 @@ private fun PersonMovieCast(
 
 @Composable
 private fun PersonMovieCastItem(
-    movie: PersonMovieCastModel,
+    movie: PersonMovieCastDto,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -265,7 +265,7 @@ private fun PersonMovieCastItem(
 
 @Composable
 private fun PersonTvCast(
-    cast: Resource<List<PersonTvCastModel>>,
+    cast: Resource<List<PersonTvCastDto>>,
     navigateToTvDetails: (tvId: Int) -> Unit
 ) {
     Column {
@@ -291,7 +291,7 @@ private fun PersonTvCast(
 }
 
 @Composable
-private fun PersonTvCastItem(tv: PersonTvCastModel, navigateToTvDetails: (tvId: Int) -> Unit) {
+private fun PersonTvCastItem(tv: PersonTvCastDto, navigateToTvDetails: (tvId: Int) -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()

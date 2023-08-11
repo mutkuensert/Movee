@@ -3,9 +3,9 @@ package com.mutkuensert.movee.feature.person
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.person.PersonApi
-import com.mutkuensert.movee.data.person.model.PersonDetailsModel
-import com.mutkuensert.movee.data.person.model.PersonMovieCastModel
-import com.mutkuensert.movee.data.person.model.PersonTvCastModel
+import com.mutkuensert.movee.data.person.model.PersonDetailsResponse
+import com.mutkuensert.movee.data.person.model.PersonMovieCastDto
+import com.mutkuensert.movee.data.person.model.PersonTvCastDto
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,15 +16,15 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PersonViewModel @Inject constructor(private val personApi: PersonApi) : ViewModel() {
-    private val _personDetails: MutableStateFlow<Resource<PersonDetailsModel>> =
+    private val _personDetails: MutableStateFlow<Resource<PersonDetailsResponse>> =
         MutableStateFlow(Resource.standby(null))
     val personDetails = _personDetails.asStateFlow()
 
-    private val _personMovieCast: MutableStateFlow<Resource<List<PersonMovieCastModel>>> =
+    private val _personMovieCast: MutableStateFlow<Resource<List<PersonMovieCastDto>>> =
         MutableStateFlow(Resource.standby(null))
     val personMovieCast = _personMovieCast.asStateFlow()
 
-    private val _personTvCast: MutableStateFlow<Resource<List<PersonTvCastModel>>> =
+    private val _personTvCast: MutableStateFlow<Resource<List<PersonTvCastDto>>> =
         MutableStateFlow(Resource.standby(null))
     val personTvCast = _personTvCast.asStateFlow()
 

@@ -1,9 +1,9 @@
 package com.mutkuensert.movee.data.movie
 
 import com.mutkuensert.movee.data.account.local.AccountDao
-import com.mutkuensert.movee.data.account.local.entity.FavoriteMovieEntity
-import com.mutkuensert.movee.data.movie.local.entity.PopularMovieEntity
-import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResultResponseModel
+import com.mutkuensert.movee.data.account.local.model.FavoriteMovieEntity
+import com.mutkuensert.movee.data.movie.local.model.PopularMovieEntity
+import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResultDto
 import com.mutkuensert.movee.library.session.SessionManager
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class PopularMoviesResultMapper @Inject constructor(
     private var key: Int? = null
 
     suspend fun mapToEntity(
-        popularMovieResult: PopularMoviesResultResponseModel,
+        popularMovieResult: PopularMoviesResultDto,
         page: Int
     ): PopularMovieEntity {
         if (page != key) {

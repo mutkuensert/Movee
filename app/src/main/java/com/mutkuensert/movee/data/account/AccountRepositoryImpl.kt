@@ -6,11 +6,11 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.mutkuensert.movee.data.ApiConstants
 import com.mutkuensert.movee.data.account.local.AccountDao
-import com.mutkuensert.movee.data.account.local.entity.FavoriteMovieEntity
+import com.mutkuensert.movee.data.account.local.model.FavoriteMovieEntity
 import com.mutkuensert.movee.data.account.remote.AccountApi
-import com.mutkuensert.movee.data.account.remote.model.FavoriteMovieRequestModel
-import com.mutkuensert.movee.data.account.remote.model.FavoriteMoviesResultResponseModel
-import com.mutkuensert.movee.data.authentication.dto.AccountDetailsDto
+import com.mutkuensert.movee.data.account.remote.model.FavoriteMovieDto
+import com.mutkuensert.movee.data.account.remote.model.FavoriteMoviesResultResponse
+import com.mutkuensert.movee.data.authentication.model.AccountDetailsResponse
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.account.AccountRepository
@@ -64,7 +64,7 @@ class AccountRepositoryImpl @Inject constructor(
             insertFavoriteMovieInCache(movieId)
 
             accountApi.postFavoriteMovie(
-                FavoriteMovieRequestModel(
+                FavoriteMovieDto(
                     favorite = true,
                     mediaId = movieId
                 )
@@ -75,7 +75,7 @@ class AccountRepositoryImpl @Inject constructor(
             deleteFavoriteFromMovie(movieId = movieId)
 
             accountApi.postFavoriteMovie(
-                FavoriteMovieRequestModel(
+                FavoriteMovieDto(
                     favorite = false,
                     mediaId = movieId
                 )
@@ -96,21 +96,21 @@ class AccountRepositoryImpl @Inject constructor(
     }
 }
 
-private fun mapToUserDetails(accountDetailsDto: AccountDetailsDto): UserDetails {
+private fun mapToUserDetails(accountDetailsResponse: AccountDetailsResponse): UserDetails {
     return UserDetails(
-        avatarPath = accountDetailsDto.avatar.tmdb.avatarPath,
-        gravatarHash = accountDetailsDto.avatar.gravatar.hash,
-        id = accountDetailsDto.id,
-        includeAdult = accountDetailsDto.includeAdult,
-        iso_3166_1 = accountDetailsDto.iso_3166_1,
-        iso_639_1 = accountDetailsDto.iso_639_1,
-        name = accountDetailsDto.name,
-        username = accountDetailsDto.username
+        avatarPath = accountDetailsResponse.avatar.tmdb.avatarPath,
+        gravatarHash = accountDetailsResponse.avatar.gravatar.hash,
+        id = accountDetailsResponse.id,
+        includeAdult = accountDetailsResponse.includeAdult,
+        iso_3166_1 = accountDetailsResponse.iso_3166_1,
+        iso_639_1 = accountDetailsResponse.iso_639_1,
+        name = accountDetailsResponse.name,
+        username = accountDetailsResponse.username
     )
 }
 
 private fun mapToFavoriteMovieEntity(
-    favoriteMoviesResultResponseModel: FavoriteMoviesResultResponseModel
+    favoriteMoviesResultResponse: FavoriteMoviesResultResponse
 ): FavoriteMovieEntity {
-    return FavoriteMovieEntity(id = favoriteMoviesResultResponseModel.id)
+    return FavoriteMovieEntity(id = favoriteMoviesResultResponse.id)
 }

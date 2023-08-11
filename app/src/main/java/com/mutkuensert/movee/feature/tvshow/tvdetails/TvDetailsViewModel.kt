@@ -3,8 +3,8 @@ package com.mutkuensert.movee.feature.tvshow.tvdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.movee.data.tvshow.TvShowsApi
-import com.mutkuensert.movee.data.tvshow.model.TvDetailsModel
-import com.mutkuensert.movee.data.tvshow.model.credits.TvShowCast
+import com.mutkuensert.movee.data.tvshow.model.TvDetailsResponse
+import com.mutkuensert.movee.data.tvshow.model.TvShowCastDto
 import com.mutkuensert.movee.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TvDetailsViewModel @Inject constructor(private val tvShowsApi: TvShowsApi) : ViewModel() {
-    private val _tvDetails: MutableStateFlow<Resource<TvDetailsModel>> =
+    private val _tvDetails: MutableStateFlow<Resource<TvDetailsResponse>> =
         MutableStateFlow(Resource.standby(null))
     val tvDetails = _tvDetails.asStateFlow()
 
-    private val _tvCast: MutableStateFlow<Resource<List<TvShowCast>>> =
+    private val _tvCast: MutableStateFlow<Resource<List<TvShowCastDto>>> =
         MutableStateFlow(Resource.standby(null))
     val tvCast = _tvCast.asStateFlow()
 

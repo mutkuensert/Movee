@@ -35,8 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsModel
-import com.mutkuensert.movee.data.movie.remote.model.credits.MovieCast
+import com.mutkuensert.movee.data.movie.remote.model.MovieCastDto
+import com.mutkuensert.movee.data.movie.remote.model.MovieDetailsResponse
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.Resource
 import com.mutkuensert.movee.util.SIZE_ORIGINAL
@@ -76,7 +76,7 @@ fun MovieDetails(
 
 @Composable
 private fun MovieDetailsDataObserver(
-    data: Resource<MovieDetailsModel>,
+    data: Resource<MovieDetailsResponse>,
     loadCastIfSuccessful: () -> Unit
 ) {
     when (data.status) {
@@ -113,7 +113,7 @@ private fun MovieDetailsDataObserver(
 
 @Composable
 private fun MovieCastDataObserver(
-    data: Resource<List<MovieCast>>,
+    data: Resource<List<MovieCastDto>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
     when (data.status) {
@@ -153,7 +153,7 @@ private fun MovieCastDataObserver(
 }
 
 @Composable
-private fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
+private fun MovieDetailsItem(movieDetails: MovieDetailsResponse) {
     if (movieDetails.posterPath != null) {
         Card(
             elevation = 10.dp,
@@ -234,7 +234,7 @@ private fun MovieDetailsItem(movieDetails: MovieDetailsModel) {
 
 
 @Composable
-private fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) {
+private fun MovieCastItem(cast: MovieCastDto, navigateToPersonDetails: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { navigateToPersonDetails() }

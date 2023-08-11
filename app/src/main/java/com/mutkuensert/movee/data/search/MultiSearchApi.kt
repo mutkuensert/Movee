@@ -1,6 +1,6 @@
 package com.mutkuensert.movee.data.search
 
-import com.mutkuensert.movee.data.search.model.MultiSearchModel
+import com.mutkuensert.movee.data.search.model.MultiSearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,5 +11,5 @@ interface MultiSearchApi {
     suspend fun multiSearch(
         @Query("query") query: String,
         @Query("page") page: Int = 1
-    ): Response<MultiSearchModel>
+    ): Response<MultiSearchResponse>
 }

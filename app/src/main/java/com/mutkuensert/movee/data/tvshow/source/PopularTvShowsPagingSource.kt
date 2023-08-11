@@ -2,15 +2,15 @@ package com.mutkuensert.movee.data.tvshow.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsModel
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResult
+import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResponse
+import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResultDto
 import com.mutkuensert.movee.util.UnsuccessfulResponseException
 import retrofit2.HttpException
 import retrofit2.Response
 
-class PopularTvShowsPagingSource(private val getPopularTvShows: suspend (page: Int) -> Response<PopularTvShowsModel>) :
-    PagingSource<Int, PopularTvShowsResult>() {
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PopularTvShowsResult> {
+class PopularTvShowsPagingSource(private val getPopularTvShows: suspend (page: Int) -> Response<PopularTvShowsResponse>) :
+    PagingSource<Int, PopularTvShowsResultDto>() {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PopularTvShowsResultDto> {
         try {
             val nextPageNumber = params.key ?: 1
             val response = getPopularTvShows.invoke(nextPageNumber)
@@ -29,7 +29,7 @@ class PopularTvShowsPagingSource(private val getPopularTvShows: suspend (page: I
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, PopularTvShowsResult>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, PopularTvShowsResultDto>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)

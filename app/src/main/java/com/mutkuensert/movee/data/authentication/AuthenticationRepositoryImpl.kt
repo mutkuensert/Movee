@@ -5,8 +5,8 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
-import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.data.authentication.model.SessionIdDto
+import com.mutkuensert.movee.data.authentication.model.ValidRequestTokenResponse
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.login.AuthenticationError
 import com.mutkuensert.movee.domain.login.AuthenticationRepository
@@ -36,7 +36,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun fetchSessionIdWithValidatedRequestToken(requestToken: String): Result<String, Failure> {
         authenticationApi.getSessionWithValidatedRequestToken(
-            validRequestTokenDto = ValidRequestTokenDto(
+            validRequestTokenResponse = ValidRequestTokenResponse(
                 validRequestToken = requestToken
             )
         ).toResult()

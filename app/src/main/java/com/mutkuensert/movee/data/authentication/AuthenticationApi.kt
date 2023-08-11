@@ -1,11 +1,10 @@
 package com.mutkuensert.movee.data.authentication
 
-import com.mutkuensert.movee.data.authentication.dto.DeleteSessionDto
-import com.mutkuensert.movee.data.authentication.dto.LoginDto
-import com.mutkuensert.movee.data.authentication.dto.RequestTokenDto
-import com.mutkuensert.movee.data.authentication.dto.SessionDto
-import com.mutkuensert.movee.data.authentication.dto.SessionIdDto
-import com.mutkuensert.movee.data.authentication.dto.ValidRequestTokenDto
+import com.mutkuensert.movee.data.authentication.model.DeleteSessionResponse
+import com.mutkuensert.movee.data.authentication.model.RequestTokenResponse
+import com.mutkuensert.movee.data.authentication.model.SessionIdDto
+import com.mutkuensert.movee.data.authentication.model.SessionResponse
+import com.mutkuensert.movee.data.authentication.model.ValidRequestTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,16 +14,13 @@ import retrofit2.http.POST
 interface AuthenticationApi {
 
     @GET("authentication/token/new")
-    suspend fun getRequestToken(): Response<RequestTokenDto>
-
-    @POST("authentication/token/validate_with_login")
-    suspend fun getValidatedRequestTokenWithLogin(@Body loginDto: LoginDto): Response<RequestTokenDto>
+    suspend fun getRequestToken(): Response<RequestTokenResponse>
 
     @POST("authentication/session/new")
     suspend fun getSessionWithValidatedRequestToken(
-        @Body validRequestTokenDto: ValidRequestTokenDto
-    ): Response<SessionDto>
+        @Body validRequestTokenResponse: ValidRequestTokenResponse
+    ): Response<SessionResponse>
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
-    suspend fun deleteSession(@Body sessionIdDto: SessionIdDto): Response<DeleteSessionDto>
+    suspend fun deleteSession(@Body sessionIdDto: SessionIdDto): Response<DeleteSessionResponse>
 }

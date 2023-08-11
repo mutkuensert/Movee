@@ -1,9 +1,9 @@
 package com.mutkuensert.movee.data.tvshow
 
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsModel
-import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsModel
-import com.mutkuensert.movee.data.tvshow.model.TvDetailsModel
-import com.mutkuensert.movee.data.tvshow.model.credits.TvShowCredits
+import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResponse
+import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResponse
+import com.mutkuensert.movee.data.tvshow.model.TvDetailsResponse
+import com.mutkuensert.movee.data.tvshow.model.TvShowCreditsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,20 +14,20 @@ interface TvShowsApi {
     @GET("tv/popular")
     suspend fun getPopularTvShows(
         @Query("page") page: Int = 1
-    ): Response<PopularTvShowsModel>
+    ): Response<PopularTvShowsResponse>
 
     @GET("tv/top_rated")
     suspend fun getTopRatedTvShows(
         @Query("page") page: Int = 1
-    ): Response<TopRatedTvShowsModel>
+    ): Response<TopRatedTvShowsResponse>
 
     @GET("tv/{tv_id}")
     suspend fun getTvShowDetails(
         @Path("tv_id") tvId: Int
-    ): Response<TvDetailsModel>
+    ): Response<TvDetailsResponse>
 
     @GET("tv/{tv_id}/credits")
     suspend fun getTvShowCredits(
         @Path("tv_id") tvId: Int
-    ): Response<TvShowCredits>
+    ): Response<TvShowCreditsResponse>
 }

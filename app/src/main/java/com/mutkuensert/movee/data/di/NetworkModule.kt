@@ -6,10 +6,10 @@ import com.mutkuensert.movee.data.movie.MovieApi
 import com.mutkuensert.movee.data.person.PersonApi
 import com.mutkuensert.movee.data.search.MultiSearchApi
 import com.mutkuensert.movee.data.search.model.MediaType
-import com.mutkuensert.movee.data.search.model.MovieResultItemModel
-import com.mutkuensert.movee.data.search.model.MultiSearchResultMediaType
-import com.mutkuensert.movee.data.search.model.PersonResulItemModel
-import com.mutkuensert.movee.data.search.model.TvResultItemModel
+import com.mutkuensert.movee.data.search.model.MovieResultItemDto
+import com.mutkuensert.movee.data.search.model.MultiSearchResultDto
+import com.mutkuensert.movee.data.search.model.PersonResulItemDto
+import com.mutkuensert.movee.data.search.model.TvResultItemDto
 import com.mutkuensert.movee.data.tvshow.TvShowsApi
 import com.mutkuensert.movee.network.AccountIdInterceptor
 import com.mutkuensert.movee.network.AuthenticationInterceptor
@@ -46,10 +46,10 @@ object NetworkModule {
     @Provides
     fun provideMoshiWithMultiSearchResultFactory(): Moshi {
         val multiSearchResultFactory =
-            PolymorphicJsonAdapterFactory.of(MultiSearchResultMediaType::class.java, "media_type")
-                .withSubtype(MovieResultItemModel::class.java, MediaType.MOVIE)
-                .withSubtype(TvResultItemModel::class.java, MediaType.TV)
-                .withSubtype(PersonResulItemModel::class.java, MediaType.PERSON)
+            PolymorphicJsonAdapterFactory.of(MultiSearchResultDto::class.java, "media_type")
+                .withSubtype(MovieResultItemDto::class.java, MediaType.MOVIE)
+                .withSubtype(TvResultItemDto::class.java, MediaType.TV)
+                .withSubtype(PersonResulItemDto::class.java, MediaType.PERSON)
 
         return Moshi
             .Builder()

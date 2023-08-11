@@ -60,8 +60,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResult
-import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResult
+import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResultDto
+import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResultDto
 import com.mutkuensert.movee.util.IMAGE_BASE_URL
 import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
@@ -152,7 +152,7 @@ fun TvShows(
 @Composable
 private fun PopularTvShows(
     modifier: Modifier = Modifier,
-    popularTvShows: LazyPagingItems<PopularTvShowsResult>,
+    popularTvShows: LazyPagingItems<PopularTvShowsResultDto>,
     lazyListState: LazyListState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
 ) {
@@ -218,7 +218,7 @@ private fun PopularTvShows(
 @Composable
 private fun TopRatedTvShows(
     modifier: Modifier = Modifier,
-    topRatedTvShows: LazyPagingItems<TopRatedTvShowsResult>,
+    topRatedTvShows: LazyPagingItems<TopRatedTvShowsResultDto>,
     itemsAboveHeight: MutableState<Dp>,
     lazyGridState: LazyGridState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit
@@ -316,7 +316,7 @@ private fun TopRatedTvShows(
 }
 
 @Composable
-private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () -> Unit) {
+private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResultDto, onClick: () -> Unit) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { onClick() }) {
@@ -363,7 +363,10 @@ private fun PopularTvShowsItem(popularTvShow: PopularTvShowsResult, onClick: () 
 }
 
 @Composable
-private fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: () -> Unit) {
+private fun TopRatedTvShowsItem(
+    topRatedTvShow: TopRatedTvShowsResultDto,
+    onClick: () -> Unit
+) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
@@ -423,7 +426,7 @@ private fun TopRatedTvShowsItem(topRatedTvShow: TopRatedTvShowsResult, onClick: 
 @Composable
 private fun PreviewTopRatedTveShowsItem() {
     TopRatedTvShowsItem(
-        topRatedTvShow = TopRatedTvShowsResult(
+        topRatedTvShow = TopRatedTvShowsResultDto(
             posterPath = null,
             id = 0,
             voteAverage = 0.0,
