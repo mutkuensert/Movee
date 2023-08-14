@@ -21,8 +21,8 @@ class CompleteLoginUseCase @Inject constructor(
         authenticationRepository.fetchSessionIdWithValidatedRequestToken(requestToken)
             .onFailure {
                 sessionManager.removeRequestToken()
-                
-                Timber.d(it.statusMessage)
+
+                Timber.d(it.message)
 
                 return false
             }

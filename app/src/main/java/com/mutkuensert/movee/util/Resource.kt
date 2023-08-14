@@ -1,6 +1,11 @@
 package com.mutkuensert.movee.util
 
-data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
+data class Resource<out T>(
+    val status: Status,
+    val data: T?,
+    val message: String?,
+    val error: Throwable? = null
+) {
 
     companion object {
 
@@ -8,8 +13,12 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
             return Resource(Status.SUCCESS, data, message)
         }
 
-        fun <T> error(data: T? = null, message: String? = null): Resource<T> {
-            return Resource(Status.ERROR, data, message)
+        fun <T> error(
+            data: T? = null,
+            message: String? = null,
+            error: Throwable? = null
+        ): Resource<T> {
+            return Resource(Status.ERROR, data, message, error)
         }
 
         fun <T> loading(data: T? = null, message: String? = null): Resource<T> {

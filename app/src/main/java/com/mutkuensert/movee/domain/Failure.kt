@@ -2,11 +2,12 @@ package com.mutkuensert.movee.domain
 
 data class Failure(
     val statusCode: Int? = null,
-    val statusMessage: String,
-) {
+    override val message: String,
+    override val cause: Throwable? = null,
+) : Throwable() {
     companion object {
         fun empty(): Failure {
-            return Failure(statusMessage = "Unknown")
+            return Failure(message = "Unknown")
         }
     }
 }

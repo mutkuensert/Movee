@@ -25,13 +25,13 @@ class AuthenticationRepositoryImpl @Inject constructor(
             .toResult()
             .onSuccess {
                 return if (!it.success) {
-                    Err(Failure(statusMessage = "Unsuccessful request token"))
+                    Err(Failure(message = "Unsuccessful request token"))
                 } else {
                     Ok(it.requestToken)
                 }
             }
 
-        return Err(Failure(statusMessage = ""))
+        return Err(Failure(message = ""))
     }
 
     override suspend fun fetchSessionIdWithValidatedRequestToken(requestToken: String): Result<String, Failure> {
@@ -42,13 +42,13 @@ class AuthenticationRepositoryImpl @Inject constructor(
         ).toResult()
             .onSuccess {
                 return if (!it.success) {
-                    Err(Failure(statusMessage = "Unsuccessful request token validation."))
+                    Err(Failure(message = "Unsuccessful request token validation."))
                 } else {
                     Ok(it.sessionId)
                 }
             }
 
-        return Err(Failure(statusMessage = ""))
+        return Err(Failure(message = ""))
     }
 
     override suspend fun logout(): Boolean {
@@ -67,7 +67,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 .onFailure {
                     if (it.statusCode == AuthenticationError.RESOURCE_NOT_FOUND.statusCode) {
                         sessionManager.removeSession()
-                        Timber.e("User session has been removed. Error Message: ${it.statusMessage}")
+                        Timber.e("User session has been removed. Error Message: ${it.message}")
                         return true
                     }
 

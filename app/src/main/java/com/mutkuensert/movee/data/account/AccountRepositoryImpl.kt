@@ -30,7 +30,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun getUserDetails(): Result<UserDetails, Failure> {
         val sessionId = sessionManager.getSessionId()
-            ?: return Err(Failure(statusMessage = "${SessionManager::getSessionId.name} returned null."))
+            ?: return Err(Failure(message = "${SessionManager::getSessionId.name} returned null."))
 
         return accountApi.getAccountDetails(sessionId).toResult(::mapToUserDetails)
     }

@@ -41,7 +41,7 @@ fun ResponseBody?.toFailure(): Failure {
 
         Failure(
             statusCode = jsonObject.getInt("status_code"),
-            statusMessage = jsonObject.getString("status_message")
+            message = jsonObject.getString("status_message")
         )
     } catch (e: JSONException) {
         Failure.empty()

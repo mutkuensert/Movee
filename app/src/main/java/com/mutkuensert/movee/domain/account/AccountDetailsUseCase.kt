@@ -22,7 +22,7 @@ class AccountDetailsUseCase @Inject constructor(
                 return true
             }
             .onFailure {
-                Timber.e(it.statusMessage)
+                Timber.e(it.message)
             }
 
         return false

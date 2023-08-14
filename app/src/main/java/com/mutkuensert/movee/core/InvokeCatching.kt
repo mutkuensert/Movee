@@ -4,7 +4,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 
-fun <T> invoke(block: () -> T): Result<T, Throwable> {
+fun <T> invokeCatching(block: () -> T): Result<T, Throwable> {
     return try {
         Ok(block.invoke())
     } catch (e: Throwable) {
@@ -12,7 +12,7 @@ fun <T> invoke(block: () -> T): Result<T, Throwable> {
     }
 }
 
-suspend fun <T> invokeSuspending(block: suspend () -> T): Result<T, Throwable> {
+suspend fun <T> invokeSuspendingCatching(block: suspend () -> T): Result<T, Throwable> {
     return try {
         Ok(block.invoke())
     } catch (e: Throwable) {
