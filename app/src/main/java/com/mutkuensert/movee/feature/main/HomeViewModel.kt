@@ -10,18 +10,18 @@ class HomeViewModel @Inject constructor(
     private val mainNavigator: MainNavigator,
 ) : ViewModel() {
     fun navigateToMovie() {
-        mainNavigator.navigateToTab(route = Tabs.Movie.route)
+        mainNavigator.navigateToTab(route = TabItem.Movie.route)
     }
 
     fun navigateToTvShow() {
-        mainNavigator.navigateToTab(route = Tabs.TvShow.route)
+        mainNavigator.navigateToTab(route = TabItem.TvShow.route)
     }
 
     fun navigateToMultiSearch() {
-        mainNavigator.navigateToTab(route = Tabs.MultiSearch.route)
+        mainNavigator.navigateToTab(route = TabItem.MultiSearch.route)
     }
 
     fun navigateToLogin() {
-        mainNavigator.navigateToTab(route = Tabs.Login.route)
+        mainNavigator.navigateToTab(route = TabItem.Login.route)
     }
 }

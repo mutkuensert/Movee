@@ -24,10 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.mutkuensert.movee.R
-import com.mutkuensert.movee.feature.login.navigation.ROUTE_LOGIN
 import com.mutkuensert.movee.feature.movie.navigation.GRAPH_MOVIE
-import com.mutkuensert.movee.feature.multisearch.navigation.ROUTE_MULTI_SEARCH
-import com.mutkuensert.movee.feature.tvshow.navigation.GRAPH_TV_SHOW
 import com.mutkuensert.movee.navigation.NavigationBuilder
 import com.mutkuensert.movee.theme.AppColors
 
@@ -42,7 +39,7 @@ fun HomeScreen(navigationBuilder: NavigationBuilder) {
     ) {
         Scaffold(
             bottomBar = {
-                MyBottomAppBar(
+                BottomNavBar(
                     navController = navController,
                     viewModel = viewModel
                 )
@@ -61,8 +58,8 @@ fun HomeScreen(navigationBuilder: NavigationBuilder) {
 }
 
 @Composable
-private fun MyBottomAppBar(navController: NavController, viewModel: HomeViewModel) {
-    val currentRoute by navController.currentParentRouteAsState()
+private fun BottomNavBar(navController: NavController, viewModel: HomeViewModel) {
+    val lastTabItemRoute by navController.lastTabItemRouteAsState()
 
     BottomNavigation(
         modifier = Modifier.border(width = 1.dp, color = Color.LightGray),
@@ -70,63 +67,62 @@ private fun MyBottomAppBar(navController: NavController, viewModel: HomeViewMode
         contentColor = Color.DarkGray
     ) {
         BottomNavigationItem(
-            selected = currentRoute == GRAPH_MOVIE,
+            selected = lastTabItemRoute == TabItem.Movie.route,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
             onClick = viewModel::navigateToMovie,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_movie),
-                    contentDescription = "Go to movies button icon"
+                    contentDescription = null
                 )
             })
 
         BottomNavigationItem(
-            selected = currentRoute == GRAPH_TV_SHOW,
+            selected = lastTabItemRoute == TabItem.TvShow.route,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
             onClick = viewModel::navigateToTvShow,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_tvshow),
-                    contentDescription = "Go to tv shows button icon"
+                    contentDescription = null
                 )
             })
 
         BottomNavigationItem(
-            selected = currentRoute == ROUTE_MULTI_SEARCH,
+            selected = lastTabItemRoute == TabItem.MultiSearch.route,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
             onClick = viewModel::navigateToMultiSearch,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "Go to search button icon"
+                    contentDescription = null
                 )
             })
 
         BottomNavigationItem(
-            selected = currentRoute == ROUTE_LOGIN,
+            selected = lastTabItemRoute == TabItem.Login.route,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
             onClick = viewModel::navigateToLogin,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_account),
-                    contentDescription = "Go to account button icon"
+                    contentDescription = null
                 )
             })
     }
 }
 
 @Composable
-private fun NavController.currentParentRouteAsState(): State<String?> {
+private fun NavController.lastTabItemRouteAsState(): State<String?> {
     val destination = remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { navController, _, _ ->
-            destination.value = navController.currentDestination?.parent?.route
-                ?: navController.currentDestination?.route
+            destination.value = navController.getLastNavigatedTabItem()?.route
         }
 
         addOnDestinationChangedListener(listener)
@@ -137,4 +133,26 @@ private fun NavController.currentParentRouteAsState(): State<String?> {
     }
 
     return destination
+}
+
+private fun NavController.getLastNavigatedTabItem(): TabItem? {
+    val currentTabItem = TabItem.all().find {
+        it.route == currentBackStackEntry?.destination?.parent?.route
+    }
+
+    if (currentTabItem != null) return currentTabItem
+
+    val backIterator = currentBackStack.value.iterator()
+    var lastTabItem: TabItem? = null
+
+    while (backIterator.hasNext()) {
+        val entry = backIterator.next()
+        val tabItem = TabItem.all().find { it.route == entry.destination.route }
+
+        if (tabItem != null) {
+            lastTabItem = tabItem
+        }
+    }
+
+    return lastTabItem
 }
