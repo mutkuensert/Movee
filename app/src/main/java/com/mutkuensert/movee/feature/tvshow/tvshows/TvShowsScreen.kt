@@ -68,8 +68,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TvShowsScreen(
-    viewModel: TvShowsViewModel = hiltViewModel(),
-    navigateToTvShowDetails: (tvShowId: Int) -> Unit
+    viewModel: TvShowsViewModel = hiltViewModel()
 ) {
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
     val topRatedTvShows = viewModel.topRatedTvShows.collectAsLazyPagingItems()
@@ -106,7 +105,7 @@ fun TvShowsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
             topRatedTvShows = topRatedTvShows,
-            navigateToTvShowDetails = navigateToTvShowDetails,
+            navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
             itemsAboveHeight = itemsAboveHeight,
             lazyGridState = stateOfTopRatedTvShows
         )
@@ -139,7 +138,7 @@ fun TvShowsScreen(
                         .wrapContentHeight()
                         .padding(horizontal = 10.dp),
                     popularTvShows = popularTvShowsLazyPagingItems,
-                    navigateToTvShowDetails = navigateToTvShowDetails,
+                    navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
                     lazyListState = stateOfPopularTvShows
                 )
 

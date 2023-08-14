@@ -44,33 +44,30 @@ import com.mutkuensert.movee.util.Status
 
 @Composable
 fun TvDetailsScreen(
-    tvId: Int?,
-    viewModel: TvShowDetailsViewModel = hiltViewModel(),
-    navigateToPersonDetails: (personId: Int) -> Unit
+    viewModel: TvShowDetailsViewModel = hiltViewModel()
 ) {
     val tvShowDetails by viewModel.tvShowDetails.collectAsStateWithLifecycle()
     val tvCast by viewModel.tvCast.collectAsStateWithLifecycle()
+    val tvShowId = viewModel.tvShowId
 
-    if (tvId != null) {
-        LaunchedEffect(true) { viewModel.getTvDetails(tvId) }
+    LaunchedEffect(true) { viewModel.getTvDetails(tvShowId) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 25.dp)
-        ) {
-            TvDetailsDataObserver(
-                data = tvShowDetails,
-                loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvId = tvId) })
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 25.dp)
+    ) {
+        TvDetailsDataObserver(
+            data = tvShowDetails,
+            loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvShowId = tvShowId) })
 
-            Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
-            TvShowsCastDataObserver(
-                data = tvCast,
-                navigateToPersonDetails = navigateToPersonDetails
-            )
-        }
+        TvShowsCastDataObserver(
+            data = tvCast,
+            navigateToPersonDetails = viewModel::navigateToPersonDetails
+        )
     }
 }
 

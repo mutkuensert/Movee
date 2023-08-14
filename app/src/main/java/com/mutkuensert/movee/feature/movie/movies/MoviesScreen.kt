@@ -66,8 +66,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun MoviesScreen(
-    viewModel: MoviesViewModel = hiltViewModel(),
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    viewModel: MoviesViewModel = hiltViewModel()
 ) {
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
     val popularMovies = viewModel.popularMovies.collectAsLazyPagingItems()
@@ -99,7 +98,7 @@ fun MoviesScreen(
         PopularMovies(
             popularMovies = popularMovies,
             itemsAboveHeight = itemsAboveHeight,
-            navigateToMovieDetails = navigateToMovieDetails,
+            navigateToMovieDetails = viewModel::navigateToMovieDetails,
             onAddToFavorite = viewModel::addMovieToFavorites
         )
 
@@ -129,7 +128,7 @@ fun MoviesScreen(
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     moviesNowPlaying = moviesNowPlayingLazyPagingItems,
-                    navigateToMovieDetails = navigateToMovieDetails,
+                    navigateToMovieDetails = viewModel::navigateToMovieDetails,
                     lazyListState = stateOfMoviesNowPlaying
                 )
 

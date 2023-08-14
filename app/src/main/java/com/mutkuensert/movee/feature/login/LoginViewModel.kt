@@ -7,8 +7,8 @@ import com.mutkuensert.movee.domain.login.CompleteAnyUnfinishedLoginTaskUseCase
 import com.mutkuensert.movee.domain.login.CompleteLoginUseCase
 import com.mutkuensert.movee.domain.login.GetRequestTokenUseCase
 import com.mutkuensert.movee.domain.login.LogoutUseCase
+import com.mutkuensert.movee.feature.login.navigation.KEY_IS_REDIRECTED_FROM_TMDB_LOGIN
 import com.mutkuensert.movee.library.session.SessionManager
-import com.mutkuensert.movee.util.NavConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private var redirectedFromTmdbLogin: String? =
-        savedStateHandle[NavConstants.Login.KEY_IS_REDIRECTED_FROM_TMDB_LOGIN]
+        savedStateHandle[KEY_IS_REDIRECTED_FROM_TMDB_LOGIN]
     private val _isLoggedIn = MutableStateFlow<Boolean?>(null)
     val isLoggedIn: StateFlow<Boolean?>
         get() {

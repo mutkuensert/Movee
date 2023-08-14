@@ -43,10 +43,7 @@ import com.mutkuensert.movee.util.SIZE_ORIGINAL
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MultiSearchScreen(
-    viewModel: MultiSearchViewModel = hiltViewModel(),
-    navigateToMovieDetails: (movieId: Int) -> Unit,
-    navigateToTvDetails: (tvId: Int) -> Unit,
-    navigateToPersonDetails: (personId: Int) -> Unit
+    viewModel: MultiSearchViewModel = hiltViewModel()
 ) {
     val searchResults = viewModel.multiSearchResults.collectAsLazyPagingItems()
     val searchTextField = viewModel.searchTextField.collectAsStateWithLifecycle()
@@ -108,9 +105,7 @@ fun MultiSearchScreen(
                             name = item.title,
                             picturePath = item.picturePath,
                             navigateToItemDetails = {
-                                navigateToMovieDetails(
-                                    item.id
-                                )
+                                viewModel.navigateToMovieDetails(item.id)
                             }
                         )
                     }
@@ -119,7 +114,9 @@ fun MultiSearchScreen(
                         SearchResultItem(
                             name = item.title,
                             picturePath = item.picturePath,
-                            navigateToItemDetails = { navigateToTvDetails(item.id) }
+                            navigateToItemDetails = {
+                                viewModel.navigateToTvShowDetails(item.id)
+                            }
                         )
                     }
 
@@ -128,9 +125,7 @@ fun MultiSearchScreen(
                             name = item.title,
                             picturePath = item.picturePath,
                             navigateToItemDetails = {
-                                navigateToPersonDetails(
-                                    item.id
-                                )
+                                viewModel.navigateToPersonDetails(item.id)
                             }
                         )
                     }

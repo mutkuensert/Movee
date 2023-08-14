@@ -44,33 +44,30 @@ import com.mutkuensert.movee.util.Status
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int?,
-    viewModel: MovieDetailsViewModel = hiltViewModel(),
-    navigateToPersonDetails: (personId: Int) -> Unit
+    viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     val movieDetails by viewModel.movieDetails.collectAsStateWithLifecycle()
     val movieCast by viewModel.movieCast.collectAsStateWithLifecycle()
+    val movieId = viewModel.movieId
 
-    if (movieId != null) {
-        LaunchedEffect(true) { viewModel.getMovieDetails(movieId) }
+    LaunchedEffect(true) { viewModel.getMovieDetails(movieId) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 25.dp)
-        ) {
-            MovieDetailsDataObserver(
-                data = movieDetails,
-                loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 25.dp)
+    ) {
+        MovieDetailsDataObserver(
+            data = movieDetails,
+            loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
 
-            Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
-            MovieCastDataObserver(
-                data = movieCast,
-                navigateToPersonDetails = navigateToPersonDetails
-            )
-        }
+        MovieCastDataObserver(
+            data = movieCast,
+            navigateToPersonDetails = viewModel::navigateToPerson
+        )
     }
 }
 

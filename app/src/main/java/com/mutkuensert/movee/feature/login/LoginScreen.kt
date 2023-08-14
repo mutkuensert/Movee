@@ -19,8 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mutkuensert.movee.R
+import com.mutkuensert.movee.feature.login.navigation.getLoginRouteWithEntity
 import com.mutkuensert.movee.util.APP_DEEP_LINK
-import com.mutkuensert.movee.util.NavConstants
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
@@ -92,7 +92,7 @@ private fun DirectToLoginPage(requestToken: String?) {
                     "https://www.themoviedb.org/authenticate/" +
                             requestToken +
                             "?redirect_to" +
-                            "=$APP_DEEP_LINK${NavConstants.Login.getRouteLoginWithEntity(true)}"
+                            "=$APP_DEEP_LINK${getLoginRouteWithEntity(true)}"
                 )
             if (uri.scheme == null) {
                 uri = uri

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.mutkuensert.movee.domain.account.AccountRepository
 import com.mutkuensert.movee.domain.movie.MovieRepository
+import com.mutkuensert.movee.navigation.navigator.MovieNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 class MoviesViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val movieRepository: MovieRepository,
+    private val movieNavigator: MovieNavigator,
 ) : ViewModel() {
 
     val popularMovies = movieRepository.getPopularMoviesPagingFlow()
@@ -28,5 +30,9 @@ class MoviesViewModel @Inject constructor(
                 movieId = movieId
             )
         }
+    }
+
+    fun navigateToMovieDetails(movieId: Int) {
+        movieNavigator.navigateToDetails(movieId)
     }
 }

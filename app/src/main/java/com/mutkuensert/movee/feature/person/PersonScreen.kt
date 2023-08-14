@@ -46,43 +46,39 @@ import com.mutkuensert.movee.util.Status
 
 @Composable
 fun PersonScreen(
-    personId: Int?,
-    viewModel: PersonViewModel = hiltViewModel(),
-    navigateToMovieDetails: (movieId: Int) -> Unit,
-    navigateToTvDetails: (tvId: Int) -> Unit
+    viewModel: PersonViewModel = hiltViewModel()
 ) {
     val personDetails by viewModel.personDetails.collectAsStateWithLifecycle()
     val personMovieCast by viewModel.personMovieCast.collectAsStateWithLifecycle()
     val personTvCast by viewModel.personTvCast.collectAsStateWithLifecycle()
+    val personId = viewModel.personId
 
-    if (personId != null) {
+    LaunchedEffect(true) {
+        viewModel.getPersonDetails(personId)
+    }
+
+    if (personDetails.status == Status.SUCCESS) {
         LaunchedEffect(true) {
-            viewModel.getPersonDetails(personId)
+            viewModel.getPersonCast(personId = personId)
         }
+    }
 
-        if (personDetails.status == Status.SUCCESS) {
-            LaunchedEffect(true) {
-                viewModel.getPersonCast(personId = personId)
-            }
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
+        PersonDetails(personDetails = personDetails)
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-        ) {
-            PersonDetails(personDetails = personDetails)
+        PersonMovieCast(
+            cast = personMovieCast,
+            navigateToMovieDetails = viewModel::navigateToMovieDetails
+        )
 
-            PersonMovieCast(
-                cast = personMovieCast,
-                navigateToMovieDetails = navigateToMovieDetails
-            )
-
-            PersonTvCast(
-                cast = personTvCast,
-                navigateToTvDetails = navigateToTvDetails
-            )
-        }
+        PersonTvCast(
+            cast = personTvCast,
+            navigateToTvDetails = viewModel::navigateToTvShowDetails
+        )
     }
 }
 

@@ -1,8 +1,5 @@
-package com.mutkuensert.movee.feature
+package com.mutkuensert.movee.feature.main
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,64 +12,57 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.mutkuensert.movee.BuildConfig
 import com.mutkuensert.movee.R
+import com.mutkuensert.movee.feature.login.navigation.ROUTE_LOGIN
+import com.mutkuensert.movee.feature.movie.navigation.GRAPH_MOVIE
+import com.mutkuensert.movee.feature.multisearch.navigation.ROUTE_MULTI_SEARCH
+import com.mutkuensert.movee.feature.tvshow.navigation.GRAPH_TV_SHOW
+import com.mutkuensert.movee.navigation.NavigationBuilder
 import com.mutkuensert.movee.theme.AppColors
-import com.mutkuensert.movee.theme.MoveeTheme
-import com.mutkuensert.movee.util.NavConstants
-import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
-import timber.log.Timber.Forest.plant
 
+@Composable
+fun HomeScreen(navigationBuilder: NavigationBuilder) {
+    val navController = rememberNavController()
+    val viewModel = hiltViewModel<HomeViewModel>()
 
-@AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        plantTimber()
-
-        setContent {
-            val navController = rememberNavController()
-            MoveeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Scaffold(
-                        bottomBar = {
-                            MyBottomAppBar(navController = navController)
-                        }
-                    ) { padding ->
-                        MyNavHost(
-                            modifier = Modifier.padding(padding),
-                            navController = navController
-                        )
-                    }
-                }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        Scaffold(
+            bottomBar = {
+                MyBottomAppBar(
+                    navController = navController,
+                    viewModel = viewModel
+                )
             }
+        ) { padding ->
+            NavHost(
+                modifier = Modifier.padding(padding),
+                navController = navController,
+                startDestination = GRAPH_MOVIE,
+                builder = navigationBuilder::buildNavGraph
+            )
         }
     }
 
-    private fun plantTimber() {
-        if (BuildConfig.DEBUG) {
-            plant(Timber.DebugTree())
-        }
-    }
+    navigationBuilder.ObserveNavigation(navController = navController)
 }
 
 @Composable
-private fun MyBottomAppBar(navController: NavController) {
-    val currentRoute = navController.currentParentRouteAsState().value
+private fun MyBottomAppBar(navController: NavController, viewModel: HomeViewModel) {
+    val currentRoute by navController.currentParentRouteAsState()
 
     BottomNavigation(
         modifier = Modifier.border(width = 1.dp, color = Color.LightGray),
@@ -80,10 +70,10 @@ private fun MyBottomAppBar(navController: NavController) {
         contentColor = Color.DarkGray
     ) {
         BottomNavigationItem(
-            selected = currentRoute == NavConstants.Movie.GRAPH_MOVIE,
+            selected = currentRoute == GRAPH_MOVIE,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(NavConstants.Movie.ROUTE_MOVIES) },
+            onClick = viewModel::navigateToMovie,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_movie),
@@ -92,10 +82,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == NavConstants.TvShow.GRAPH_TV_SHOWS,
+            selected = currentRoute == GRAPH_TV_SHOW,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(NavConstants.TvShow.ROUTE_TV_SHOWS) },
+            onClick = viewModel::navigateToTvShow,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_tvshow),
@@ -104,10 +94,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == NavConstants.Search.ROUTE_MULTI_SEARCH,
+            selected = currentRoute == ROUTE_MULTI_SEARCH,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(NavConstants.Search.ROUTE_MULTI_SEARCH) },
+            onClick = viewModel::navigateToMultiSearch,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
@@ -116,10 +106,10 @@ private fun MyBottomAppBar(navController: NavController) {
             })
 
         BottomNavigationItem(
-            selected = currentRoute == NavConstants.Login.ROUTE_LOGIN,
+            selected = currentRoute == ROUTE_LOGIN,
             unselectedContentColor = Color.Gray,
             selectedContentColor = AppColors.DarkCyan,
-            onClick = { navController.navigate(NavConstants.Login.ROUTE_LOGIN) },
+            onClick = viewModel::navigateToLogin,
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_account),
@@ -147,12 +137,4 @@ private fun NavController.currentParentRouteAsState(): State<String?> {
     }
 
     return destination
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    MoveeTheme {
-        MyNavHost()
-    }
 }
