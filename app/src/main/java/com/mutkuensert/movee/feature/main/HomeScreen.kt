@@ -137,7 +137,9 @@ private fun NavController.lastTabItemRouteAsState(): State<String?> {
 
 private fun NavController.getLastNavigatedTabItem(): TabItem? {
     val currentTabItem = TabItem.all().find {
-        it.route == currentBackStackEntry?.destination?.parent?.route
+        val destination = currentBackStackEntry?.destination
+
+        it.route == (destination?.parent?.route ?: destination?.route)
     }
 
     if (currentTabItem != null) return currentTabItem
