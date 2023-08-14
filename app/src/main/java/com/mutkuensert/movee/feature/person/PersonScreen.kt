@@ -39,10 +39,8 @@ import coil.request.ImageRequest
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
-import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.Resource
-import com.mutkuensert.movee.util.SIZE_ORIGINAL
-import com.mutkuensert.movee.util.Status
+import com.mutkuensert.movee.domain.util.Resource
+import com.mutkuensert.movee.domain.util.Status
 
 @Composable
 fun PersonScreen(
@@ -110,36 +108,32 @@ private fun PersonDetails(personDetails: Resource<PersonDetails>) {
         Loading(status = personDetails.status)
 
         if (personDetails.status == Status.SUCCESS && personDetails.data != null) {
-            val profilePath = personDetails.data.profilePath
-
-            if (profilePath != null) {
-                Card(
-                    elevation = 10.dp,
-                    shape = RectangleShape
-                ) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL$profilePath")
-                            .crossfade(true)
-                            .build(),
-                        loading = {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Spacer(Modifier.height(50.dp))
-                                CircularProgressIndicator(
-                                    color = Color.Gray,
-                                    modifier = Modifier.size(100.dp)
-                                )
-                                Spacer(Modifier.height(50.dp))
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentDescription = "Tv Poster",
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
+            Card(
+                elevation = 10.dp,
+                shape = RectangleShape
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(personDetails.data.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    loading = {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(Modifier.height(50.dp))
+                            CircularProgressIndicator(
+                                color = Color.Gray,
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Spacer(Modifier.height(50.dp))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentDescription = "Tv Poster",
+                    contentScale = ContentScale.FillWidth
+                )
             }
 
             Column(modifier = Modifier.padding(horizontal = 15.dp)) {
@@ -230,7 +224,7 @@ private fun PersonMovieCastItem(
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${movie.posterPath}")
+                            .data(movie.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -301,7 +295,7 @@ private fun PersonTvCastItem(tv: PersonTvCast, navigateToTvDetails: (tvId: Int) 
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${tv.posterPath}")
+                            .data(tv.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {

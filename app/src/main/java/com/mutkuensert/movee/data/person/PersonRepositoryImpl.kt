@@ -1,6 +1,7 @@
 package com.mutkuensert.movee.data.person
 
 import com.github.michaelbull.result.Result
+import com.mutkuensert.movee.data.util.getImageUrl
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.person.PersonRepository
 import com.mutkuensert.movee.domain.person.model.PersonDetails
@@ -20,7 +21,7 @@ class PersonRepositoryImpl @Inject constructor(
                     character = it.character,
                     title = it.title,
                     id = it.id,
-                    posterPath = it.posterPath
+                    imageUrl = getImageUrl(it.posterPath)
                 )
             }
         })
@@ -33,7 +34,7 @@ class PersonRepositoryImpl @Inject constructor(
                     character = it.character,
                     name = it.name,
                     id = it.id,
-                    posterPath = it.posterPath
+                    imageUrl = getImageUrl(it.posterPath)
                 )
             }
         })
@@ -41,7 +42,11 @@ class PersonRepositoryImpl @Inject constructor(
 
     override suspend fun getPersonDetails(personId: Int): Result<PersonDetails, Failure> {
         return personApi.getPersonDetails(personId).toResult(mapper = {
-            PersonDetails(name = it.name, biography = it.biography, profilePath = it.profilePath)
+            PersonDetails(
+                name = it.name,
+                biography = it.biography,
+                imageUrl = getImageUrl(it.profilePath)
+            )
         })
     }
 }

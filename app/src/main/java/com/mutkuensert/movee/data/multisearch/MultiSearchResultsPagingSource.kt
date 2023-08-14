@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mutkuensert.movee.data.multisearch.model.MultiSearchResponse
 import com.mutkuensert.movee.data.multisearch.model.MultiSearchResultDto
-import com.mutkuensert.movee.util.UnsuccessfulResponseException
+import com.mutkuensert.movee.domain.Failure
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -31,7 +31,7 @@ class MultiSearchResultsPagingSource(
                     nextKey = if (nextPageNumber + 1 <= response.body()!!.totalPages) nextPageNumber + 1 else null
                 )
             } else {
-                LoadResult.Error(UnsuccessfulResponseException("Unsuccessful Multi Search Request"))
+                LoadResult.Error(Failure(message = "Unsuccessful Request"))
             }
 
         } catch (exception: HttpException) {

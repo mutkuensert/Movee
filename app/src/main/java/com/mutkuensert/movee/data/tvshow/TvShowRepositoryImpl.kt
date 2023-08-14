@@ -7,6 +7,7 @@ import androidx.paging.map
 import com.github.michaelbull.result.Result
 import com.mutkuensert.movee.data.tvshow.source.PopularTvShowsPagingSource
 import com.mutkuensert.movee.data.tvshow.source.TopRatedTvShowsPagingSource
+import com.mutkuensert.movee.data.util.getImageUrl
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.tvshow.TvShowRepository
 import com.mutkuensert.movee.domain.tvshow.model.PopularTvShow
@@ -27,7 +28,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 id = response.id,
                 name = response.name,
                 overview = response.overview,
-                posterPath = response.posterPath,
+                imageUrl = getImageUrl(response.posterPath),
                 seasonCount = response.seasons.size,
                 totalEpisodeNumber = response.seasons.sumOf { it.episodeCount },
                 voteAverage = response.voteAverage
@@ -41,7 +42,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 TvShowCast(
                     id = it.id,
                     name = it.name,
-                    profilePath = it.profilePath,
+                    imageUrl = getImageUrl(it.profilePath),
                     character = it.character
                 )
             }
@@ -56,7 +57,7 @@ class TvShowRepositoryImpl @Inject constructor(
         }.flow.map { pagingData ->
             pagingData.map {
                 PopularTvShow(
-                    posterPath = it.posterPath,
+                    imageUrl = getImageUrl(it.posterPath),
                     id = it.id,
                     voteAverage = it.voteAverage,
                     name = it.name
@@ -73,7 +74,7 @@ class TvShowRepositoryImpl @Inject constructor(
         }.flow.map { pagingData ->
             pagingData.map {
                 TopRatedTvShow(
-                    posterPath = it.posterPath,
+                    imageUrl = getImageUrl(it.posterPath),
                     id = it.id,
                     voteAverage = it.voteAverage,
                     name = it.name

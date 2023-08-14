@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowDto
 import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResponse
-import com.mutkuensert.movee.util.UnsuccessfulResponseException
+import com.mutkuensert.movee.domain.Failure
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -22,7 +22,7 @@ class TopRatedTvShowsPagingSource(private val getTopRatedTvShows: suspend (page:
                     nextKey = if (nextPageNumber + 1 <= response.body()!!.totalPages) nextPageNumber + 1 else null
                 )
             } else {
-                LoadResult.Error(UnsuccessfulResponseException("Unsuccessful Top Rated Tv Shows Request"))
+                LoadResult.Error(Failure(message = "Unsuccessful Request"))
             }
         } catch (exception: HttpException) {
             return LoadResult.Error(exception)

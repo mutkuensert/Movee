@@ -8,7 +8,6 @@ import com.github.michaelbull.result.onSuccess
 import com.mutkuensert.movee.data.authentication.model.SessionIdDto
 import com.mutkuensert.movee.data.authentication.model.ValidRequestTokenResponse
 import com.mutkuensert.movee.domain.Failure
-import com.mutkuensert.movee.domain.login.AuthenticationError
 import com.mutkuensert.movee.domain.login.AuthenticationRepository
 import com.mutkuensert.movee.library.session.SessionManager
 import com.mutkuensert.movee.network.toResult

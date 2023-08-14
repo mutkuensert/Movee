@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.mutkuensert.movee.data.ApiConstants
+import com.mutkuensert.movee.data.util.ApiConstants
 import com.mutkuensert.movee.data.movie.PopularMoviesResultMapper
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.data.movie.local.model.PopularMovieEntity

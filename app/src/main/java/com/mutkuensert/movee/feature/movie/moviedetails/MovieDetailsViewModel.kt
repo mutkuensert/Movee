@@ -9,7 +9,7 @@ import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
 import com.mutkuensert.movee.feature.movie.navigation.KEY_MOVIE_ID
 import com.mutkuensert.movee.navigation.navigator.PersonNavigator
-import com.mutkuensert.movee.util.Resource
+import com.mutkuensert.movee.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

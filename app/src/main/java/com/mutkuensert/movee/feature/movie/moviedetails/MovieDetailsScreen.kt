@@ -37,10 +37,8 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
-import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.Resource
-import com.mutkuensert.movee.util.SIZE_ORIGINAL
-import com.mutkuensert.movee.util.Status
+import com.mutkuensert.movee.domain.util.Resource
+import com.mutkuensert.movee.domain.util.Status
 
 @Composable
 fun MovieDetailsScreen(
@@ -151,14 +149,14 @@ private fun MovieCastDataObserver(
 
 @Composable
 private fun MovieDetailsItem(movieDetails: MovieDetails) {
-    if (movieDetails.posterPath != null) {
+    if (movieDetails.imageUrl != null) {
         Card(
             elevation = 10.dp,
             shape = RectangleShape
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${movieDetails.posterPath}")
+                    .data(movieDetails.imageUrl)
                     .crossfade(true)
                     .build(),
                 loading = {
@@ -244,7 +242,7 @@ private fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) 
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${cast.profilePath}")
+                            .data(cast.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {

@@ -60,8 +60,6 @@ import coil.request.ImageRequest
 import com.mutkuensert.movee.R
 import com.mutkuensert.movee.domain.movie.model.MovieNowPlaying
 import com.mutkuensert.movee.domain.movie.model.PopularMovie
-import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
 
 @Composable
@@ -302,7 +300,7 @@ private fun MoviesNowPlayingItem(
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .data(movie.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -355,7 +353,7 @@ private fun PopularMoviesItem(
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${movie.posterPath}")
+                            .data(movie.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {

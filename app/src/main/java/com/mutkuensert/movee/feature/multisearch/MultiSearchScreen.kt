@@ -37,8 +37,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.domain.multisearch.model.SearchResult
-import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.SIZE_ORIGINAL
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -103,7 +101,7 @@ fun MultiSearchScreen(
                     SearchResult.Type.MOVIE -> {
                         SearchResultItem(
                             name = item.title,
-                            picturePath = item.picturePath,
+                            imageUrl = item.imageUrl,
                             navigateToItemDetails = {
                                 viewModel.navigateToMovieDetails(item.id)
                             }
@@ -113,7 +111,7 @@ fun MultiSearchScreen(
                     SearchResult.Type.TV -> {
                         SearchResultItem(
                             name = item.title,
-                            picturePath = item.picturePath,
+                            imageUrl = item.imageUrl,
                             navigateToItemDetails = {
                                 viewModel.navigateToTvShowDetails(item.id)
                             }
@@ -123,7 +121,7 @@ fun MultiSearchScreen(
                     SearchResult.Type.PERSON -> {
                         SearchResultItem(
                             name = item.title,
-                            picturePath = item.picturePath,
+                            imageUrl = item.imageUrl,
                             navigateToItemDetails = {
                                 viewModel.navigateToPersonDetails(item.id)
                             }
@@ -154,7 +152,7 @@ fun MultiSearchScreen(
 @Composable
 private fun SearchResultItem(
     name: String,
-    picturePath: String?,
+    imageUrl: String?,
     navigateToItemDetails: () -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
@@ -165,12 +163,11 @@ private fun SearchResultItem(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Card(elevation = 10.dp) {
-                    if (picturePath != null) {
+                    if (imageUrl != null) {
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data("$IMAGE_BASE_URL$SIZE_ORIGINAL${picturePath}")
+                                .data(imageUrl)
                                 .crossfade(true)
                                 .build(),
                             loading = {

@@ -1,7 +1,7 @@
 package com.mutkuensert.movee.domain.multisearch.model
 
 data class SearchResult(
-    val picturePath: String?,
+    val imageUrl: String?,
     val title: String,
     val id: Int,
     val type: Type

@@ -11,7 +11,7 @@ import com.mutkuensert.movee.domain.person.model.PersonTvCast
 import com.mutkuensert.movee.feature.person.navigation.KEY_PERSON_ID
 import com.mutkuensert.movee.navigation.navigator.MovieNavigator
 import com.mutkuensert.movee.navigation.navigator.TvShowNavigator
-import com.mutkuensert.movee.util.Resource
+import com.mutkuensert.movee.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

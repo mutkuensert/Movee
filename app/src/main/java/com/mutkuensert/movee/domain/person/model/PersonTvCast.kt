@@ -4,5 +4,5 @@ data class PersonTvCast(
     val character: String,
     val name: String,
     val id: Int,
-    val posterPath: String?
+    val imageUrl: String?
 )

@@ -9,7 +9,7 @@ import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
 import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
 import com.mutkuensert.movee.feature.tvshow.navigation.KEY_TV_SHOW_ID
 import com.mutkuensert.movee.navigation.navigator.PersonNavigator
-import com.mutkuensert.movee.util.Resource
+import com.mutkuensert.movee.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

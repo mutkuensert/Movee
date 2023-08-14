@@ -8,6 +8,7 @@ import com.mutkuensert.movee.data.multisearch.model.MovieResultItemDto
 import com.mutkuensert.movee.data.multisearch.model.MultiSearchResultDto
 import com.mutkuensert.movee.data.multisearch.model.PersonResulItemDto
 import com.mutkuensert.movee.data.multisearch.model.TvResultItemDto
+import com.mutkuensert.movee.data.util.getImageUrl
 import com.mutkuensert.movee.domain.multisearch.MultiSearchRepository
 import com.mutkuensert.movee.domain.multisearch.model.SearchResult
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class MultiSearchRepositoryImpl @Inject constructor(
         return when (multiSearchResultDto) {
             is PersonResulItemDto -> {
                 SearchResult(
-                    picturePath = multiSearchResultDto.profilePath,
+                    imageUrl = getImageUrl(multiSearchResultDto.profilePath),
                     title = multiSearchResultDto.name,
                     id = multiSearchResultDto.id,
                     type = SearchResult.Type.PERSON
@@ -52,7 +53,7 @@ class MultiSearchRepositoryImpl @Inject constructor(
 
             is MovieResultItemDto -> {
                 SearchResult(
-                    picturePath = multiSearchResultDto.posterPath,
+                    imageUrl = getImageUrl(multiSearchResultDto.posterPath),
                     title = multiSearchResultDto.title,
                     id = multiSearchResultDto.id,
                     type = SearchResult.Type.MOVIE
@@ -63,7 +64,7 @@ class MultiSearchRepositoryImpl @Inject constructor(
                 val tvShowDto = multiSearchResultDto as TvResultItemDto
 
                 SearchResult(
-                    picturePath = tvShowDto.posterPath,
+                    imageUrl = getImageUrl(tvShowDto.posterPath),
                     title = tvShowDto.name,
                     id = tvShowDto.id,
                     type = SearchResult.Type.TV

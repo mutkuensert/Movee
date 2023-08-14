@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mutkuensert.movee.data.movie.remote.model.MovieNowPlayingDto
 import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResponse
-import com.mutkuensert.movee.util.UnsuccessfulResponseException
+import com.mutkuensert.movee.domain.Failure
 import retrofit2.HttpException
 import retrofit2.Response
 
@@ -22,7 +22,7 @@ class MoviesNowPlayingPagingSource(private val getMoviesNowPlaying: suspend (pag
                     nextKey = if (nextPageNumber + 1 <= response.body()!!.totalPages) nextPageNumber + 1 else null
                 )
             } else {
-                LoadResult.Error(UnsuccessfulResponseException("Unsuccessful Popular Movies Request"))
+                LoadResult.Error(Failure(message = "Unsuccessful Request"))
             }
         } catch (exception: HttpException) {
             return LoadResult.Error(exception)

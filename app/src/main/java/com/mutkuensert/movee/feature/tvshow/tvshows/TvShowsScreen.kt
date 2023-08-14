@@ -62,8 +62,6 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.movee.domain.tvshow.model.PopularTvShow
 import com.mutkuensert.movee.domain.tvshow.model.TopRatedTvShow
-import com.mutkuensert.movee.util.IMAGE_BASE_URL
-import com.mutkuensert.movee.util.POSTER_SIZE_W500
 import kotlin.math.roundToInt
 
 @Composable
@@ -327,7 +325,7 @@ private fun PopularTvShowsItem(popularTvShow: PopularTvShow, onClick: () -> Unit
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${popularTvShow.posterPath}")
+                            .data(popularTvShow.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -380,7 +378,7 @@ private fun TopRatedTvShowsItem(
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$IMAGE_BASE_URL$POSTER_SIZE_W500${topRatedTvShow.posterPath}")
+                            .data(topRatedTvShow.imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -426,7 +424,7 @@ private fun TopRatedTvShowsItem(
 private fun PreviewTopRatedTveShowsItem() {
     TopRatedTvShowsItem(
         topRatedTvShow = TopRatedTvShow(
-            posterPath = null,
+            imageUrl = null,
             id = 0,
             voteAverage = 0.0,
             name = "Tv Show Title"

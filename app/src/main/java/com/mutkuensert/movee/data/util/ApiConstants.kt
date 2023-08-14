@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.data
+package com.mutkuensert.movee.data.util
 
 class ApiConstants {
     class General {

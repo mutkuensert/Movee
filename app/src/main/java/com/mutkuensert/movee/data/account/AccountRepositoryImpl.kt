@@ -4,7 +4,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
-import com.mutkuensert.movee.data.ApiConstants
+import com.mutkuensert.movee.data.util.ApiConstants
 import com.mutkuensert.movee.data.account.local.AccountDao
 import com.mutkuensert.movee.data.account.local.model.FavoriteMovieEntity
 import com.mutkuensert.movee.data.account.remote.AccountApi

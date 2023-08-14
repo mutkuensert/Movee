@@ -1,4 +1,4 @@
-package com.mutkuensert.movee.util
+package com.mutkuensert.movee.domain.util
 
 data class Resource<out T>(
     val status: Status,
