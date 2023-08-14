@@ -12,9 +12,6 @@ interface AccountDao {
     @Query("SELECT * FROM FavoriteMovieEntity")
     suspend fun getFavoriteMovies(): List<FavoriteMovieEntity>
 
-    @Query("SELECT EXISTS(SELECT * FROM FavoriteMovieEntity WHERE id = :id)")
-    suspend fun isMovieFavorite(id: Int): Boolean
-
     @Query("SELECT * FROM FavoriteMovieEntity WHERE id = :id")
     suspend fun getFavoriteMovie(id: Int): FavoriteMovieEntity?
 
