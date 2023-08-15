@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * Must not be singleton.
  */
-class PopularMoviesResultMapper @Inject constructor(
+class PopularMovieDtoMapper @Inject constructor(
     private val accountDao: AccountDao,
     private val sessionManager: SessionManager,
 ) {

@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.map
 class MovieRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val movieDao: MovieDao,
-    private val popularMoviesResultMapper: PopularMoviesResultMapper,
+    private val popularMovieDtoMapper: PopularMovieDtoMapper,
 ) : MovieRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -34,7 +34,7 @@ class MovieRepositoryImpl @Inject constructor(
             remoteMediator = PopularMoviesRemoteMediator(
                 getPopularMovies = movieApi::getPopularMovies,
                 movieDao = movieDao,
-                popularMoviesResultMapper = popularMoviesResultMapper
+                popularMovieDtoMapper = popularMovieDtoMapper
             ),
             pagingSourceFactory = { movieDao.getPopularMoviesPagingSource() }
         ).flow.map { pagingData ->

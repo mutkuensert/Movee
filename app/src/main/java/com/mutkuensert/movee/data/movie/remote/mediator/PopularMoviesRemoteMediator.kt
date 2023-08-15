@@ -4,11 +4,11 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.mutkuensert.movee.data.util.ApiConstants
-import com.mutkuensert.movee.data.movie.PopularMoviesResultMapper
+import com.mutkuensert.movee.data.movie.PopularMovieDtoMapper
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.data.movie.local.model.PopularMovieEntity
 import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponse
+import com.mutkuensert.movee.data.util.ApiConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -19,7 +19,7 @@ import java.io.IOException
 class PopularMoviesRemoteMediator(
     private val getPopularMovies: suspend (page: Int) -> Response<PopularMoviesResponse>,
     private val movieDao: MovieDao,
-    private val popularMoviesResultMapper: PopularMoviesResultMapper,
+    private val popularMovieDtoMapper: PopularMovieDtoMapper,
 ) : RemoteMediator<Int, PopularMovieEntity>() {
     override suspend fun load(
         loadType: LoadType,
@@ -54,9 +54,9 @@ class PopularMoviesRemoteMediator(
                 val popularMovies = popularMoviesResponse.body()!!.results
                 withContext(Dispatchers.IO) {
                     movieDao.insertAll(
-                        *popularMovies.map {
-                            popularMoviesResultMapper.mapToEntity(it, page)
-                        }.toTypedArray()
+                        popularMovies.map {
+                            popularMovieDtoMapper.mapToEntity(it, page)
+                        }
                     )
                 }
                 MediatorResult.Success(endOfPaginationReached = false)

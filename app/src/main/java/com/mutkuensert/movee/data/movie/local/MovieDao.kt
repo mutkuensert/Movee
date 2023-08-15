@@ -22,7 +22,7 @@ interface MovieDao {
     suspend fun getPopularMovie(id: Int): PopularMovieEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg popularMovie: PopularMovieEntity)
+    fun insertAll(popularMovieList: List<PopularMovieEntity>)
 
     @Update
     fun update(popularMovie: PopularMovieEntity)
