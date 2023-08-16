@@ -4,10 +4,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.mutkuensert.movee.data.movie.PopularMovieDtoMapper
+import com.mutkuensert.movee.data.movie.MovieNowPlayingDtoMapper
 import com.mutkuensert.movee.data.movie.local.MovieDao
-import com.mutkuensert.movee.data.movie.local.model.PopularMovieEntity
-import com.mutkuensert.movee.data.movie.remote.model.PopularMoviesResponse
+import com.mutkuensert.movee.data.movie.local.model.MovieNowPlayingEntity
+import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResponse
 import com.mutkuensert.movee.data.util.ApiConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,19 +16,19 @@ import retrofit2.Response
 import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
-class PopularMoviesRemoteMediator(
-    private val getPopularMovies: suspend (page: Int) -> Response<PopularMoviesResponse>,
+class MoviesNowPlayingRemoteMediator(
+    private val getMoviesNowPlaying: suspend (page: Int) -> Response<MoviesNowPlayingResponse>,
     private val movieDao: MovieDao,
-    private val popularMovieDtoMapper: PopularMovieDtoMapper,
-) : RemoteMediator<Int, PopularMovieEntity>() {
+    private val movieNowPlayingDtoMapper: MovieNowPlayingDtoMapper,
+) : RemoteMediator<Int, MovieNowPlayingEntity>() {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, PopularMovieEntity>
+        state: PagingState<Int, MovieNowPlayingEntity>
     ): MediatorResult {
         return try {
             val page = when (loadType) {
                 LoadType.REFRESH -> {
-                    withContext(Dispatchers.IO) { movieDao.clearAllPopularMovies() }
+                    withContext(Dispatchers.IO) { movieDao.clearAllMoviesNowPlaying() }
                     ApiConstants.General.DEFAULT_FIRST_PAGE
                 }
 
@@ -37,7 +37,7 @@ class PopularMoviesRemoteMediator(
 
                 LoadType.APPEND -> {
                     val lastPageNumber = withContext(Dispatchers.IO) {
-                        movieDao.getAllPopularMovies().lastOrNull()?.page
+                        movieDao.getAllMoviesNowPlaying().lastOrNull()?.page
                     }
 
                     if (lastPageNumber == null) {
@@ -48,14 +48,14 @@ class PopularMoviesRemoteMediator(
                 }
             }
 
-            val popularMoviesResponse = getPopularMovies.invoke(page)
+            val moviesNowPlayingResponse = getMoviesNowPlaying.invoke(page)
 
-            if (popularMoviesResponse.isSuccessful && !popularMoviesResponse.body()?.results.isNullOrEmpty()) {
-                val popularMovies = popularMoviesResponse.body()!!.results
+            if (moviesNowPlayingResponse.isSuccessful && !moviesNowPlayingResponse.body()?.results.isNullOrEmpty()) {
+                val moviesNowPlaying = moviesNowPlayingResponse.body()!!.results
                 withContext(Dispatchers.IO) {
-                    movieDao.insertPopularMovies(
-                        popularMovies.map {
-                            popularMovieDtoMapper.mapToEntity(it, page)
+                    movieDao.insertMoviesNowPlaying(
+                        moviesNowPlaying.map {
+                            movieNowPlayingDtoMapper.mapToEntity(it, page)
                         }
                     )
                 }

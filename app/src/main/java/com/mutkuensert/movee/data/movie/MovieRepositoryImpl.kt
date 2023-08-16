@@ -7,8 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.github.michaelbull.result.Result
 import com.mutkuensert.movee.data.movie.local.MovieDao
+import com.mutkuensert.movee.data.movie.remote.mediator.MoviesNowPlayingRemoteMediator
 import com.mutkuensert.movee.data.movie.remote.mediator.PopularMoviesRemoteMediator
-import com.mutkuensert.movee.data.movie.source.MoviesNowPlayingPagingSource
 import com.mutkuensert.movee.data.util.getImageUrl
 import com.mutkuensert.movee.domain.Failure
 import com.mutkuensert.movee.domain.movie.MovieRepository
@@ -21,13 +21,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalPagingApi::class)
 class MovieRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val movieDao: MovieDao,
     private val popularMovieDtoMapper: PopularMovieDtoMapper,
+    private val movieNowPlayingDtoMapper: MovieNowPlayingDtoMapper,
 ) : MovieRepository {
 
-    @OptIn(ExperimentalPagingApi::class)
     override fun getPopularMoviesPagingFlow(): Flow<PagingData<PopularMovie>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
@@ -52,10 +53,14 @@ class MovieRepositoryImpl @Inject constructor(
 
     override fun getMoviesNowPlayingPagingFlow(): Flow<PagingData<MovieNowPlaying>> {
         return Pager(
-            PagingConfig(pageSize = 20)
-        ) {
-            MoviesNowPlayingPagingSource(movieApi::getMoviesNowPlaying)
-        }.flow.map { pagingData ->
+            config = PagingConfig(pageSize = 20),
+            remoteMediator = MoviesNowPlayingRemoteMediator(
+                getMoviesNowPlaying = movieApi::getMoviesNowPlaying,
+                movieDao = movieDao,
+                movieNowPlayingDtoMapper = movieNowPlayingDtoMapper
+            ),
+            pagingSourceFactory = { movieDao.getMoviesNowPlayingPagingSource() }
+        ).flow.map { pagingData ->
             pagingData.map {
                 MovieNowPlaying(
                     imageUrl = getImageUrl(it.posterPath),
@@ -90,5 +95,33 @@ class MovieRepositoryImpl @Inject constructor(
                 )
             }
         })
+    }
+
+    override suspend fun addMovieToFavorites(movieId: Int) {
+        movieDao.getPopularMovie(movieId)
+            ?.copyWithPrimaryKey(isFavorite = true)
+            ?.let {
+                movieDao.update(it)
+            }
+
+        movieDao.getMovieNowPlaying(movieId)
+            ?.copyWithPrimaryKey(isFavorite = true)
+            ?.let {
+                movieDao.update(it)
+            }
+    }
+
+    override suspend fun removeMovieFromFavorites(movieId: Int) {
+        movieDao.getPopularMovie(movieId)
+            ?.copyWithPrimaryKey(isFavorite = false)
+            ?.let {
+                movieDao.update(it)
+            }
+
+        movieDao.getMovieNowPlaying(movieId)
+            ?.copyWithPrimaryKey(isFavorite = false)
+            ?.let {
+                movieDao.update(it)
+            }
     }
 }
