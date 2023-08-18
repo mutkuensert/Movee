@@ -3,7 +3,7 @@ buildscript {
         compose_ui_version = '1.5.0-beta02'
         lifecycle_version = '2.6.1'
         paging_version = '3.2.0'
-        nav_version = '2.6.0'
+        nav_version = '2.7.0'
         kotlin_version = '1.8.21'
         room_version = '2.5.2'
     }

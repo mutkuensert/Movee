@@ -66,7 +66,8 @@ class MovieRepositoryImpl @Inject constructor(
                     imageUrl = getImageUrl(it.posterPath),
                     title = it.title,
                     id = it.id,
-                    voteAverage = it.voteAverage
+                    voteAverage = it.voteAverage,
+                    isFavorite = it.isFavorite
                 )
             }
         }

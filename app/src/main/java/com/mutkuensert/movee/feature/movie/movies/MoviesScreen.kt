@@ -127,7 +127,8 @@ fun MoviesScreen(
                         .wrapContentHeight(),
                     moviesNowPlaying = moviesNowPlayingLazyPagingItems,
                     navigateToMovieDetails = viewModel::navigateToMovieDetails,
-                    lazyListState = stateOfMoviesNowPlaying
+                    lazyListState = stateOfMoviesNowPlaying,
+                    onAddToFavorite = viewModel::addMovieToFavorites
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -141,31 +142,14 @@ private fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlaying: LazyPagingItems<MovieNowPlaying>,
     lazyListState: LazyListState,
-    navigateToMovieDetails: (movieId: Int) -> Unit
+    navigateToMovieDetails: (movieId: Int) -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (moviesNowPlaying.loadState.refresh == LoadState.Loading) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-
-                Spacer(Modifier.height(50.dp))
-            }
-            Spacer(Modifier.width(50.dp))
-        }
+        LoadingRefresh(state = moviesNowPlaying.loadState.refresh)
 
         LazyRow(state = lazyListState) {
             items(count = moviesNowPlaying.itemCount) { index ->
@@ -174,32 +158,14 @@ private fun MoviesNowPlaying(
                 if (item != null) {
                     MoviesNowPlayingItem(
                         movie = item,
-                        navigateToMovieDetails = { navigateToMovieDetails(item.id) })
+                        navigateToMovieDetails = { navigateToMovieDetails(item.id) },
+                        onAddToFavorite = onAddToFavorite
+                    )
                 }
             }
         }
 
-
-        if (moviesNowPlaying.loadState.append == LoadState.Loading) {
-            Spacer(Modifier.width(50.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-
-                Spacer(Modifier.height(50.dp))
-            }
-        }
+        LoadingAppend(state = moviesNowPlaying.loadState.append)
     }
 }
 
@@ -244,17 +210,7 @@ private fun PopularMovies(
             }
 
             item {
-                if (popularMovies.loadState.refresh == LoadState.Loading) {
-                    Spacer(Modifier.height(50.dp))
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(100.dp),
-                        strokeWidth = 6.dp,
-                        color = Color.Gray
-                    )
-
-                    Spacer(Modifier.height(50.dp))
-                }
+                LoadingRefresh(state = popularMovies.loadState.refresh)
             }
 
             items(count = popularMovies.itemCount) { index ->
@@ -270,18 +226,52 @@ private fun PopularMovies(
             }
 
             item {
-                if (popularMovies.loadState.append == LoadState.Loading) {
-                    Spacer(Modifier.height(50.dp))
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(100.dp),
-                        strokeWidth = 6.dp,
-                        color = Color.Gray
-                    )
-
-                    Spacer(Modifier.height(50.dp))
-                }
+                LoadingAppend(state = popularMovies.loadState.append)
             }
+        }
+    }
+}
+
+@Composable
+private fun LoadingRefresh(state: LoadState) {
+    if (state == LoadState.Loading) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(50.dp))
+
+            CircularProgressIndicator(
+                modifier = Modifier.size(100.dp),
+                strokeWidth = 6.dp,
+                color = Color.Gray
+            )
+
+            Spacer(Modifier.size(50.dp))
+        }
+    }
+}
+
+@Composable
+private fun LoadingAppend(state: LoadState) {
+    if (state == LoadState.Loading) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(10.dp))
+
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 6.dp,
+                color = Color.Gray
+            )
+
+            Spacer(Modifier.size(10.dp))
         }
     }
 }
@@ -289,7 +279,8 @@ private fun PopularMovies(
 @Composable
 private fun MoviesNowPlayingItem(
     movie: MovieNowPlaying,
-    navigateToMovieDetails: () -> Unit
+    navigateToMovieDetails: () -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier.clickable(onClick = navigateToMovieDetails)) {
@@ -329,6 +320,16 @@ private fun MoviesNowPlayingItem(
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
+
+                if (movie.isFavorite != null) {
+                    Spacer(Modifier.height(10.dp))
+
+                    FavoriteButton(
+                        isFavorite = movie.isFavorite,
+                        movieId = movie.id,
+                        onAddToFavorite = onAddToFavorite
+                    )
+                }
             }
         }
     }
@@ -387,26 +388,39 @@ private fun PopularMoviesItem(
                     if (movie.isFavorite != null) {
                         Spacer(Modifier.height(10.dp))
 
-                        IconButton(onClick = {
-                            onAddToFavorite.invoke(
-                                !movie.isFavorite,
-                                movie.id
-                            )
-                        }) {
-                            val iconId = if (movie.isFavorite) {
-                                R.drawable.ic_star_filled
-                            } else {
-                                R.drawable.ic_star_unfilled
-                            }
-                            Icon(
-                                painter = painterResource(id = iconId),
-                                contentDescription = null
-                            )
-                        }
+                        FavoriteButton(
+                            isFavorite = movie.isFavorite,
+                            movieId = movie.id,
+                            onAddToFavorite = onAddToFavorite
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FavoriteButton(
+    isFavorite: Boolean,
+    movieId: Int,
+    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit
+) {
+    IconButton(
+        onClick = {
+            onAddToFavorite.invoke(!isFavorite, movieId)
+        }
+    ) {
+        val iconId = if (isFavorite) {
+            R.drawable.ic_star_filled
+        } else {
+            R.drawable.ic_star_unfilled
+        }
+
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null
+        )
     }
 }
 
@@ -423,8 +437,15 @@ private fun PreviewPopularMoviesItem() {
 @Composable
 private fun PreviewMoviesNowPlayingItem() {
     MoviesNowPlayingItem(
-        movie = MovieNowPlaying(null, "Title", 0, 5.0),
-        navigateToMovieDetails = {})
+        movie = MovieNowPlaying(
+            imageUrl = null,
+            title = "movie",
+            id = 8466,
+            voteAverage = 2.3,
+            isFavorite = null
+        ),
+        navigateToMovieDetails = {},
+        onAddToFavorite = { _, _ -> })
 }
 
 @Preview(showSystemUi = true, showBackground = true)
@@ -432,8 +453,15 @@ private fun PreviewMoviesNowPlayingItem() {
 private fun PreviewPopularMovies() {
     Column(modifier = Modifier.fillMaxSize()) {
         MoviesNowPlayingItem(
-            movie = MovieNowPlaying(null, "Title", 0, 5.0),
-            navigateToMovieDetails = {})
+            movie = MovieNowPlaying(
+                imageUrl = null,
+                title = "movie",
+                id = 3126,
+                voteAverage = 6.7,
+                isFavorite = null
+            ),
+            navigateToMovieDetails = {},
+            onAddToFavorite = { _, _ -> })
         Divider(startIndent = 8.dp, thickness = 1.dp, color = Color.Black)
         PopularMoviesItem(
             movie = PopularMovie(null, "Title", 0, isFavorite = false, voteAverage = 1.0),
