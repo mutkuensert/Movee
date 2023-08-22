@@ -3,11 +3,11 @@ package com.mutkuensert.movee.feature.movie.moviedetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.domain.GetResourceFlowUseCase
 import com.mutkuensert.movee.domain.movie.MovieRepository
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
-import com.mutkuensert.movee.domain.util.Resource
 import com.mutkuensert.movee.feature.movie.navigation.KEY_MOVIE_ID
 import com.mutkuensert.movee.navigation.navigator.PersonNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,12 +25,12 @@ class MovieDetailsViewModel @Inject constructor(
     val movieId: Int = requireNotNull(savedStateHandle[KEY_MOVIE_ID]) {
         "Provide $KEY_MOVIE_ID before navigating."
     }
-    private val _movieDetails: MutableStateFlow<Resource<MovieDetails>> =
-        MutableStateFlow(Resource.Standby())
+    private val _movieDetails: MutableStateFlow<Phase<MovieDetails>> =
+        MutableStateFlow(Phase.Standby())
     val movieDetails = _movieDetails.asStateFlow()
 
-    private val _movieCast: MutableStateFlow<Resource<List<MovieCast>>> =
-        MutableStateFlow(Resource.Standby())
+    private val _movieCast: MutableStateFlow<Phase<List<MovieCast>>> =
+        MutableStateFlow(Phase.Standby())
     val movieCast = _movieCast.asStateFlow()
 
     fun getMovieDetails(movieId: Int) {

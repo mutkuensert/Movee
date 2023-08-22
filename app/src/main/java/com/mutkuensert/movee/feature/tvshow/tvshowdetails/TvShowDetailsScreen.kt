@@ -34,12 +34,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.core.Loading
-import com.mutkuensert.movee.core.When
 import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
 import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
-import com.mutkuensert.movee.domain.util.Resource
 
 @Composable
 fun TvDetailsScreen(
@@ -57,25 +56,25 @@ fun TvDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        TvDetailsResource(
-            resource = tvShowDetails,
+        TvShowDetailsResource(
+            phase = tvShowDetails,
             loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvShowId = tvShowId) })
 
         Spacer(modifier = Modifier.height(15.dp))
 
         TvShowCastResourceResource(
-            resource = tvCast,
+            phase = tvCast,
             navigateToPersonDetails = viewModel::navigateToPersonDetails
         )
     }
 }
 
 @Composable
-private fun TvDetailsResource(
-    resource: Resource<TvShowDetails>,
+private fun TvShowDetailsResource(
+    phase: Phase<TvShowDetails>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = {
             TvDetailsItem(it)
@@ -186,10 +185,10 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
 
 @Composable
 private fun TvShowCastResourceResource(
-    resource: Resource<List<TvShowCast>>,
+    phase: Phase<List<TvShowCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = { data ->
             LazyRow {

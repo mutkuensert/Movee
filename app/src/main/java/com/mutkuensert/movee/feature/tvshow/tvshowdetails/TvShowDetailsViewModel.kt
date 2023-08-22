@@ -3,11 +3,11 @@ package com.mutkuensert.movee.feature.tvshow.tvshowdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.domain.GetResourceFlowUseCase
 import com.mutkuensert.movee.domain.tvshow.TvShowRepository
 import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
 import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
-import com.mutkuensert.movee.domain.util.Resource
 import com.mutkuensert.movee.feature.tvshow.navigation.KEY_TV_SHOW_ID
 import com.mutkuensert.movee.navigation.navigator.PersonNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,12 +25,12 @@ class TvShowDetailsViewModel @Inject constructor(
     val tvShowId: Int = requireNotNull(savedStateHandle[KEY_TV_SHOW_ID]) {
         "Provide $KEY_TV_SHOW_ID before navigating."
     }
-    private val _tvShowDetails: MutableStateFlow<Resource<TvShowDetails>> =
-        MutableStateFlow(Resource.Standby())
+    private val _tvShowDetails: MutableStateFlow<Phase<TvShowDetails>> =
+        MutableStateFlow(Phase.Standby())
     val tvShowDetails = _tvShowDetails.asStateFlow()
 
-    private val _tvCast: MutableStateFlow<Resource<List<TvShowCast>>> =
-        MutableStateFlow(Resource.Standby())
+    private val _tvCast: MutableStateFlow<Phase<List<TvShowCast>>> =
+        MutableStateFlow(Phase.Standby())
     val tvCast = _tvCast.asStateFlow()
 
     fun getTvDetails(tvId: Int) {

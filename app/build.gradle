@@ -120,6 +120,8 @@ dependencies {
 
     implementation "androidx.room:room-paging:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+
+    implementation 'com.github.mutkuensert:Android-Phase:v1.0.6.0'
 }
 
 kapt {

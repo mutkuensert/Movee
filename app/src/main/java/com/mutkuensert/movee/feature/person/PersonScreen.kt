@@ -35,13 +35,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.core.Loading
-import com.mutkuensert.movee.core.When
 import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
-import com.mutkuensert.movee.domain.util.Resource
 
 @Composable
 fun PersonScreen(
@@ -56,7 +55,7 @@ fun PersonScreen(
         viewModel.getPersonDetails(personId)
     }
 
-    if (detailsResource is Resource.Success) {
+    if (detailsResource is Phase.Success) {
         LaunchedEffect(true) {
             viewModel.getCasting(personId = personId)
         }
@@ -67,25 +66,25 @@ fun PersonScreen(
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        PersonDetailsResource(resource = detailsResource)
+        PersonDetailsResource(phase = detailsResource)
 
         PersonMovieCastingResource(
-            resource = movieCastingResource,
+            phase = movieCastingResource,
             navigateToMovieDetails = viewModel::navigateToMovieDetails
         )
 
         PersonTvCastingResource(
-            resource = tvCastingResource,
+            phase = tvCastingResource,
             navigateToTvDetails = viewModel::navigateToTvShowDetails
         )
     }
 }
 
 @Composable
-private fun PersonDetailsResource(resource: Resource<PersonDetails>) {
+private fun PersonDetailsResource(phase: Phase<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
 
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = { data ->
             Card(
@@ -152,10 +151,10 @@ private fun PersonDetailsResource(resource: Resource<PersonDetails>) {
 
 @Composable
 private fun PersonMovieCastingResource(
-    resource: Resource<List<PersonMovieCast>>,
+    phase: Phase<List<PersonMovieCast>>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = {
             it.forEach { item ->
@@ -212,10 +211,10 @@ private fun PersonMovieCastItem(
 
 @Composable
 private fun PersonTvCastingResource(
-    resource: Resource<List<PersonTvCast>>,
+    phase: Phase<List<PersonTvCast>>,
     navigateToTvDetails: (tvId: Int) -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = {
             it.forEach { item ->

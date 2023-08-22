@@ -34,12 +34,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.core.Loading
-import com.mutkuensert.movee.core.When
 import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
-import com.mutkuensert.movee.domain.util.Resource
 
 @Composable
 fun MovieDetailsScreen(
@@ -58,13 +57,13 @@ fun MovieDetailsScreen(
             .padding(bottom = 25.dp)
     ) {
         MovieDetailsResource(
-            resource = movieDetails,
+            phase = movieDetails,
             loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
 
         Spacer(modifier = Modifier.height(15.dp))
 
         MovieCastResource(
-            resource = movieCast,
+            phase = movieCast,
             navigateToPersonDetails = viewModel::navigateToPerson
         )
     }
@@ -72,10 +71,10 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun MovieDetailsResource(
-    resource: Resource<MovieDetails>,
+    phase: Phase<MovieDetails>,
     loadCastIfSuccessful: () -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = {
             MovieDetailsItem(it)
@@ -87,10 +86,10 @@ private fun MovieDetailsResource(
 
 @Composable
 private fun MovieCastResource(
-    resource: Resource<List<MovieCast>>,
+    phase: Phase<List<MovieCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    resource.When(
+    phase.Execute(
         onLoading = { Loading() },
         onSuccessWithData = {
             LazyRow {

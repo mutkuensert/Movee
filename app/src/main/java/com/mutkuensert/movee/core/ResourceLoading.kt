@@ -11,17 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mutkuensert.movee.domain.util.Resource
+import com.mutkuensert.androidphase.Phase
 
 @Composable
-fun <T> Resource<T>.Loading(
+fun <T> Phase<T>.Loading(
     modifier: Modifier = Modifier,
     padding: Dp = 50.dp,
     indicatorSize: Dp = 100.dp,
     strokeWidth: Dp = 6.dp,
     color: Color = Color.Gray
 ) {
-    val visible = this is Resource.Loading
+    val visible = this is Phase.Loading
 
     if (visible) {
         Column(

@@ -5,6 +5,7 @@ data class Failure(
     override val message: String,
     override val cause: Throwable? = null,
 ) : Throwable() {
+
     companion object {
         fun empty(): Failure {
             return Failure(message = "Unknown")

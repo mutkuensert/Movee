@@ -3,12 +3,12 @@ package com.mutkuensert.movee.feature.person
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.movee.domain.GetResourceFlowUseCase
 import com.mutkuensert.movee.domain.person.PersonRepository
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
-import com.mutkuensert.movee.domain.util.Resource
 import com.mutkuensert.movee.feature.person.navigation.KEY_PERSON_ID
 import com.mutkuensert.movee.navigation.navigator.MovieNavigator
 import com.mutkuensert.movee.navigation.navigator.TvShowNavigator
@@ -29,17 +29,17 @@ class PersonViewModel @Inject constructor(
     val personId: Int = requireNotNull(savedStateHandle[KEY_PERSON_ID]) {
         "Provide $KEY_PERSON_ID before navigating."
     }
-    private val _details: MutableStateFlow<Resource<PersonDetails>> =
-        MutableStateFlow(Resource.Standby())
+    private val _details: MutableStateFlow<Phase<PersonDetails>> =
+        MutableStateFlow(Phase.Standby())
     val details = _details.asStateFlow()
 
-    private val _movieCastingResource: MutableStateFlow<Resource<List<PersonMovieCast>>> =
-        MutableStateFlow(Resource.Standby())
-    val movieCastingResource = _movieCastingResource.asStateFlow()
+    private val _movieCastingPhase: MutableStateFlow<Phase<List<PersonMovieCast>>> =
+        MutableStateFlow(Phase.Standby())
+    val movieCastingResource = _movieCastingPhase.asStateFlow()
 
-    private val _tvCastingResource: MutableStateFlow<Resource<List<PersonTvCast>>> =
-        MutableStateFlow(Resource.Standby(null))
-    val tvCastingResource = _tvCastingResource.asStateFlow()
+    private val _tvCastingPhase: MutableStateFlow<Phase<List<PersonTvCast>>> =
+        MutableStateFlow(Phase.Standby(null))
+    val tvCastingResource = _tvCastingPhase.asStateFlow()
 
     fun getPersonDetails(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -63,7 +63,7 @@ class PersonViewModel @Inject constructor(
             GetResourceFlowUseCase<List<PersonMovieCast>>().execute {
                 personRepository.getPersonMovieCasting(personId)
             }.collect {
-                _movieCastingResource.value = it
+                _movieCastingPhase.value = it
             }
         }
     }
@@ -73,7 +73,7 @@ class PersonViewModel @Inject constructor(
             GetResourceFlowUseCase<List<PersonTvCast>>().execute {
                 personRepository.getPersonTvCasting(personId)
             }.collect {
-                _tvCastingResource.value = it
+                _tvCastingPhase.value = it
             }
         }
     }
