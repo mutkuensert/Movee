@@ -10,8 +10,8 @@ import com.mutkuensert.movee.domain.movie.model.PopularMovie
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    fun getPopularMoviesPagingFlow(): Flow<PagingData<PopularMovie>>
-    fun getMoviesNowPlayingPagingFlow(): Flow<PagingData<MovieNowPlaying>>
+    fun getPopularMoviesPagingFlow(): Result<Flow<PagingData<PopularMovie>>, Throwable>
+    fun getMoviesNowPlayingPagingFlow(): Result<Flow<PagingData<MovieNowPlaying>>, Throwable>
     suspend fun getMovieDetails(movieId: Int): Result<MovieDetails, Failure>
     suspend fun getMovieCast(movieId: Int): Result<List<MovieCast>, Failure>
     suspend fun addMovieToFavorites(movieId: Int)

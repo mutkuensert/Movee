@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.github.michaelbull.result.Result
+import com.mutkuensert.movee.core.invokeForResult
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.data.movie.remote.mediator.MoviesNowPlayingRemoteMediator
 import com.mutkuensert.movee.data.movie.remote.mediator.PopularMoviesRemoteMediator
@@ -29,30 +30,32 @@ class MovieRepositoryImpl @Inject constructor(
     private val movieNowPlayingDtoMapper: MovieNowPlayingDtoMapper,
 ) : MovieRepository {
 
-    override fun getPopularMoviesPagingFlow(): Flow<PagingData<PopularMovie>> {
-        return Pager(
-            config = PagingConfig(pageSize = 20),
-            remoteMediator = PopularMoviesRemoteMediator(
-                getPopularMovies = movieApi::getPopularMovies,
-                movieDao = movieDao,
-                popularMovieDtoMapper = popularMovieDtoMapper
-            ),
-            pagingSourceFactory = { movieDao.getPopularMoviesPagingSource() }
-        ).flow.map { pagingData ->
-            pagingData.map {
-                PopularMovie(
-                    imageUrl = getImageUrl(it.posterPath),
-                    title = it.title,
-                    id = it.id,
-                    isFavorite = it.isFavorite,
-                    voteAverage = it.voteAverage
-                )
+    override fun getPopularMoviesPagingFlow(): Result<Flow<PagingData<PopularMovie>>, Throwable> =
+        invokeForResult {
+            Pager(
+                config = PagingConfig(pageSize = 20),
+                remoteMediator = PopularMoviesRemoteMediator(
+                    getPopularMovies = movieApi::getPopularMovies,
+                    movieDao = movieDao,
+                    popularMovieDtoMapper = popularMovieDtoMapper
+                ),
+                pagingSourceFactory = { movieDao.getPopularMoviesPagingSource() }
+            ).flow.map { pagingData ->
+                pagingData.map {
+                    PopularMovie(
+                        imageUrl = getImageUrl(it.posterPath),
+                        title = it.title,
+                        id = it.id,
+                        isFavorite = it.isFavorite,
+                        voteAverage = it.voteAverage
+                    )
+                }
             }
         }
-    }
 
-    override fun getMoviesNowPlayingPagingFlow(): Flow<PagingData<MovieNowPlaying>> {
-        return Pager(
+    override fun getMoviesNowPlayingPagingFlow()
+            : Result<Flow<PagingData<MovieNowPlaying>>, Throwable> = invokeForResult {
+        Pager(
             config = PagingConfig(pageSize = 20),
             remoteMediator = MoviesNowPlayingRemoteMediator(
                 getMoviesNowPlaying = movieApi::getMoviesNowPlaying,

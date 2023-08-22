@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.feature.tvshow.tvshowdetails
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,10 +34,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.core.Loading
+import com.mutkuensert.movee.core.When
+import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
 import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
 import com.mutkuensert.movee.domain.util.Resource
-import com.mutkuensert.movee.domain.util.Status
 
 @Composable
 fun TvDetailsScreen(
@@ -56,54 +57,31 @@ fun TvDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        TvDetailsDataObserver(
-            data = tvShowDetails,
+        TvDetailsResource(
+            resource = tvShowDetails,
             loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvShowId = tvShowId) })
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        TvShowsCastDataObserver(
-            data = tvCast,
+        TvShowCastResourceResource(
+            resource = tvCast,
             navigateToPersonDetails = viewModel::navigateToPersonDetails
         )
     }
 }
 
 @Composable
-private fun TvDetailsDataObserver(
-    data: Resource<TvShowDetails>,
+private fun TvDetailsResource(
+    resource: Resource<TvShowDetails>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
-    when (data.status) {
-        Status.STANDBY -> {}
-
-        Status.LOADING -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-        Status.SUCCESS -> {
-            if (data.data != null) {
-                TvDetailsItem(data.data)
-
-                loadTvCastIfSuccessful()
-            }
-        }
-
-        Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
-        }
-    }
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = {
+            TvDetailsItem(it)
+            LaunchedEffect(Unit) { loadTvCastIfSuccessful() }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) })
 }
 
 @Composable
@@ -207,44 +185,22 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
 }
 
 @Composable
-private fun TvShowsCastDataObserver(
-    data: Resource<List<TvShowCast>>,
+private fun TvShowCastResourceResource(
+    resource: Resource<List<TvShowCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    when (data.status) {
-        Status.STANDBY -> {}
-
-        Status.LOADING -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-        Status.SUCCESS -> {
-            if (data.data != null) {
-                LazyRow {
-                    items(data.data) { item ->
-                        TvShowCastItem(
-                            cast = item,
-                            navigateToPersonDetails = { navigateToPersonDetails(item.id) })
-                    }
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = { data ->
+            LazyRow {
+                items(data) { item ->
+                    TvShowCastItem(
+                        cast = item,
+                        navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                 }
             }
-        }
-
-        Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
-        }
-    }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) })
 }
 
 @Composable

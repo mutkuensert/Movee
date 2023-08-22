@@ -1,39 +1,32 @@
 package com.mutkuensert.movee.domain.util
 
-data class Resource<out T>(
-    val status: Status,
-    val data: T?,
-    val message: String?,
-    val error: Throwable? = null
+sealed class Resource<T>(
+    open val data: T? = null,
+    open val message: String?,
+    open val error: Throwable? = null
 ) {
 
-    companion object {
+    class Standby<T>(
+        override val data: T? = null,
+        override val message: String? = null,
+        override val error: Throwable? = null
+    ) : Resource<T>(data, message, error)
 
-        fun <T> success(data: T?, message: String? = null): Resource<T> {
-            return Resource(Status.SUCCESS, data, message)
-        }
+    class Loading<T>(
+        override val data: T? = null,
+        override val message: String? = null,
+        override val error: Throwable? = null
+    ) : Resource<T>(data, message, error)
 
-        fun <T> error(
-            data: T? = null,
-            message: String? = null,
-            error: Throwable? = null
-        ): Resource<T> {
-            return Resource(Status.ERROR, data, message, error)
-        }
+    class Success<T>(
+        override val data: T? = null,
+        override val message: String? = null,
+        override val error: Throwable? = null
+    ) : Resource<T>(data, message, error)
 
-        fun <T> loading(data: T? = null, message: String? = null): Resource<T> {
-            return Resource(Status.LOADING, data, message)
-        }
-
-        fun <T> standby(data: T? = null, message: String? = null): Resource<T> {
-            return Resource(Status.STANDBY, data, message)
-        }
-    }
-}
-
-enum class Status {
-    SUCCESS,
-    ERROR,
-    LOADING,
-    STANDBY
+    class Error<T>(
+        override val data: T? = null,
+        override val message: String? = null,
+        override val error: Throwable? = null
+    ) : Resource<T>(data, message, error)
 }

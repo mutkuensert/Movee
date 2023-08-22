@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.feature.movie.moviedetails
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,10 +34,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.core.Loading
+import com.mutkuensert.movee.core.When
+import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
 import com.mutkuensert.movee.domain.util.Resource
-import com.mutkuensert.movee.domain.util.Status
 
 @Composable
 fun MovieDetailsScreen(
@@ -56,95 +57,52 @@ fun MovieDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        MovieDetailsDataObserver(
-            data = movieDetails,
+        MovieDetailsResource(
+            resource = movieDetails,
             loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        MovieCastDataObserver(
-            data = movieCast,
+        MovieCastResource(
+            resource = movieCast,
             navigateToPersonDetails = viewModel::navigateToPerson
         )
     }
 }
 
 @Composable
-private fun MovieDetailsDataObserver(
-    data: Resource<MovieDetails>,
+private fun MovieDetailsResource(
+    resource: Resource<MovieDetails>,
     loadCastIfSuccessful: () -> Unit
 ) {
-    when (data.status) {
-        Status.STANDBY -> {}
-
-        Status.LOADING -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-        Status.SUCCESS -> {
-            if (data.data != null) {
-                MovieDetailsItem(data.data)
-
-                loadCastIfSuccessful()
-            }
-        }
-
-        Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
-        }
-    }
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = {
+            MovieDetailsItem(it)
+            LaunchedEffect(Unit) { loadCastIfSuccessful() }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) }
+    )
 }
 
 @Composable
-private fun MovieCastDataObserver(
-    data: Resource<List<MovieCast>>,
+private fun MovieCastResource(
+    resource: Resource<List<MovieCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    when (data.status) {
-        Status.STANDBY -> {}
-
-        Status.LOADING -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-            }
-        }
-
-        Status.SUCCESS -> {
-            if (data.data != null) {
-                LazyRow {
-                    items(data.data) { item ->
-                        MovieCastItem(
-                            cast = item,
-                            navigateToPersonDetails = { navigateToPersonDetails(item.id) })
-                    }
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = {
+            LazyRow {
+                items(it) { item ->
+                    MovieCastItem(
+                        cast = item,
+                        navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                 }
             }
-        }
-
-        Status.ERROR -> {
-            Toast.makeText(LocalContext.current, "${data.message}", Toast.LENGTH_LONG).show()
-        }
-    }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) }
+    )
 }
 
 @Composable

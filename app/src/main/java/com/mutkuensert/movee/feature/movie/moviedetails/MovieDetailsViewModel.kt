@@ -7,9 +7,9 @@ import com.mutkuensert.movee.domain.GetResourceFlowUseCase
 import com.mutkuensert.movee.domain.movie.MovieRepository
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
+import com.mutkuensert.movee.domain.util.Resource
 import com.mutkuensert.movee.feature.movie.navigation.KEY_MOVIE_ID
 import com.mutkuensert.movee.navigation.navigator.PersonNavigator
-import com.mutkuensert.movee.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +25,12 @@ class MovieDetailsViewModel @Inject constructor(
     val movieId: Int = requireNotNull(savedStateHandle[KEY_MOVIE_ID]) {
         "Provide $KEY_MOVIE_ID before navigating."
     }
-    private val _movieDetails = MutableStateFlow(Resource.standby<MovieDetails>(null))
+    private val _movieDetails: MutableStateFlow<Resource<MovieDetails>> =
+        MutableStateFlow(Resource.Standby())
     val movieDetails = _movieDetails.asStateFlow()
 
-    private val _movieCast = MutableStateFlow(Resource.standby<List<MovieCast>>(null))
+    private val _movieCast: MutableStateFlow<Resource<List<MovieCast>>> =
+        MutableStateFlow(Resource.Standby())
     val movieCast = _movieCast.asStateFlow()
 
     fun getMovieDetails(movieId: Int) {

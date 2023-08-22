@@ -15,12 +15,12 @@ interface PersonApi {
     ): Response<PersonDetailsResponse>
 
     @GET("person/{person_id}/movie_credits")
-    suspend fun getPersonMovieCredits(
+    suspend fun getPersonMovieCasting(
         @Path("person_id") personId: Int
     ): Response<PersonMovieCreditsResponse>
 
     @GET("person/{person_id}/tv_credits")
-    suspend fun getPersonTvCredits(
+    suspend fun getPersonTvCasting(
         @Path("person_id") personId: Int
     ): Response<PersonTvCreditsResponse>
 }

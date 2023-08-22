@@ -8,10 +8,10 @@ import com.mutkuensert.movee.domain.person.PersonRepository
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
+import com.mutkuensert.movee.domain.util.Resource
 import com.mutkuensert.movee.feature.person.navigation.KEY_PERSON_ID
 import com.mutkuensert.movee.navigation.navigator.MovieNavigator
 import com.mutkuensert.movee.navigation.navigator.TvShowNavigator
-import com.mutkuensert.movee.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -29,49 +29,51 @@ class PersonViewModel @Inject constructor(
     val personId: Int = requireNotNull(savedStateHandle[KEY_PERSON_ID]) {
         "Provide $KEY_PERSON_ID before navigating."
     }
-    private val _personDetails = MutableStateFlow(Resource.standby<PersonDetails>(null))
-    val personDetails = _personDetails.asStateFlow()
+    private val _details: MutableStateFlow<Resource<PersonDetails>> =
+        MutableStateFlow(Resource.Standby())
+    val details = _details.asStateFlow()
 
-    private val _personMovieCast =
-        MutableStateFlow(Resource.standby<List<PersonMovieCast>>(null))
-    val personMovieCast = _personMovieCast.asStateFlow()
+    private val _movieCastingResource: MutableStateFlow<Resource<List<PersonMovieCast>>> =
+        MutableStateFlow(Resource.Standby())
+    val movieCastingResource = _movieCastingResource.asStateFlow()
 
-    private val _personTvCast = MutableStateFlow(Resource.standby<List<PersonTvCast>>(null))
-    val personTvCast = _personTvCast.asStateFlow()
+    private val _tvCastingResource: MutableStateFlow<Resource<List<PersonTvCast>>> =
+        MutableStateFlow(Resource.Standby(null))
+    val tvCastingResource = _tvCastingResource.asStateFlow()
 
     fun getPersonDetails(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             GetResourceFlowUseCase<PersonDetails>().execute {
                 personRepository.getPersonDetails(personId)
             }.collect {
-                _personDetails.value = it
+                _details.value = it
             }
         }
     }
 
-    fun getPersonCast(personId: Int) {
+    fun getCasting(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            getPersonMovieCast(personId = personId)
-            getPersonTvCast(personId = personId)
+            getMovieCasting(personId = personId)
+            getTvCasting(personId = personId)
         }
     }
 
-    private suspend fun getPersonMovieCast(personId: Int) {
+    private suspend fun getMovieCasting(personId: Int) {
         viewModelScope.launch {
             GetResourceFlowUseCase<List<PersonMovieCast>>().execute {
-                personRepository.getPersonMovieCast(personId)
+                personRepository.getPersonMovieCasting(personId)
             }.collect {
-                _personMovieCast.value = it
+                _movieCastingResource.value = it
             }
         }
     }
 
-    private suspend fun getPersonTvCast(personId: Int) {
+    private suspend fun getTvCasting(personId: Int) {
         viewModelScope.launch {
             GetResourceFlowUseCase<List<PersonTvCast>>().execute {
-                personRepository.getPersonTvCast(personId)
+                personRepository.getPersonTvCasting(personId)
             }.collect {
-                _personTvCast.value = it
+                _tvCastingResource.value = it
             }
         }
     }

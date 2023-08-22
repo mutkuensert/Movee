@@ -14,8 +14,8 @@ class PersonRepositoryImpl @Inject constructor(
     private val personApi: PersonApi
 ) : PersonRepository {
 
-    override suspend fun getPersonMovieCast(personId: Int): Result<List<PersonMovieCast>, Failure> {
-        return personApi.getPersonMovieCredits(personId = personId).toResult(mapper = { response ->
+    override suspend fun getPersonMovieCasting(personId: Int): Result<List<PersonMovieCast>, Failure> {
+        return personApi.getPersonMovieCasting(personId = personId).toResult(mapper = { response ->
             response.cast.map {
                 PersonMovieCast(
                     character = it.character,
@@ -27,8 +27,8 @@ class PersonRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun getPersonTvCast(personId: Int): Result<List<PersonTvCast>, Failure> {
-        return personApi.getPersonTvCredits(personId).toResult(mapper = { response ->
+    override suspend fun getPersonTvCasting(personId: Int): Result<List<PersonTvCast>, Failure> {
+        return personApi.getPersonTvCasting(personId).toResult(mapper = { response ->
             response.cast.map {
                 PersonTvCast(
                     character = it.character,

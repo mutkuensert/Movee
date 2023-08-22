@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -55,11 +53,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.core.LoadingIfAppend
+import com.mutkuensert.movee.core.LoadingIfRefresh
 import com.mutkuensert.movee.domain.tvshow.model.PopularTvShow
 import com.mutkuensert.movee.domain.tvshow.model.TopRatedTvShow
 import kotlin.math.roundToInt
@@ -157,27 +156,7 @@ private fun PopularTvShows(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (popularTvShows.loadState.refresh == LoadState.Loading) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Spacer(Modifier.height(50.dp))
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-
-                Spacer(Modifier.height(50.dp))
-            }
-
-            Spacer(Modifier.width(50.dp))
-        }
+        popularTvShows.loadState.LoadingIfRefresh()
 
         LazyRow(state = lazyListState) {
             items(count = popularTvShows.itemCount) { index ->
@@ -192,23 +171,7 @@ private fun PopularTvShows(
             }
         }
 
-
-        if (popularTvShows.loadState.append == LoadState.Loading) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    strokeWidth = 6.dp,
-                    color = Color.Gray
-                )
-            }
-        }
+        popularTvShows.loadState.LoadingIfAppend()
     }
 }
 
@@ -255,24 +218,7 @@ private fun TopRatedTvShows(
             item(
                 span = { GridItemSpan(spanCount) }
             ) {
-                if (topRatedTvShows.loadState.refresh == LoadState.Loading) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.height(40.dp))
-
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(100.dp),
-                            strokeWidth = 6.dp,
-                            color = Color.Gray
-                        )
-
-                        Spacer(Modifier.height(50.dp))
-                    }
-                }
+                topRatedTvShows.loadState.LoadingIfRefresh()
             }
 
 
@@ -289,24 +235,7 @@ private fun TopRatedTvShows(
             item(
                 span = { GridItemSpan(spanCount) }
             ) {
-                if (topRatedTvShows.loadState.append == LoadState.Loading) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.height(40.dp))
-
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(100.dp),
-                            strokeWidth = 6.dp,
-                            color = Color.Gray
-                        )
-
-                        Spacer(Modifier.height(50.dp))
-                    }
-                }
+                topRatedTvShows.loadState.LoadingIfAppend()
             }
         }
     }

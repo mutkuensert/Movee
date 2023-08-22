@@ -1,6 +1,5 @@
 package com.mutkuensert.movee.feature.person
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,28 +35,30 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.core.Loading
+import com.mutkuensert.movee.core.When
+import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
 import com.mutkuensert.movee.domain.util.Resource
-import com.mutkuensert.movee.domain.util.Status
 
 @Composable
 fun PersonScreen(
     viewModel: PersonViewModel = hiltViewModel()
 ) {
-    val personDetails by viewModel.personDetails.collectAsStateWithLifecycle()
-    val personMovieCast by viewModel.personMovieCast.collectAsStateWithLifecycle()
-    val personTvCast by viewModel.personTvCast.collectAsStateWithLifecycle()
+    val detailsResource by viewModel.details.collectAsStateWithLifecycle()
+    val movieCastingResource by viewModel.movieCastingResource.collectAsStateWithLifecycle()
+    val tvCastingResource by viewModel.tvCastingResource.collectAsStateWithLifecycle()
     val personId = viewModel.personId
 
     LaunchedEffect(true) {
         viewModel.getPersonDetails(personId)
     }
 
-    if (personDetails.status == Status.SUCCESS) {
+    if (detailsResource is Resource.Success) {
         LaunchedEffect(true) {
-            viewModel.getPersonCast(personId = personId)
+            viewModel.getCasting(personId = personId)
         }
     }
 
@@ -66,55 +67,34 @@ fun PersonScreen(
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        PersonDetails(personDetails = personDetails)
+        PersonDetailsResource(resource = detailsResource)
 
-        PersonMovieCast(
-            cast = personMovieCast,
+        PersonMovieCastingResource(
+            resource = movieCastingResource,
             navigateToMovieDetails = viewModel::navigateToMovieDetails
         )
 
-        PersonTvCast(
-            cast = personTvCast,
+        PersonTvCastingResource(
+            resource = tvCastingResource,
             navigateToTvDetails = viewModel::navigateToTvShowDetails
         )
     }
 }
 
 @Composable
-private fun Loading(status: Status) {
-    val visible = status == Status.LOADING
-
-    if (visible) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(50.dp))
-
-            CircularProgressIndicator(
-                modifier = Modifier.size(100.dp),
-                strokeWidth = 6.dp,
-                color = Color.Gray
-            )
-        }
-    }
-}
-
-@Composable
-private fun PersonDetails(personDetails: Resource<PersonDetails>) {
+private fun PersonDetailsResource(resource: Resource<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
 
-    Column {
-        Loading(status = personDetails.status)
-
-        if (personDetails.status == Status.SUCCESS && personDetails.data != null) {
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = { data ->
             Card(
                 elevation = 10.dp,
                 shape = RectangleShape
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(personDetails.data.imageUrl)
+                        .data(data.imageUrl)
                         .crossfade(true)
                         .build(),
                     loading = {
@@ -123,6 +103,7 @@ private fun PersonDetails(personDetails: Resource<PersonDetails>) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(Modifier.height(50.dp))
+
                             CircularProgressIndicator(
                                 color = Color.Gray,
                                 modifier = Modifier.size(100.dp)
@@ -140,7 +121,7 @@ private fun PersonDetails(personDetails: Resource<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
-                    text = personDetails.data.name,
+                    text = data.name,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 30.sp
@@ -149,13 +130,13 @@ private fun PersonDetails(personDetails: Resource<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 if (readMore.value) {
-                    Text(text = personDetails.data.biography)
+                    Text(text = data.biography)
 
                     Text(
                         text = "... read less",
                         modifier = Modifier.clickable { readMore.value = false })
                 } else {
-                    Text(text = personDetails.data.biography, maxLines = 4)
+                    Text(text = data.biography, maxLines = 4)
 
                     Text(
                         text = "... read more",
@@ -165,47 +146,23 @@ private fun PersonDetails(personDetails: Resource<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
             }
-        }
-    }
-
-    val context = LocalContext.current
-
-    LaunchedEffect(personDetails.status) {
-        if (personDetails.status == Status.ERROR) {
-            Toast.makeText(
-                context,
-                "${personDetails.message}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) })
 }
 
 @Composable
-private fun PersonMovieCast(
-    cast: Resource<List<PersonMovieCast>>,
+private fun PersonMovieCastingResource(
+    resource: Resource<List<PersonMovieCast>>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
-    Column {
-        Loading(status = cast.status)
-
-        if (cast.status == Status.SUCCESS && cast.data != null) {
-            cast.data.forEach { item ->
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = {
+            it.forEach { item ->
                 PersonMovieCastItem(movie = item, navigateToMovieDetails = navigateToMovieDetails)
             }
-        }
-    }
-    val context = LocalContext.current
-
-    LaunchedEffect(cast.status) {
-        if (cast.status == Status.ERROR) {
-            Toast.makeText(
-                context,
-                "${cast.message}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) })
 }
 
 @Composable
@@ -254,30 +211,21 @@ private fun PersonMovieCastItem(
 }
 
 @Composable
-private fun PersonTvCast(
-    cast: Resource<List<PersonTvCast>>,
+private fun PersonTvCastingResource(
+    resource: Resource<List<PersonTvCast>>,
     navigateToTvDetails: (tvId: Int) -> Unit
 ) {
-    Column {
-        Loading(status = cast.status)
-
-        if (cast.status == Status.SUCCESS && cast.data != null) {
-            cast.data.forEach { item ->
-                PersonTvCastItem(tv = item, navigateToTvDetails = navigateToTvDetails)
+    resource.When(
+        onLoading = { Loading() },
+        onSuccessWithData = {
+            it.forEach { item ->
+                PersonTvCastItem(
+                    tv = item,
+                    navigateToTvDetails = navigateToTvDetails
+                )
             }
-        }
-    }
-    val context = LocalContext.current
-
-    LaunchedEffect(cast.status) {
-        if (cast.status == Status.ERROR) {
-            Toast.makeText(
-                context,
-                "${cast.message}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+        },
+        onError = { LocalContext.current.showToastIfNotNull(message) })
 }
 
 @Composable

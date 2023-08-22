@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.core.LoadingIfAppend
+import com.mutkuensert.movee.core.LoadingIfRefresh
 import com.mutkuensert.movee.domain.multisearch.model.SearchResult
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -57,7 +57,6 @@ fun MultiSearchScreen(
             .padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         OutlinedTextField(
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -81,17 +80,7 @@ fun MultiSearchScreen(
             state = lazyListState
         ) {
             item {
-                if (searchResults.loadState.refresh == LoadState.Loading) {
-                    Spacer(Modifier.height(50.dp))
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(100.dp),
-                        strokeWidth = 6.dp,
-                        color = Color.Gray
-                    )
-
-                    Spacer(Modifier.height(50.dp))
-                }
+                searchResults.loadState.LoadingIfRefresh()
             }
 
             items(count = searchResults.itemCount) { index ->
@@ -133,17 +122,7 @@ fun MultiSearchScreen(
             }
 
             item {
-                if (searchResults.loadState.append == LoadState.Loading) {
-                    Spacer(Modifier.height(50.dp))
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(100.dp),
-                        strokeWidth = 6.dp,
-                        color = Color.Gray
-                    )
-
-                    Spacer(Modifier.height(50.dp))
-                }
+                searchResults.loadState.LoadingIfAppend()
             }
         }
     }
