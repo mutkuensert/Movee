@@ -46,9 +46,8 @@ fun MovieDetailsScreen(
 ) {
     val movieDetails by viewModel.movieDetails.collectAsStateWithLifecycle()
     val movieCast by viewModel.movieCast.collectAsStateWithLifecycle()
-    val movieId = viewModel.movieId
 
-    LaunchedEffect(true) { viewModel.getMovieDetails(movieId) }
+    LaunchedEffect(true) { viewModel.getMovieDetails() }
 
     Column(
         modifier = Modifier
@@ -56,13 +55,14 @@ fun MovieDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        MovieDetailsResource(
+        MovieDetails(
             phase = movieDetails,
-            loadCastIfSuccessful = { viewModel.getMovieCast(movieId) })
+            loadCastIfSuccessful = viewModel::getMovieCast
+        )
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        MovieCastResource(
+        MovieCast(
             phase = movieCast,
             navigateToPersonDetails = viewModel::navigateToPerson
         )
@@ -70,7 +70,7 @@ fun MovieDetailsScreen(
 }
 
 @Composable
-private fun MovieDetailsResource(
+private fun MovieDetails(
     phase: Phase<MovieDetails>,
     loadCastIfSuccessful: () -> Unit
 ) {
@@ -85,7 +85,7 @@ private fun MovieDetailsResource(
 }
 
 @Composable
-private fun MovieCastResource(
+private fun MovieCast(
     phase: Phase<List<MovieCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {

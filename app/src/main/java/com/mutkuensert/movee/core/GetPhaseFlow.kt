@@ -1,10 +1,10 @@
-package com.mutkuensert.movee.domain
+package com.mutkuensert.movee.core
 
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.mutkuensert.androidphase.Phase
-import com.mutkuensert.movee.core.invokeSuspendingForResult
+import com.mutkuensert.movee.domain.Failure
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 /**
  * Create a new instance for every use case.
  */
-class GetResourceFlowUseCase<T> {
+class GetPhaseFlow<T> {
     private val _phase: MutableStateFlow<Phase<T>> = MutableStateFlow(Phase.Standby())
 
     suspend fun execute(block: suspend () -> Result<T, Failure>): StateFlow<Phase<T>> =

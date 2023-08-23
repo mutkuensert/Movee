@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.map
 class TvShowRepositoryImpl @Inject constructor(
     private val tvShowsApi: TvShowsApi,
 ) : TvShowRepository {
-    override suspend fun getTvShowDetails(tvId: Int): Result<TvShowDetails, Failure> {
-        return tvShowsApi.getTvShowDetails(tvId).toResult(mapper = { response ->
+    override suspend fun getTvShowDetails(tvShowId: Int): Result<TvShowDetails, Failure> {
+        return tvShowsApi.getTvShowDetails(tvShowId).toResult(mapper = { response ->
             TvShowDetails(
                 id = response.id,
                 name = response.name,
@@ -36,8 +36,8 @@ class TvShowRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun getTvShowCast(tvId: Int): Result<List<TvShowCast>, Failure> {
-        return tvShowsApi.getTvShowCredits(tvId).toResult(mapper = { response ->
+    override suspend fun getTvShowCast(tvShowId: Int): Result<List<TvShowCast>, Failure> {
+        return tvShowsApi.getTvShowCredits(tvShowId).toResult(mapper = { response ->
             response.cast.map {
                 TvShowCast(
                     id = it.id,

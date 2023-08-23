@@ -46,42 +46,39 @@ import com.mutkuensert.movee.domain.person.model.PersonTvCast
 fun PersonScreen(
     viewModel: PersonViewModel = hiltViewModel()
 ) {
-    val detailsResource by viewModel.details.collectAsStateWithLifecycle()
-    val movieCastingResource by viewModel.movieCastingResource.collectAsStateWithLifecycle()
-    val tvCastingResource by viewModel.tvCastingResource.collectAsStateWithLifecycle()
-    val personId = viewModel.personId
+    val details by viewModel.details.collectAsStateWithLifecycle()
+    val movieCasting by viewModel.movieCasting.collectAsStateWithLifecycle()
+    val tvCasting by viewModel.tvCasting.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) {
-        viewModel.getPersonDetails(personId)
-    }
+    LaunchedEffect(true) { viewModel.getPersonDetails() }
 
-    if (detailsResource is Phase.Success) {
-        LaunchedEffect(true) {
-            viewModel.getCasting(personId = personId)
+    details.Execute(
+        onSuccess = {
+            LaunchedEffect(true) { viewModel.getCasting() }
         }
-    }
+    )
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        PersonDetailsResource(phase = detailsResource)
+        PersonDetails(phase = details)
 
-        PersonMovieCastingResource(
-            phase = movieCastingResource,
+        PersonMovieCasting(
+            phase = movieCasting,
             navigateToMovieDetails = viewModel::navigateToMovieDetails
         )
 
-        PersonTvCastingResource(
-            phase = tvCastingResource,
+        PersonTvCasting(
+            phase = tvCasting,
             navigateToTvDetails = viewModel::navigateToTvShowDetails
         )
     }
 }
 
 @Composable
-private fun PersonDetailsResource(phase: Phase<PersonDetails>) {
+private fun PersonDetails(phase: Phase<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
 
     phase.Execute(
@@ -150,7 +147,7 @@ private fun PersonDetailsResource(phase: Phase<PersonDetails>) {
 }
 
 @Composable
-private fun PersonMovieCastingResource(
+private fun PersonMovieCasting(
     phase: Phase<List<PersonMovieCast>>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
@@ -210,7 +207,7 @@ private fun PersonMovieCastItem(
 }
 
 @Composable
-private fun PersonTvCastingResource(
+private fun PersonTvCasting(
     phase: Phase<List<PersonTvCast>>,
     navigateToTvDetails: (tvId: Int) -> Unit
 ) {

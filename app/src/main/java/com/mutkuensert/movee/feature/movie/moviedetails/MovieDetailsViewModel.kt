@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutkuensert.androidphase.Phase
-import com.mutkuensert.movee.domain.GetResourceFlowUseCase
-import com.mutkuensert.movee.domain.movie.MovieRepository
+import com.mutkuensert.movee.domain.movie.GetMovieCastUseCase
+import com.mutkuensert.movee.domain.movie.GetMovieDetailsUseCase
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
 import com.mutkuensert.movee.feature.movie.navigation.KEY_MOVIE_ID
@@ -14,12 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val movieRepository: MovieRepository,
     private val personNavigator: PersonNavigator,
+    private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val getMovieCastUseCase: GetMovieCastUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val movieId: Int = requireNotNull(savedStateHandle[KEY_MOVIE_ID]) {
@@ -33,21 +35,17 @@ class MovieDetailsViewModel @Inject constructor(
         MutableStateFlow(Phase.Standby())
     val movieCast = _movieCast.asStateFlow()
 
-    fun getMovieDetails(movieId: Int) {
+    fun getMovieDetails() {
         viewModelScope.launch {
-            GetResourceFlowUseCase<MovieDetails>().execute {
-                movieRepository.getMovieDetails(movieId)
-            }.collect {
+            getMovieDetailsUseCase.execute(movieId).collectLatest {
                 _movieDetails.value = it
             }
         }
     }
 
-    fun getMovieCast(movieId: Int) {
+    fun getMovieCast() {
         viewModelScope.launch {
-            GetResourceFlowUseCase<List<MovieCast>>().execute {
-                movieRepository.getMovieCast(movieId)
-            }.collect {
+            getMovieCastUseCase.execute(movieId).collectLatest {
                 _movieCast.value = it
             }
         }

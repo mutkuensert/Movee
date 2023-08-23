@@ -45,10 +45,9 @@ fun TvDetailsScreen(
     viewModel: TvShowDetailsViewModel = hiltViewModel()
 ) {
     val tvShowDetails by viewModel.tvShowDetails.collectAsStateWithLifecycle()
-    val tvCast by viewModel.tvCast.collectAsStateWithLifecycle()
-    val tvShowId = viewModel.tvShowId
+    val tvShowCast by viewModel.tvShowCast.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) { viewModel.getTvDetails(tvShowId) }
+    LaunchedEffect(true) { viewModel.getTvShowDetails() }
 
     Column(
         modifier = Modifier
@@ -56,21 +55,22 @@ fun TvDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        TvShowDetailsResource(
+        TvShowDetails(
             phase = tvShowDetails,
-            loadTvCastIfSuccessful = { viewModel.getTvShowCast(tvShowId = tvShowId) })
+            loadTvCastIfSuccessful = viewModel::getTvShowCast
+        )
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        TvShowCastResourceResource(
-            phase = tvCast,
+        TvShowCast(
+            phase = tvShowCast,
             navigateToPersonDetails = viewModel::navigateToPersonDetails
         )
     }
 }
 
 @Composable
-private fun TvShowDetailsResource(
+private fun TvShowDetails(
     phase: Phase<TvShowDetails>,
     loadTvCastIfSuccessful: () -> Unit
 ) {
@@ -184,7 +184,7 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
 }
 
 @Composable
-private fun TvShowCastResourceResource(
+private fun TvShowCast(
     phase: Phase<List<TvShowCast>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
