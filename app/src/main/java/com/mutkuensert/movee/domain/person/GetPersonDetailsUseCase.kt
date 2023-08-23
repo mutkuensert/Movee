@@ -11,7 +11,7 @@ class GetPersonDetailsUseCase @Inject constructor(
 ) {
 
     suspend fun execute(personId: Int): Flow<Phase<PersonDetails>> {
-        return GetPhaseFlow<PersonDetails>().execute {
+        return GetPhaseFlow.execute {
             personRepository.getPersonDetails(personId)
         }
     }

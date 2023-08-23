@@ -11,7 +11,7 @@ class GetMovieDetailsUseCase @Inject constructor(
 ) {
 
     suspend fun execute(movieId: Int): Flow<Phase<MovieDetails>> {
-        return GetPhaseFlow<MovieDetails>().execute {
+        return GetPhaseFlow.execute {
             movieRepository.getMovieDetails(movieId)
         }
     }

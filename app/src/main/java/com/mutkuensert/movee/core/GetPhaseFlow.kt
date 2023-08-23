@@ -4,40 +4,43 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import com.mutkuensert.androidphase.Phase
-import com.mutkuensert.movee.domain.Failure
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Create a new instance for every use case.
- */
-class GetPhaseFlow<T> {
-    private val _phase: MutableStateFlow<Phase<T>> = MutableStateFlow(Phase.Standby())
+class GetPhaseFlow {
 
-    suspend fun execute(block: suspend () -> Result<T, Failure>): StateFlow<Phase<T>> =
-        coroutineScope {
-            launch { runBlock(block = block) }
+    companion object {
 
-            _phase.asStateFlow()
-        }
+        suspend fun <T, R : Throwable> execute(block: suspend () -> Result<T, R>): StateFlow<Phase<T>> =
+            coroutineScope {
+                val phase = MutableStateFlow<Phase<T>>(Phase.Standby())
 
-    private suspend fun runBlock(block: suspend () -> Result<T, Failure>) {
-        _phase.value = Phase.Loading()
+                launch { runBlock(phase = phase, block = block) }
 
-        invokeSuspendingForResult(block)
-            .onSuccess { result ->
-                result.onSuccess {
-                    _phase.value = Phase.Success(data = it)
-                }
-                    .onFailure {
-                        _phase.value = Phase.Error(error = it, message = it.message)
+                phase.asStateFlow()
+            }
+
+        private suspend fun <T, R : Throwable> runBlock(
+            phase: MutableStateFlow<Phase<T>>,
+            block: suspend () -> Result<T, R>
+        ) {
+            phase.value = Phase.Loading()
+
+            invokeSuspendingForResult(block)
+                .onSuccess { result ->
+                    result.onSuccess {
+                        phase.value = Phase.Success(data = it)
                     }
-            }
-            .onFailure {
-                _phase.value = Phase.Error(error = it, message = it.message)
-            }
+                        .onFailure {
+                            phase.value = Phase.Error(error = it, message = it.message)
+                        }
+                }
+                .onFailure {
+                    phase.value = Phase.Error(error = it, message = it.message)
+                }
+        }
     }
 }

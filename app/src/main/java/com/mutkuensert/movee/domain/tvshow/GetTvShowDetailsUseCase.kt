@@ -11,7 +11,7 @@ class GetTvShowDetailsUseCase @Inject constructor(
 ) {
 
     suspend fun execute(tvShowId: Int): Flow<Phase<TvShowDetails>> {
-        return GetPhaseFlow<TvShowDetails>().execute {
+        return GetPhaseFlow.execute {
             tvShowRepository.getTvShowDetails(tvShowId)
         }
     }
