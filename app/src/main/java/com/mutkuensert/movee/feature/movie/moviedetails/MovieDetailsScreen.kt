@@ -76,8 +76,8 @@ private fun MovieDetails(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = {
-            MovieDetailsItem(it)
+        onSuccess = {
+            MovieDetailsItem(data)
             LaunchedEffect(Unit) { loadCastIfSuccessful() }
         },
         onError = { LocalContext.current.showToastIfNotNull(message) }
@@ -91,9 +91,9 @@ private fun MovieCast(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = {
+        onSuccess = {
             LazyRow {
-                items(it) { item ->
+                items(data) { item ->
                     MovieCastItem(
                         cast = item,
                         navigateToPersonDetails = { navigateToPersonDetails(item.id) })

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.mutkuensert.androidphase.Phase
 
 @Composable
-fun <T> Phase<T>.Loading(
+fun <T : Any> Phase<T>.Loading(
     modifier: Modifier = Modifier,
     padding: Dp = 50.dp,
     indicatorSize: Dp = 100.dp,

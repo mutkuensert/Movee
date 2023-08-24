@@ -14,7 +14,7 @@ class GetPhaseFlow {
 
     companion object {
 
-        suspend fun <T, R : Throwable> execute(block: suspend () -> Result<T, R>): StateFlow<Phase<T>> =
+        suspend fun <T : Any, R : Throwable> execute(block: suspend () -> Result<T, R>): StateFlow<Phase<T>> =
             coroutineScope {
                 val phase = MutableStateFlow<Phase<T>>(Phase.Standby())
 
@@ -23,7 +23,7 @@ class GetPhaseFlow {
                 phase.asStateFlow()
             }
 
-        private suspend fun <T, R : Throwable> runBlock(
+        private suspend fun <T : Any, R : Throwable> runBlock(
             phase: MutableStateFlow<Phase<T>>,
             block: suspend () -> Result<T, R>
         ) {

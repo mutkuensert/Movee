@@ -76,8 +76,8 @@ private fun TvShowDetails(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = {
-            TvDetailsItem(it)
+        onSuccess = {
+            TvDetailsItem(data)
             LaunchedEffect(Unit) { loadTvCastIfSuccessful() }
         },
         onError = { LocalContext.current.showToastIfNotNull(message) })
@@ -190,7 +190,7 @@ private fun TvShowCast(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = { data ->
+        onSuccess = {
             LazyRow {
                 items(data) { item ->
                     TvShowCastItem(

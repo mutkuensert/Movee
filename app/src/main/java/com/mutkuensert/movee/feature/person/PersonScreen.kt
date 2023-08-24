@@ -82,8 +82,10 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
 
     phase.Execute(
-        onLoading = { Loading() },
-        onSuccessWithData = { data ->
+        onLoading = {
+            Loading()
+        },
+        onSuccess = {
             Card(
                 elevation = 10.dp,
                 shape = RectangleShape
@@ -153,8 +155,8 @@ private fun PersonMovieCasting(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = {
-            it.forEach { item ->
+        onSuccess = {
+            data.forEach { item ->
                 PersonMovieCastItem(movie = item, navigateToMovieDetails = navigateToMovieDetails)
             }
         },
@@ -213,8 +215,8 @@ private fun PersonTvCasting(
 ) {
     phase.Execute(
         onLoading = { Loading() },
-        onSuccessWithData = {
-            it.forEach { item ->
+        onSuccess = {
+            data.forEach { item ->
                 PersonTvCastItem(
                     tv = item,
                     navigateToTvDetails = navigateToTvDetails
