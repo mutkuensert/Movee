@@ -29,15 +29,9 @@ class GetPhaseFlow {
         ) {
             phase.value = Phase.Loading()
 
-            invokeSuspendingForResult(block)
-                .onSuccess { result ->
-                    result.onSuccess {
-                        phase.value = Phase.Success(data = it)
-                    }
-                        .onFailure {
-                            phase.value = Phase.Error(error = it, message = it.message)
-                        }
-                }
+            block.invoke().onSuccess {
+                phase.value = Phase.Success(data = it)
+            }
                 .onFailure {
                     phase.value = Phase.Error(error = it, message = it.message)
                 }
