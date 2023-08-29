@@ -39,6 +39,7 @@ import com.mutkuensert.movee.core.Loading
 import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.tvshow.model.TvShowCast
 import com.mutkuensert.movee.domain.tvshow.model.TvShowDetails
+import com.mutkuensert.phasecomposeextension.Execute
 
 @Composable
 fun TvDetailsScreen(
@@ -77,10 +78,10 @@ private fun TvShowDetails(
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            TvDetailsItem(data)
+            TvDetailsItem(it)
             LaunchedEffect(Unit) { loadTvCastIfSuccessful() }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) })
+        onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable
@@ -192,14 +193,14 @@ private fun TvShowCast(
         onLoading = { Loading() },
         onSuccess = {
             LazyRow {
-                items(data) { item ->
+                items(it) { item ->
                     TvShowCastItem(
                         cast = item,
                         navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                 }
             }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) })
+        onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable

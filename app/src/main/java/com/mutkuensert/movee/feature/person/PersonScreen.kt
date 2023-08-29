@@ -41,6 +41,7 @@ import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.person.model.PersonDetails
 import com.mutkuensert.movee.domain.person.model.PersonMovieCast
 import com.mutkuensert.movee.domain.person.model.PersonTvCast
+import com.mutkuensert.phasecomposeextension.Execute
 
 @Composable
 fun PersonScreen(
@@ -92,7 +93,7 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(data.imageUrl)
+                        .data(it.imageUrl)
                         .crossfade(true)
                         .build(),
                     loading = {
@@ -119,7 +120,7 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
-                    text = data.name,
+                    text = it.name,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 30.sp
@@ -128,13 +129,13 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 if (readMore.value) {
-                    Text(text = data.biography)
+                    Text(text = it.biography)
 
                     Text(
                         text = "... read less",
                         modifier = Modifier.clickable { readMore.value = false })
                 } else {
-                    Text(text = data.biography, maxLines = 4)
+                    Text(text = it.biography, maxLines = 4)
 
                     Text(
                         text = "... read more",
@@ -145,7 +146,7 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
 
             }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) })
+        onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable
@@ -156,11 +157,11 @@ private fun PersonMovieCasting(
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            data.forEach { item ->
+            it.forEach { item ->
                 PersonMovieCastItem(movie = item, navigateToMovieDetails = navigateToMovieDetails)
             }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) })
+        onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable
@@ -216,14 +217,14 @@ private fun PersonTvCasting(
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            data.forEach { item ->
+            it.forEach { item ->
                 PersonTvCastItem(
                     tv = item,
                     navigateToTvDetails = navigateToTvDetails
                 )
             }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) })
+        onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable

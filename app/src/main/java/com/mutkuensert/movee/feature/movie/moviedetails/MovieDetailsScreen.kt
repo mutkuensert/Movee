@@ -39,6 +39,7 @@ import com.mutkuensert.movee.core.Loading
 import com.mutkuensert.movee.core.showToastIfNotNull
 import com.mutkuensert.movee.domain.movie.model.MovieCast
 import com.mutkuensert.movee.domain.movie.model.MovieDetails
+import com.mutkuensert.phasecomposeextension.Execute
 
 @Composable
 fun MovieDetailsScreen(
@@ -77,10 +78,10 @@ private fun MovieDetails(
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            MovieDetailsItem(data)
+            MovieDetailsItem(it)
             LaunchedEffect(Unit) { loadCastIfSuccessful() }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) }
+        onError = { LocalContext.current.showToastIfNotNull(it.message) }
     )
 }
 
@@ -93,14 +94,14 @@ private fun MovieCast(
         onLoading = { Loading() },
         onSuccess = {
             LazyRow {
-                items(data) { item ->
+                items(it) { item ->
                     MovieCastItem(
                         cast = item,
                         navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                 }
             }
         },
-        onError = { LocalContext.current.showToastIfNotNull(message) }
+        onError = { LocalContext.current.showToastIfNotNull(it.message) }
     )
 }
 
