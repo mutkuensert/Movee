@@ -14,4 +14,6 @@ interface TvShowRepository {
     suspend fun getTvShowCast(tvShowId: Int): Result<List<TvShowCast>, Failure>
     fun getPopularTvShowsPagingFlow(): Flow<PagingData<PopularTvShow>>
     fun getTopRatedTvShowsPagingFlow(): Flow<PagingData<TopRatedTvShow>>
+    suspend fun addTvShowToFavorites(tvShowId: Int)
+    suspend fun removeTvShowFromFavorites(tvShowId: Int)
 }

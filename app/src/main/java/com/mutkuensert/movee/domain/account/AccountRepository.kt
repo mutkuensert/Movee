@@ -6,6 +6,7 @@ import com.mutkuensert.movee.library.user.UserDetails
 
 interface AccountRepository {
     suspend fun getUserDetails(): Result<UserDetails, Failure>
-    suspend fun fetchAndInsertFavoriteMovies()
+    suspend fun fetchFavoriteMoviesAndTvShows()
     suspend fun addMovieToFavorites(isFavorite: Boolean, movieId: Int)
+    suspend fun addTvShowToFavorites(isFavorite: Boolean, movieId: Int)
 }

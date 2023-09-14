@@ -29,6 +29,6 @@ class AccountDetailsUseCase @Inject constructor(
     }
 
     private suspend fun getOtherUserRelatedInfo() {
-        accountRepository.fetchAndInsertFavoriteMovies()
+        accountRepository.fetchFavoriteMoviesAndTvShows()
     }
 }

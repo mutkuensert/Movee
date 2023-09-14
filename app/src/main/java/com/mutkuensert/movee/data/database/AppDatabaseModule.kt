@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mutkuensert.movee.data.account.local.AccountDao
 import com.mutkuensert.movee.data.movie.local.MovieDao
+import com.mutkuensert.movee.data.tvshow.local.TvShowDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +29,10 @@ object AppDatabaseModule {
     @Singleton
     @Provides
     fun provideMovieDao(appDatabase: AppDatabase): MovieDao = appDatabase.movieDao()
+
+    @Singleton
+    @Provides
+    fun provideTvShowDao(appDatabase: AppDatabase): TvShowDao = appDatabase.tvShowDao()
 
     @Singleton
     @Provides

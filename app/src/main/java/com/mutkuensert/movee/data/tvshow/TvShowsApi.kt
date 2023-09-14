@@ -1,9 +1,9 @@
 package com.mutkuensert.movee.data.tvshow
 
-import com.mutkuensert.movee.data.tvshow.model.PopularTvShowsResponse
-import com.mutkuensert.movee.data.tvshow.model.TopRatedTvShowsResponse
-import com.mutkuensert.movee.data.tvshow.model.TvShowCreditsResponse
-import com.mutkuensert.movee.data.tvshow.model.TvShowDetailsResponse
+import com.mutkuensert.movee.data.tvshow.remote.model.PopularTvShowsResponse
+import com.mutkuensert.movee.data.tvshow.remote.model.TopRatedTvShowsResponse
+import com.mutkuensert.movee.data.tvshow.remote.model.TvShowCreditsResponse
+import com.mutkuensert.movee.data.tvshow.remote.model.TvShowDetailsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

@@ -26,6 +26,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -46,6 +48,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -57,6 +60,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.mutkuensert.movee.R
 import com.mutkuensert.movee.core.LoadingIfAppend
 import com.mutkuensert.movee.core.LoadingIfRefresh
 import com.mutkuensert.movee.domain.tvshow.model.PopularTvShow
@@ -104,7 +108,8 @@ fun TvShowsScreen(
             topRatedTvShows = topRatedTvShows,
             navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
             itemsAboveHeight = itemsAboveHeight,
-            lazyGridState = stateOfTopRatedTvShows
+            lazyGridState = stateOfTopRatedTvShows,
+            onAddToFavorite = viewModel::addTvShowToFavorites
         )
 
 
@@ -136,7 +141,8 @@ fun TvShowsScreen(
                         .padding(horizontal = 10.dp),
                     popularTvShows = popularTvShowsLazyPagingItems,
                     navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
-                    lazyListState = stateOfPopularTvShows
+                    lazyListState = stateOfPopularTvShows,
+                    onAddToFavorite = viewModel::addTvShowToFavorites
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -150,7 +156,8 @@ private fun PopularTvShows(
     modifier: Modifier = Modifier,
     popularTvShows: LazyPagingItems<PopularTvShow>,
     lazyListState: LazyListState,
-    navigateToTvShowDetails: (tvShowId: Int) -> Unit
+    navigateToTvShowDetails: (tvShowId: Int) -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -165,7 +172,8 @@ private fun PopularTvShows(
                 if (item != null) {
                     PopularTvShowsItem(
                         popularTvShow = item,
-                        onClick = { navigateToTvShowDetails(item.id) }
+                        onClick = { navigateToTvShowDetails(item.id) },
+                        onAddToFavorite = onAddToFavorite
                     )
                 }
             }
@@ -181,7 +189,8 @@ private fun TopRatedTvShows(
     topRatedTvShows: LazyPagingItems<TopRatedTvShow>,
     itemsAboveHeight: MutableState<Dp>,
     lazyGridState: LazyGridState,
-    navigateToTvShowDetails: (tvShowId: Int) -> Unit
+    navigateToTvShowDetails: (tvShowId: Int) -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -228,7 +237,9 @@ private fun TopRatedTvShows(
                 if (tvShow != null) {
                     TopRatedTvShowsItem(
                         topRatedTvShow = tvShow,
-                        onClick = { navigateToTvShowDetails(tvShow.id) })
+                        onClick = { navigateToTvShowDetails(tvShow.id) },
+                        onAddToFavorite = onAddToFavorite
+                    )
                 }
             }
 
@@ -242,7 +253,11 @@ private fun TopRatedTvShows(
 }
 
 @Composable
-private fun PopularTvShowsItem(popularTvShow: PopularTvShow, onClick: () -> Unit) {
+private fun PopularTvShowsItem(
+    popularTvShow: PopularTvShow,
+    onClick: () -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
+) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .clickable { onClick() }) {
@@ -283,6 +298,16 @@ private fun PopularTvShowsItem(popularTvShow: PopularTvShow, onClick: () -> Unit
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
+
+                if (popularTvShow.isFavorite != null) {
+                    Spacer(Modifier.height(10.dp))
+
+                    FavoriteButton(
+                        isFavorite = popularTvShow.isFavorite,
+                        tvShowId = popularTvShow.id,
+                        onAddToFavorite = onAddToFavorite
+                    )
+                }
             }
         }
     }
@@ -291,7 +316,8 @@ private fun PopularTvShowsItem(popularTvShow: PopularTvShow, onClick: () -> Unit
 @Composable
 private fun TopRatedTvShowsItem(
     topRatedTvShow: TopRatedTvShow,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
@@ -341,9 +367,43 @@ private fun TopRatedTvShowsItem(
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
                     )
+
+                    if (topRatedTvShow.isFavorite != null) {
+                        Spacer(Modifier.height(10.dp))
+
+                        FavoriteButton(
+                            isFavorite = topRatedTvShow.isFavorite,
+                            tvShowId = topRatedTvShow.id,
+                            onAddToFavorite = onAddToFavorite
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FavoriteButton(
+    isFavorite: Boolean,
+    tvShowId: Int,
+    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit
+) {
+    IconButton(
+        onClick = {
+            onAddToFavorite.invoke(!isFavorite, tvShowId)
+        }
+    ) {
+        val iconId = if (isFavorite) {
+            R.drawable.ic_star_filled
+        } else {
+            R.drawable.ic_star_unfilled
+        }
+
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null
+        )
     }
 }
 
@@ -356,8 +416,10 @@ private fun PreviewTopRatedTveShowsItem() {
             imageUrl = null,
             id = 0,
             voteAverage = 0.0,
-            name = "Tv Show Title"
+            name = "Tv Show Title",
+            isFavorite = true
         ),
-        onClick = {}
+        onClick = {},
+        onAddToFavorite = { _, _ -> }
     )
 }

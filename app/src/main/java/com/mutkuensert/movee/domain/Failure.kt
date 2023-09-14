@@ -2,7 +2,7 @@ package com.mutkuensert.movee.domain
 
 data class Failure(
     val statusCode: Int? = null,
-    override val message: String,
+    override val message: String = "Empty Message",
     override val cause: Throwable? = null,
 ) : Throwable() {
 

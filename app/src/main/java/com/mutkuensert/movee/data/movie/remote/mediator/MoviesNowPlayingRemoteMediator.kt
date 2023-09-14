@@ -4,9 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.mutkuensert.movee.data.movie.MovieNowPlayingDtoMapper
 import com.mutkuensert.movee.data.movie.local.MovieDao
 import com.mutkuensert.movee.data.movie.local.model.MovieNowPlayingEntity
+import com.mutkuensert.movee.data.movie.remote.mapper.MovieNowPlayingDtoMapper
 import com.mutkuensert.movee.data.movie.remote.model.MoviesNowPlayingResponse
 import com.mutkuensert.movee.data.util.ApiConstants
 import kotlinx.coroutines.Dispatchers
