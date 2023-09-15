@@ -15,3 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Movee"
 include ':app'
+include ':presentation'
+include ':domain'
+include ':data'
+include ':resources'

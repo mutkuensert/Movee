@@ -1,0 +1,50 @@
+plugins {
+    id 'base-library'
+}
+
+android {
+    namespace "movee.presentation"
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compiler.kotlinComposeExtensionVersion
+    }
+}
+
+dependencies {
+    implementation project(':domain')
+    implementation project(':resources')
+
+    implementation "androidx.core:core-ktx:$versions.core"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+    implementation "androidx.compose.ui:ui:$versions.composeUi"
+    implementation "androidx.compose.ui:ui-tooling-preview:$versions.composeUi"
+    implementation "androidx.compose.material:material:$versions.composeUi"
+
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$versions.composeUi"
+    debugImplementation "androidx.compose.ui:ui-tooling:$versions.composeUi"
+    //noinspection GradleDependency
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$versions.composeUi"
+
+    implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
+    implementation "androidx.navigation:navigation-compose:$versions.navigation"
+    implementation "androidx.hilt:hilt-navigation-compose:$versions.hiltNavigationCompose"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+    // ViewModel utilities for Compose
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$versions.lifecycle"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:$versions.lifecycle"
+
+    implementation("io.coil-kt:coil-compose:$versions.coil")
+
+    implementation "androidx.paging:paging-compose:$versions.paging"
+
+    implementation "androidx.browser:browser:$versions.browser"
+
+    implementation "com.github.mutkuensert:Android-Phase:$versions.androidPhase"
+    implementation "com.github.mutkuensert:Android-Phase-Compose-Extension:$versions.androidPhaseCompose"
+}

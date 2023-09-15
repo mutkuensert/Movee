@@ -1,18 +1,56 @@
 buildscript {
     ext {
-        compose_ui_version = '1.5.0-beta02'
-        lifecycle_version = '2.6.1'
-        paging_version = '3.2.0'
-        nav_version = '2.7.0'
-        kotlin_version = '1.8.21'
-        room_version = '2.5.2'
-    }
+        compiler = [
+                java                         : JavaVersion.VERSION_17,
+                kotlinJvmTarget              : '17',
+                kotlinComposeExtensionVersion: '1.4.7'
+        ]
 
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+        application = [
+                id                       : 'com.mutkuensert.movee',
+                versionCode              : 1,
+                versionName              : "1.0",
+                testInstrumentationRunner: "com.mutkuensert.movee.CustomTestRunner",
+                minSdk                   : 21,
+                compileSdk               : 34,
+                targetSdk                : 34
+        ]
+
+        versions = [
+                activityCompose      : '1.7.2',
+                androidPhase         : 'v2.0.0',
+                androidPhaseCompose  : 'v1.0.0',
+                browser              : '1.6.0',
+                coil                 : '2.4.0',
+                composeUi            : '1.5.0-beta02',
+                core                 : '1.10.1',
+                coroutines           : '1.7.1',
+                dagger               : dagger_version,
+                espresso             : '3.5.1',
+                hiltNavigationCompose: '1.0.0',
+                junit                : '4.13.2',
+                junitAndroidXExt     : '1.1.5',
+                kotlinResult         : '1.1.16',
+                kotlinSerialization  : '1.5.1',
+                lifecycle            : '2.6.1',
+                moshi                : '1.15.0',
+                navigation           : '2.7.0',
+                okHttpInterceptor    : '4.11.0',
+                paging               : '3.2.0',
+                retrofit             : '2.9.0',
+                room                 : '2.5.2',
+                security             : '1.1.0-alpha06',
+                testCore             : '1.5.0',
+                timber               : '5.0.1',
+                truth                : '1.1.3',
+        ]
+    }
+}
+
 plugins {
-    id 'com.android.application' version '8.0.2' apply false
-    id 'com.android.library' version '8.0.2' apply false
+    id 'com.android.application' version "$gradle_version" apply false
+    id 'com.android.library' version "$gradle_version" apply false
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
-    id 'com.google.dagger.hilt.android' version '2.44' apply false
+    id 'com.google.dagger.hilt.android' version "$dagger_version" apply false
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version" apply false
 }

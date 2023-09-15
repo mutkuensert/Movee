@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application'
+    id 'base-plugin'
+}
+
+android {
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compiler.kotlinComposeExtensionVersion
+    }
+
+    defaultConfig {
+        versionCode application.versionCode
+        versionName application.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+}

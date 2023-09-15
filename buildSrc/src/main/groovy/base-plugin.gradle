@@ -1,0 +1,59 @@
+plugins {
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    compileSdk application.compileSdk
+
+    defaultConfig {
+        minSdk application.minSdk
+        targetSdk application.targetSdk
+
+        testInstrumentationRunner application.testInstrumentationRunner
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility compiler.java
+        targetCompatibility compiler.java
+    }
+
+    kotlinOptions {
+        jvmTarget = application.kotlinJvmTarget
+        freeCompilerArgs = ['-Xjvm-default=compatibility']
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation "com.google.dagger:hilt-android:$versions.dagger"
+    kapt "com.google.dagger:hilt-compiler:$versions.dagger"
+    // For instrumented tests.
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$versions.dagger"
+    // ...with Kotlin.
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$versions.dagger"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
+
+    testImplementation "junit:junit:$versions.junit"
+    androidTestImplementation "androidx.test.ext:junit:$versions.junitAndroidXExt"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
+
+    implementation "com.jakewharton.timber:timber:$versions.timber"
+
+    implementation("com.michael-bull.kotlin-result:kotlin-result:$versions.kotlinResult")
+}
+
+kapt {
+    correctErrorTypes true
+}

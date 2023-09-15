@@ -1,0 +1,12 @@
+plugins {
+    id 'base-library'
+}
+
+android {
+    namespace "movee.domain"
+}
+
+dependencies {
+    implementation "androidx.paging:paging-runtime-ktx:$versions.paging"
+    implementation "com.github.mutkuensert:Android-Phase:$versions.androidPhase"
+}

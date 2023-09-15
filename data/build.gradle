@@ -1,0 +1,33 @@
+plugins {
+    id 'base-library'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+}
+
+android {
+    namespace "movee.data"
+}
+
+dependencies {
+    implementation project(':domain')
+
+    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    implementation "com.squareup.moshi:moshi-kotlin:$versions.moshi"
+    implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
+    implementation "com.squareup.moshi:moshi:$versions.moshi"
+    implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
+
+    implementation "androidx.room:room-runtime:$versions.room"
+    annotationProcessor "androidx.room:room-compiler:$versions.room"
+    //noinspection KaptUsageInsteadOfKsp
+    kapt "androidx.room:room-compiler:$versions.room"
+
+    implementation "androidx.room:room-paging:$versions.room"
+    implementation "androidx.room:room-ktx:$versions.room"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okHttpInterceptor"
+
+    implementation "androidx.paging:paging-runtime-ktx:$versions.paging"
+
+    implementation "androidx.security:security-crypto-ktx:$versions.security"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$versions.kotlinSerialization"
+}
