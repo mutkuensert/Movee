@@ -56,17 +56,10 @@ class AuthenticationRepositoryImpl @Inject constructor(
         if (sessionId != null) {
             authenticationApi.deleteSession(SessionIdDto(sessionId))
                 .toResult()
-                .onSuccess {
-                    if (it.success) {
-                        sessionManager.removeSession()
-                        Timber.d("User session has been removed.")
-                        return true
-                    }
-                }
                 .onFailure {
                     if (it.statusCode == AuthenticationError.RESOURCE_NOT_FOUND.statusCode) {
-                        sessionManager.removeSession()
-                        Timber.e("User session has been removed. Error Message: ${it.message}")
+                        Timber.e("Delete Session Request Error! Message: ${it.message}")
+
                         return true
                     }
 
@@ -74,6 +67,6 @@ class AuthenticationRepositoryImpl @Inject constructor(
                 }
         }
 
-        return false
+        return true
     }
 }

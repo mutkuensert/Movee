@@ -18,25 +18,30 @@ import retrofit2.http.Query
 interface AccountApi {
 
     @GET("account")
-    suspend fun getAccountDetails(@Query(QueryParameters.SESSION_ID) sessionId: String): Response<AccountDetailsResponse>
+    suspend fun getAccountDetails(@Query(QueryParameters.SESSION_ID) sessionId: String)
+            : Response<AccountDetailsResponse>
 
     @GET("account/${PathParameters.ACCOUNT_ID}/favorite/movies")
     suspend fun getFavoriteMovies(
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
+        @Query(QueryParameters.SESSION_ID) sessionId: String,
     ): Response<FavoriteMoviesResponse>
 
     @POST("account/${PathParameters.ACCOUNT_ID}/favorite")
     suspend fun postFavoriteMovie(
-        @Body favoriteMovieDto: FavoriteMovieDto
+        @Body favoriteMovieDto: FavoriteMovieDto,
+        @Query(QueryParameters.SESSION_ID) sessionId: String,
     ): Response<PostFavoriteMovieResponse>
 
     @GET("account/${PathParameters.ACCOUNT_ID}/favorite/tv")
     suspend fun getFavoriteTvShows(
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
+        @Query(QueryParameters.SESSION_ID) sessionId: String,
     ): Response<FavoriteTvShowsResponse>
 
     @POST("account/${PathParameters.ACCOUNT_ID}/favorite")
     suspend fun postFavoriteTvShow(
-        @Body favoriteTvShowDto: FavoriteTvShowDto
+        @Body favoriteTvShowDto: FavoriteTvShowDto,
+        @Query(QueryParameters.SESSION_ID) sessionId: String,
     ): Response<PostFavoriteTvShowResponse>
 }

@@ -4,6 +4,7 @@ import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import javax.inject.Inject
 import javax.inject.Singleton
+import movee.domain.account.ClearAllUserDataUseCase
 import movee.domain.account.FetchAccountDetailsUseCase
 import movee.domain.library.SessionManager
 import timber.log.Timber
@@ -13,6 +14,7 @@ class CompleteLoginUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val sessionManager: SessionManager,
     private val fetchAccountDetailsUseCase: FetchAccountDetailsUseCase,
+    private val clearAllUserDataUseCase: ClearAllUserDataUseCase,
 ) {
 
     suspend fun execute(): Boolean {
@@ -20,18 +22,17 @@ class CompleteLoginUseCase @Inject constructor(
 
         authenticationRepository.fetchSessionIdWithValidatedRequestToken(requestToken)
             .onFailure {
-                sessionManager.removeRequestToken()
-
+                clearAllUserDataUseCase.execute()
                 Timber.d(it.message)
 
                 return false
             }
             .onSuccess { sessionId ->
-                sessionManager.removeRequestToken()
+                clearAllUserDataUseCase.execute()
                 sessionManager.insertSessionId(sessionId)
-            }
 
-        fetchAccountDetailsUseCase.execute()
+                fetchAccountDetailsUseCase.execute()
+            }
 
         return true
     }

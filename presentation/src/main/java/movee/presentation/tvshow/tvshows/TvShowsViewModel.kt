@@ -25,11 +25,11 @@ class TvShowsViewModel @Inject constructor(
         tvShowNavigator.navigateToDetails(tvShowId)
     }
 
-    fun addTvShowToFavorites(isFavorite: Boolean, movieId: Int) {
+    fun addTvShowToFavorites(isFavorite: Boolean, tvShowId: Int) {
         viewModelScope.launch {
             accountRepository.addTvShowToFavorites(
                 isFavorite = isFavorite,
-                movieId = movieId
+                tvShowId = tvShowId
             )
         }
     }

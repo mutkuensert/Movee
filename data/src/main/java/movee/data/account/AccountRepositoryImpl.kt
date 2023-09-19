@@ -52,10 +52,13 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchFavoriteMoviesAndTvShows() {
-        accountDao.clearAllFavoriteMovies()
+        clearAllFavoriteMoviesAndTvShows()
 
         for (page in ApiConstants.General.DEFAULT_FIRST_PAGE..4) {
-            accountApi.getFavoriteMovies(page).toResult().onSuccess { favoriteMoviesResponse ->
+            accountApi.getFavoriteMovies(
+                page = page,
+                sessionId = sessionManager.getSessionId()!!
+            ).toResult().onSuccess { favoriteMoviesResponse ->
                 if (favoriteMoviesResponse.results.isEmpty() && page > ApiConstants.General.DEFAULT_FIRST_PAGE) {
                     return
                 } else if (favoriteMoviesResponse.results.isEmpty()) {
@@ -73,7 +76,10 @@ class AccountRepositoryImpl @Inject constructor(
                 return
             }
 
-            accountApi.getFavoriteTvShows(page).toResult().onSuccess { favoriteTvShowsResponse ->
+            accountApi.getFavoriteTvShows(
+                page = page,
+                sessionId = sessionManager.getSessionId()!!
+            ).toResult().onSuccess { favoriteTvShowsResponse ->
                 if (favoriteTvShowsResponse.results.isEmpty() && page > ApiConstants.General.DEFAULT_FIRST_PAGE) {
                     return
                 } else if (favoriteTvShowsResponse.results.isEmpty()) {
@@ -101,7 +107,8 @@ class AccountRepositoryImpl @Inject constructor(
                 FavoriteMovieDto(
                     favorite = true,
                     mediaId = movieId
-                )
+                ),
+                sessionId = sessionManager.getSessionId()!!
             ).toResult().onFailure {
                 deleteFavoriteMovie(movieId)
             }
@@ -112,35 +119,38 @@ class AccountRepositoryImpl @Inject constructor(
                 FavoriteMovieDto(
                     favorite = false,
                     mediaId = movieId
-                )
+                ),
+                sessionId = sessionManager.getSessionId()!!
             ).toResult().onFailure {
                 insertFavoriteMovieInCache(movieId = movieId)
             }
         }
     }
 
-    override suspend fun addTvShowToFavorites(isFavorite: Boolean, movieId: Int) {
+    override suspend fun addTvShowToFavorites(isFavorite: Boolean, tvShowId: Int) {
         if (isFavorite) {
-            insertFavoriteTvShowInCache(movieId)
+            insertFavoriteTvShowInCache(tvShowId)
 
             accountApi.postFavoriteTvShow(
                 FavoriteTvShowDto(
                     favorite = true,
-                    mediaId = movieId
-                )
+                    mediaId = tvShowId
+                ),
+                sessionId = sessionManager.getSessionId()!!
             ).toResult().onFailure {
-                deleteFavoriteTvShow(movieId)
+                deleteFavoriteTvShow(tvShowId)
             }
         } else {
-            deleteFavoriteTvShow(tvShowId = movieId)
+            deleteFavoriteTvShow(tvShowId = tvShowId)
 
             accountApi.postFavoriteTvShow(
                 FavoriteTvShowDto(
                     favorite = false,
-                    mediaId = movieId
-                )
+                    mediaId = tvShowId
+                ),
+                sessionId = sessionManager.getSessionId()!!
             ).toResult().onFailure {
-                insertFavoriteTvShowInCache(tvShowId = movieId)
+                insertFavoriteTvShowInCache(tvShowId = tvShowId)
             }
         }
     }
