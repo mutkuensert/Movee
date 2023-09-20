@@ -38,7 +38,7 @@ import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.phasecomposeextension.Execute
 import movee.domain.movie.model.MovieCast
 import movee.domain.movie.model.MovieDetails
-import movee.presentation.core.Loading
+import movee.presentation.components.Loading
 import movee.presentation.core.showToastIfNotNull
 
 @Composable

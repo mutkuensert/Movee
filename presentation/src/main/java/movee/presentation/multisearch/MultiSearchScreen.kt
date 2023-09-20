@@ -35,8 +35,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import movee.domain.multisearch.model.SearchResult
-import movee.presentation.core.LoadingIfAppend
-import movee.presentation.core.LoadingIfRefresh
+import movee.presentation.components.LoadingIfAppend
+import movee.presentation.components.LoadingIfRefresh
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

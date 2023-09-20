@@ -9,4 +9,5 @@ val Teal200 = Color(0xFF03DAC5)
 
 object AppColors {
     val DarkCyan = Color(0xFF55868C)
+    val FavoriteStar = Color(0xFFFFC107)
 }

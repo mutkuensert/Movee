@@ -26,8 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -48,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -63,9 +60,9 @@ import coil.request.ImageRequest
 import kotlin.math.roundToInt
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
-import movee.presentation.core.LoadingIfAppend
-import movee.presentation.core.LoadingIfRefresh
-import movee.resources.R
+import movee.presentation.components.FavoriteButton
+import movee.presentation.components.LoadingIfAppend
+import movee.presentation.components.LoadingIfRefresh
 
 @Composable
 fun TvShowsScreen(
@@ -304,8 +301,12 @@ private fun PopularTvShowsItem(
 
                     FavoriteButton(
                         isFavorite = popularTvShow.isFavorite!!,
-                        tvShowId = popularTvShow.id,
-                        onAddToFavorite = onAddToFavorite
+                        onAddToFavorite = {
+                            onAddToFavorite.invoke(
+                                !popularTvShow.isFavorite!!,
+                                popularTvShow.id
+                            )
+                        }
                     )
                 }
             }
@@ -373,8 +374,12 @@ private fun TopRatedTvShowsItem(
 
                         FavoriteButton(
                             isFavorite = topRatedTvShow.isFavorite!!,
-                            tvShowId = topRatedTvShow.id,
-                            onAddToFavorite = onAddToFavorite
+                            onAddToFavorite = {
+                                onAddToFavorite.invoke(
+                                    !topRatedTvShow.isFavorite!!,
+                                    topRatedTvShow.id
+                                )
+                            }
                         )
                     }
                 }
@@ -382,31 +387,6 @@ private fun TopRatedTvShowsItem(
         }
     }
 }
-
-@Composable
-private fun FavoriteButton(
-    isFavorite: Boolean,
-    tvShowId: Int,
-    onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit
-) {
-    IconButton(
-        onClick = {
-            onAddToFavorite.invoke(!isFavorite, tvShowId)
-        }
-    ) {
-        val iconId = if (isFavorite) {
-            R.drawable.ic_star_filled
-        } else {
-            R.drawable.ic_star_unfilled
-        }
-
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = null
-        )
-    }
-}
-
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable

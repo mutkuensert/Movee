@@ -40,7 +40,7 @@ import com.mutkuensert.phasecomposeextension.Execute
 import movee.domain.person.model.PersonDetails
 import movee.domain.person.model.PersonMovieCast
 import movee.domain.person.model.PersonTvCast
-import movee.presentation.core.Loading
+import movee.presentation.components.Loading
 import movee.presentation.core.showToastIfNotNull
 
 @Composable

@@ -22,8 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -43,7 +41,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -58,9 +55,9 @@ import coil.request.ImageRequest
 import kotlin.math.roundToInt
 import movee.domain.movie.model.MovieNowPlaying
 import movee.domain.movie.model.PopularMovie
-import movee.presentation.core.LoadingIfAppend
-import movee.presentation.core.LoadingIfRefresh
-import movee.resources.R
+import movee.presentation.components.FavoriteButton
+import movee.presentation.components.LoadingIfAppend
+import movee.presentation.components.LoadingIfRefresh
 
 @Composable
 fun MoviesScreen(
@@ -282,8 +279,7 @@ private fun MoviesNowPlayingItem(
 
                     FavoriteButton(
                         isFavorite = movie.isFavorite!!,
-                        movieId = movie.id,
-                        onAddToFavorite = onAddToFavorite
+                        onAddToFavorite = { onAddToFavorite.invoke(!movie.isFavorite!!, movie.id) }
                     )
                 }
             }
@@ -346,37 +342,17 @@ private fun PopularMoviesItem(
 
                         FavoriteButton(
                             isFavorite = movie.isFavorite!!,
-                            movieId = movie.id,
-                            onAddToFavorite = onAddToFavorite
+                            onAddToFavorite = {
+                                onAddToFavorite.invoke(
+                                    !movie.isFavorite!!,
+                                    movie.id
+                                )
+                            }
                         )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun FavoriteButton(
-    isFavorite: Boolean,
-    movieId: Int,
-    onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit
-) {
-    IconButton(
-        onClick = {
-            onAddToFavorite.invoke(!isFavorite, movieId)
-        }
-    ) {
-        val iconId = if (isFavorite) {
-            R.drawable.ic_star_filled
-        } else {
-            R.drawable.ic_star_unfilled
-        }
-
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = null
-        )
     }
 }
 
