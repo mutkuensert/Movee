@@ -1,17 +1,22 @@
 package movee.presentation.multisearch
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,6 +40,8 @@ import coil.request.ImageRequest
 import movee.domain.multisearch.model.SearchResult
 import movee.presentation.components.LoadingIfAppend
 import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.core.getInsetsController
+import movee.presentation.theme.appTypography
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -48,8 +53,17 @@ fun MultiSearchScreen(
     val focusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
     val lazyListState = rememberLazyListState()
+    val context = LocalContext.current
 
-    if (lazyListState.isScrollInProgress) keyboardController?.hide()
+    LaunchedEffect(lazyListState.isScrollInProgress) {
+        if (lazyListState.isScrollInProgress) {
+            keyboardController?.hide()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        context.getInsetsController()?.isAppearanceLightStatusBars = true
+    }
 
     Column(
         modifier = Modifier
@@ -57,6 +71,13 @@ fun MultiSearchScreen(
             .padding(top = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+        )
+
         OutlinedTextField(
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -164,9 +185,7 @@ private fun SearchResultItem(
 
                 Text(
                     text = name,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
+                    style = MaterialTheme.appTypography.feedShowTitle
                 )
             }
         }

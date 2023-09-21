@@ -7,57 +7,46 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import kotlin.math.roundToInt
 import movee.domain.movie.model.MovieNowPlaying
 import movee.domain.movie.model.PopularMovie
 import movee.presentation.components.FavoriteButton
 import movee.presentation.components.LoadingIfAppend
 import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.components.NestedVerticalScroll
+import movee.presentation.core.getInsetsController
+import movee.presentation.theme.appTypography
 
 @Composable
 fun MoviesScreen(
@@ -65,72 +54,44 @@ fun MoviesScreen(
 ) {
     val moviesNowPlayingLazyPagingItems = viewModel.moviesNowPlaying.collectAsLazyPagingItems()
     val popularMovies = viewModel.popularMovies.collectAsLazyPagingItems()
+    val context = LocalContext.current
 
-    val stateOfMoviesNowPlaying = rememberLazyListState()
-
-    val localDensity = LocalDensity.current
-
-    val itemsAboveHeight = remember { mutableStateOf(0.dp) }
-    var itemsAboveHeightPx by remember { mutableFloatStateOf(0f) }
-    var itemsAboveOffsetHeightPx by remember { mutableFloatStateOf(0f) }
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newOffset = itemsAboveOffsetHeightPx + delta
-                itemsAboveOffsetHeightPx = newOffset.coerceIn(-itemsAboveHeightPx, 0f)
-                return Offset.Zero
-            }
-        }
+    LaunchedEffect(Unit) {
+        context.getInsetsController()?.isAppearanceLightStatusBars = true
     }
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
-    ) {
-        PopularMovies(
-            popularMovies = popularMovies,
-            itemsAboveHeight = itemsAboveHeight,
-            navigateToMovieDetails = viewModel::navigateToMovieDetails,
-            onAddToFavorite = viewModel::addMovieToFavorites
-        )
-
-        Card(elevation = 10.dp,
-            modifier = Modifier
-                .onSizeChanged {
-                    itemsAboveHeightPx = it.height.toFloat()
-                    itemsAboveHeight.value = with(localDensity) { it.height.toDp() }
-                }
-                .offset { IntOffset(x = 0, y = itemsAboveOffsetHeightPx.roundToInt()) }
-                .background(Color.White)) {
-            Column {
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                    text = "Movies in Theaters",
-                    color = Color.LightGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
-                )
-
-                Spacer(Modifier.height(10.dp))
-
+    Box(modifier = Modifier.fillMaxSize()) {
+        NestedVerticalScroll(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            topContent = {
                 MoviesNowPlaying(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .background(MaterialTheme.colors.background),
                     moviesNowPlaying = moviesNowPlayingLazyPagingItems,
                     navigateToMovieDetails = viewModel::navigateToMovieDetails,
-                    lazyListState = stateOfMoviesNowPlaying,
                     onAddToFavorite = viewModel::addMovieToFavorites
                 )
+            },
+            bottomContent = { lazyListContentPadding ->
+                PopularMovies(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    lazyListContentPadding = lazyListContentPadding,
+                    popularMovies = popularMovies,
+                    navigateToMovieDetails = viewModel::navigateToMovieDetails,
+                    onAddToFavorite = viewModel::addMovieToFavorites
+                )
+            })
 
-                Spacer(Modifier.height(10.dp))
-            }
-        }
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .align(Alignment.TopCenter)
+        )
     }
 }
 
@@ -138,17 +99,24 @@ fun MoviesScreen(
 private fun MoviesNowPlaying(
     modifier: Modifier = Modifier,
     moviesNowPlaying: LazyPagingItems<MovieNowPlaying>,
-    lazyListState: LazyListState,
     navigateToMovieDetails: (movieId: Int) -> Unit,
     onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = modifier.padding(vertical = 10.dp)) {
+        Text(
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
+            text = "Movies in Theaters",
+            style = MaterialTheme.appTypography.feedContentTitle
+        )
+
         moviesNowPlaying.loadState.LoadingIfRefresh()
 
-        LazyRow(state = lazyListState) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            contentPadding = PaddingValues(horizontal = 10.dp)
+        ) {
             items(count = moviesNowPlaying.itemCount) { index ->
                 val item = moviesNowPlaying[index]
 
@@ -160,71 +128,65 @@ private fun MoviesNowPlaying(
                     )
                 }
             }
-        }
 
-        moviesNowPlaying.loadState.LoadingIfAppend()
+            item {
+                moviesNowPlaying.loadState.LoadingIfAppend()
+            }
+        }
     }
 }
 
 @Composable
 private fun PopularMovies(
     modifier: Modifier = Modifier,
+    lazyListContentPadding: PaddingValues,
     popularMovies: LazyPagingItems<PopularMovie>,
-    itemsAboveHeight: MutableState<Dp>,
     navigateToMovieDetails: (movieId: Int) -> Unit,
     onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = lazyListContentPadding
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(top = itemsAboveHeight.value)
-        ) {
-            item {
+        item {
+            Spacer(Modifier.height(10.dp))
+        }
+
+        item {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    text = "Popular Movies",
+                    style = MaterialTheme.appTypography.feedContentTitle
+                )
+
                 Spacer(Modifier.height(10.dp))
             }
+        }
 
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
-                ) {
+        item {
+            popularMovies.loadState.LoadingIfRefresh()
+        }
 
-                    Text(
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        text = "Popular Movies",
-                        color = Color.LightGray,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp
-                    )
+        items(count = popularMovies.itemCount) { index ->
+            val item = popularMovies[index]
 
-                    Spacer(Modifier.height(10.dp))
-                }
+            if (item != null) {
+                PopularMoviesItem(
+                    movie = item,
+                    navigateToMovieDetails = { navigateToMovieDetails(item.id) },
+                    onAddToFavorite = onAddToFavorite
+                )
             }
+        }
 
-            item {
-                popularMovies.loadState.LoadingIfRefresh()
-            }
-
-            items(count = popularMovies.itemCount) { index ->
-                val item = popularMovies[index]
-
-                if (item != null) {
-                    PopularMoviesItem(
-                        movie = item,
-                        navigateToMovieDetails = { navigateToMovieDetails(item.id) },
-                        onAddToFavorite = onAddToFavorite
-                    )
-                }
-            }
-
-            item {
-                popularMovies.loadState.LoadingIfAppend()
-            }
+        item {
+            popularMovies.loadState.LoadingIfAppend()
         }
     }
 }
@@ -261,17 +223,14 @@ private fun MoviesNowPlayingItem(
 
                 Text(
                     text = movie.title,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
+                    style = MaterialTheme.appTypography.feedShowTitle
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = movie.voteAverage.toString(),
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.appTypography.feedVoteAverage
                 )
 
                 if (movie.isFavorite != null) {
@@ -310,7 +269,12 @@ private fun PopularMoviesItem(
                             .crossfade(true)
                             .build(),
                         loading = {
-                            CircularProgressIndicator(color = Color.Gray)
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = Color.Gray)
+                            }
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
@@ -324,17 +288,16 @@ private fun PopularMoviesItem(
                 Column {
                     Text(
                         text = movie.title,
-                        color = Color.DarkGray,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp
+                        style = MaterialTheme.appTypography.feedShowTitle,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                     Spacer(Modifier.height(10.dp))
 
                     Text(
                         text = movie.voteAverage.toString(),
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.appTypography.feedVoteAverage
                     )
 
                     if (movie.isFavorite != null) {

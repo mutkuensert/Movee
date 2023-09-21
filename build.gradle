@@ -37,6 +37,7 @@ buildscript {
                 navigation           : '2.7.0',
                 okHttpInterceptor    : '4.11.0',
                 paging               : '3.2.0',
+                palette              : '1.0.0',
                 retrofit             : '2.9.0',
                 room                 : '2.5.2',
                 security             : '1.1.0-alpha06',

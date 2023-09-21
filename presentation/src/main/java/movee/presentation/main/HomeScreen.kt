@@ -1,14 +1,10 @@
 package movee.presentation.main
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
@@ -18,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -30,40 +25,42 @@ import movee.presentation.theme.AppColors
 import movee.resources.R
 
 @Composable
-fun HomeScreen(navigationBuilder: NavigationBuilder) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navigationBuilder: NavigationBuilder
+) {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<HomeViewModel>()
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
-    ) {
-        Scaffold(
-            bottomBar = {
-                BottomNavBar(
-                    navController = navController,
-                    viewModel = viewModel
-                )
-            }
-        ) { padding ->
-            NavHost(
-                modifier = Modifier.padding(padding),
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            BottomNavBar(
                 navController = navController,
-                startDestination = GRAPH_MOVIE,
-                builder = navigationBuilder::buildNavGraph
+                viewModel = viewModel
             )
         }
+    ) { padding ->
+        NavHost(
+            modifier = Modifier.padding(padding),
+            navController = navController,
+            startDestination = GRAPH_MOVIE,
+            builder = navigationBuilder::buildNavGraph
+        )
     }
 
     navigationBuilder.ObserveNavigation(navController = navController)
 }
 
 @Composable
-private fun BottomNavBar(navController: NavController, viewModel: HomeViewModel) {
+private fun BottomNavBar(
+    modifier: Modifier = Modifier,
+    navController: NavController, viewModel: HomeViewModel
+) {
     val lastTabItemRoute by navController.lastTabItemRouteAsState()
 
     BottomNavigation(
-        modifier = Modifier.border(width = 1.dp, color = Color.LightGray),
+        modifier = modifier,
         backgroundColor = Color.White,
         contentColor = Color.DarkGray
     ) {

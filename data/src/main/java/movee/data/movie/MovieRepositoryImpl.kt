@@ -6,7 +6,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.github.michaelbull.result.Result
-import movee.domain.Failure
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,6 +16,8 @@ import movee.data.movie.remote.mediator.MoviesNowPlayingRemoteMediator
 import movee.data.movie.remote.mediator.PopularMoviesRemoteMediator
 import movee.data.network.toResult
 import movee.data.util.getImageUrl
+import movee.data.util.withDecimalDigits
+import movee.domain.Failure
 import movee.domain.movie.MovieRepository
 import movee.domain.movie.model.MovieCast
 import movee.domain.movie.model.MovieDetails
@@ -80,7 +81,7 @@ class MovieRepositoryImpl @Inject constructor(
             MovieDetails(
                 imageUrl = getImageUrl(it.posterPath),
                 title = it.title,
-                voteAverage = it.voteAverage,
+                voteAverage = it.voteAverage.withDecimalDigits(1),
                 runtime = it.runtime,
                 overview = it.overview
             )

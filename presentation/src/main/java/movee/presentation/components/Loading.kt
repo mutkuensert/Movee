@@ -22,7 +22,7 @@ fun Loading(
 ) {
     Column(
         modifier = if (modifier == Modifier) Modifier
-            .padding(padding)
+            .padding(vertical = padding)
             .fillMaxSize() else modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

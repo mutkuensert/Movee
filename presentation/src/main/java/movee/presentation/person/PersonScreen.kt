@@ -1,6 +1,7 @@
 package movee.presentation.person
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,9 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
@@ -41,7 +40,9 @@ import movee.domain.person.model.PersonDetails
 import movee.domain.person.model.PersonMovieCast
 import movee.domain.person.model.PersonTvCast
 import movee.presentation.components.Loading
+import movee.presentation.core.setStatusBarAppearanceByDrawable
 import movee.presentation.core.showToastIfNotNull
+import movee.presentation.theme.appTypography
 
 @Composable
 fun PersonScreen(
@@ -61,7 +62,7 @@ fun PersonScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         PersonDetails(phase = details)
@@ -81,6 +82,7 @@ fun PersonScreen(
 @Composable
 private fun PersonDetails(phase: Phase<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     phase.Execute(
         onLoading = {
@@ -94,21 +96,14 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(it.imageUrl)
+                        .allowHardware(false)
                         .crossfade(true)
                         .build(),
                     loading = {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Spacer(Modifier.height(50.dp))
-
-                            CircularProgressIndicator(
-                                color = Color.Gray,
-                                modifier = Modifier.size(100.dp)
-                            )
-                            Spacer(Modifier.height(50.dp))
-                        }
+                        Loading()
+                    },
+                    onSuccess = { result ->
+                        context.setStatusBarAppearanceByDrawable(drawable = result.result.drawable)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     contentDescription = "Tv Poster",
@@ -121,9 +116,7 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
 
                 Text(
                     text = it.name,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 30.sp
+                    style = MaterialTheme.appTypography.showDetailCastName
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -184,10 +177,12 @@ private fun PersonMovieCastItem(
                             .crossfade(true)
                             .build(),
                         loading = {
-                            CircularProgressIndicator(
-                                color = Color.Gray,
-                                modifier = Modifier.size(150.dp)
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = Color.Gray)
+                            }
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
@@ -200,9 +195,7 @@ private fun PersonMovieCastItem(
 
                 Text(
                     text = movie.title,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
+                    style = MaterialTheme.appTypography.feedShowTitle
                 )
             }
         }
@@ -246,10 +239,12 @@ private fun PersonTvCastItem(tv: PersonTvCast, navigateToTvDetails: (tvId: Int) 
                             .crossfade(true)
                             .build(),
                         loading = {
-                            CircularProgressIndicator(
-                                color = Color.Gray,
-                                modifier = Modifier.size(150.dp)
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = Color.Gray)
+                            }
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
@@ -262,9 +257,7 @@ private fun PersonTvCastItem(tv: PersonTvCast, navigateToTvDetails: (tvId: Int) 
 
                 Text(
                     text = tv.name,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
+                    style = MaterialTheme.appTypography.feedShowTitle
                 )
             }
         }

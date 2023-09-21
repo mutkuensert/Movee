@@ -8,61 +8,48 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import kotlin.math.roundToInt
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
 import movee.presentation.components.FavoriteButton
 import movee.presentation.components.LoadingIfAppend
 import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.components.NestedVerticalScroll
+import movee.presentation.core.getInsetsController
+import movee.presentation.theme.appTypography
 
 @Composable
 fun TvShowsScreen(
@@ -70,81 +57,45 @@ fun TvShowsScreen(
 ) {
     val popularTvShowsLazyPagingItems = viewModel.popularTvShows.collectAsLazyPagingItems()
     val topRatedTvShows = viewModel.topRatedTvShows.collectAsLazyPagingItems()
+    val context = LocalContext.current
 
-    val stateOfPopularTvShows = rememberLazyListState()
-    val stateOfTopRatedTvShows = rememberLazyGridState()
-
-    val localDensity = LocalDensity.current
-
-
-    val itemsAboveHeight = remember { mutableStateOf(0.dp) }
-
-    var itemsAboveHeightPx by remember { mutableFloatStateOf(0f) }
-    var itemsAboveOffsetHeightPx by remember { mutableFloatStateOf(0f) }
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newOffset = itemsAboveOffsetHeightPx + delta
-                itemsAboveOffsetHeightPx = newOffset.coerceIn(-itemsAboveHeightPx, 0f)
-                return Offset.Zero
-            }
-        }
+    LaunchedEffect(Unit) {
+        context.getInsetsController()?.isAppearanceLightStatusBars = true
     }
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
-    ) {
-        TopRatedTvShows(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            topRatedTvShows = topRatedTvShows,
-            navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
-            itemsAboveHeight = itemsAboveHeight,
-            lazyGridState = stateOfTopRatedTvShows,
-            onAddToFavorite = viewModel::addTvShowToFavorites
-        )
-
-
-        Card(elevation = 10.dp,
-            modifier = Modifier
-                .onSizeChanged {
-                    itemsAboveHeightPx = it.height.toFloat()
-                    itemsAboveHeight.value = with(localDensity) { it.height.toDp() }
-                }
-                .offset { IntOffset(x = 0, y = itemsAboveOffsetHeightPx.roundToInt()) }
-                .background(Color.White)) {
-            Column {
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                    text = "Popular Tv Shows",
-                    color = Color.LightGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
-                )
-
-                Spacer(Modifier.height(10.dp))
-
+    Box(modifier = Modifier.fillMaxSize()) {
+        NestedVerticalScroll(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            topContent = {
                 PopularTvShows(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 10.dp),
+                        .background(MaterialTheme.colors.background),
                     popularTvShows = popularTvShowsLazyPagingItems,
                     navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
-                    lazyListState = stateOfPopularTvShows,
                     onAddToFavorite = viewModel::addTvShowToFavorites
                 )
-
-                Spacer(Modifier.height(10.dp))
+            },
+            bottomContent = { lazyListContentPadding ->
+                TopRatedTvShows(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    topRatedTvShows = topRatedTvShows,
+                    navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
+                    lazyListContentPadding = lazyListContentPadding,
+                    onAddToFavorite = viewModel::addTvShowToFavorites
+                )
             }
-        }
+        )
+
+        Spacer(
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .align(Alignment.TopCenter)
+        )
     }
 }
 
@@ -152,17 +103,24 @@ fun TvShowsScreen(
 private fun PopularTvShows(
     modifier: Modifier = Modifier,
     popularTvShows: LazyPagingItems<PopularTvShow>,
-    lazyListState: LazyListState,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = modifier.padding(vertical = 10.dp)) {
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            text = "Popular Tv Shows",
+            style = MaterialTheme.appTypography.feedContentTitle
+        )
+
         popularTvShows.loadState.LoadingIfRefresh()
 
-        LazyRow(state = lazyListState) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            contentPadding = PaddingValues(horizontal = 10.dp)
+        ) {
             items(count = popularTvShows.itemCount) { index ->
                 val item = popularTvShows[index]
 
@@ -174,9 +132,11 @@ private fun PopularTvShows(
                     )
                 }
             }
-        }
 
-        popularTvShows.loadState.LoadingIfAppend()
+            item {
+                popularTvShows.loadState.LoadingIfAppend()
+            }
+        }
     }
 }
 
@@ -184,67 +144,56 @@ private fun PopularTvShows(
 private fun TopRatedTvShows(
     modifier: Modifier = Modifier,
     topRatedTvShows: LazyPagingItems<TopRatedTvShow>,
-    itemsAboveHeight: MutableState<Dp>,
-    lazyGridState: LazyGridState,
+    lazyListContentPadding: PaddingValues,
     navigateToTvShowDetails: (tvShowId: Int) -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
-    Column(
+    val spanCount = 2
+
+    LazyVerticalGrid(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        columns = GridCells.Fixed(2),
+        contentPadding = lazyListContentPadding
     ) {
-        val spanCount = 2
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            state = lazyGridState,
-            contentPadding = PaddingValues(top = itemsAboveHeight.value)
+        item(
+            span = { GridItemSpan(spanCount) }
         ) {
-            item(
-                span = { GridItemSpan(spanCount) }
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.height(10.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(Modifier.height(10.dp))
 
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp)
-                            .fillMaxWidth(),
-                        text = "Top Rated Tv Shows",
-                        color = Color.LightGray,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 20.sp,
-                        maxLines = 1
-                    )
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    text = "Top Rated Tv Shows",
+                    style = MaterialTheme.appTypography.feedContentTitle
+                )
 
-                    Spacer(Modifier.height(10.dp))
-                }
+                Spacer(Modifier.height(10.dp))
             }
+        }
 
-            item(
-                span = { GridItemSpan(spanCount) }
-            ) {
-                topRatedTvShows.loadState.LoadingIfRefresh()
+        item(
+            span = { GridItemSpan(spanCount) }
+        ) {
+            topRatedTvShows.loadState.LoadingIfRefresh()
+        }
+
+
+        items(topRatedTvShows.itemCount) { index ->
+            val tvShow = topRatedTvShows[index]
+
+            if (tvShow != null) {
+                TopRatedTvShowsItem(
+                    topRatedTvShow = tvShow,
+                    onClick = { navigateToTvShowDetails(tvShow.id) },
+                    onAddToFavorite = onAddToFavorite
+                )
             }
+        }
 
-
-            items(topRatedTvShows.itemCount) { index ->
-                val tvShow = topRatedTvShows[index]
-
-                if (tvShow != null) {
-                    TopRatedTvShowsItem(
-                        topRatedTvShow = tvShow,
-                        onClick = { navigateToTvShowDetails(tvShow.id) },
-                        onAddToFavorite = onAddToFavorite
-                    )
-                }
-            }
-
-            item(
-                span = { GridItemSpan(spanCount) }
-            ) {
-                topRatedTvShows.loadState.LoadingIfAppend()
-            }
+        item(
+            span = { GridItemSpan(spanCount) }
+        ) {
+            topRatedTvShows.loadState.LoadingIfAppend()
         }
     }
 }
@@ -256,9 +205,7 @@ private fun PopularTvShowsItem(
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .clickable { onClick() }) {
-
+        Card(elevation = 10.dp, modifier = Modifier.clickable { onClick() }) {
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -283,17 +230,14 @@ private fun PopularTvShowsItem(
 
                 Text(
                     text = popularTvShow.name,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
+                    style = MaterialTheme.appTypography.feedShowTitle
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = popularTvShow.voteAverage.toString(),
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.appTypography.feedVoteAverage
                 )
 
                 if (popularTvShow.isFavorite != null) {
@@ -321,10 +265,12 @@ private fun TopRatedTvShowsItem(
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .fillMaxWidth()
-            .height(380.dp)
-            .clickable { onClick() }) {
+        Card(
+            elevation = 10.dp, modifier = Modifier
+                .fillMaxWidth()
+                .height(380.dp)
+                .clickable(onClick = onClick)
+        ) {
             Column(
                 modifier = Modifier
                     .padding(10.dp)
@@ -338,7 +284,12 @@ private fun TopRatedTvShowsItem(
                             .crossfade(true)
                             .build(),
                         loading = {
-                            CircularProgressIndicator(color = Color.Gray)
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = Color.Gray)
+                            }
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(5.dp))
@@ -352,21 +303,21 @@ private fun TopRatedTvShowsItem(
 
                 Column(
                     verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
                         text = topRatedTvShow.name,
-                        color = Color.DarkGray,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        style = MaterialTheme.appTypography.feedShowTitle,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
 
                     Spacer(Modifier.height(5.dp))
 
                     Text(
                         text = topRatedTvShow.voteAverage.toString(),
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.appTypography.feedVoteAverage
                     )
 
                     if (topRatedTvShow.isFavorite != null) {

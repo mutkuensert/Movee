@@ -9,12 +9,6 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
-import movee.domain.Failure
-import movee.domain.tvshow.TvShowRepository
-import movee.domain.tvshow.model.PopularTvShow
-import movee.domain.tvshow.model.TopRatedTvShow
-import movee.domain.tvshow.model.TvShowCast
-import movee.domain.tvshow.model.TvShowDetails
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -29,6 +23,13 @@ import movee.data.tvshow.remote.mapper.PopularTvShowDtoMapper
 import movee.data.tvshow.remote.mapper.TopRatedTvShowDtoMapper
 import movee.data.util.GenericRemoteMediator
 import movee.data.util.getImageUrl
+import movee.data.util.withDecimalDigits
+import movee.domain.Failure
+import movee.domain.tvshow.TvShowRepository
+import movee.domain.tvshow.model.PopularTvShow
+import movee.domain.tvshow.model.TopRatedTvShow
+import movee.domain.tvshow.model.TvShowCast
+import movee.domain.tvshow.model.TvShowDetails
 
 class TvShowRepositoryImpl @Inject constructor(
     private val tvShowsApi: TvShowsApi,
@@ -45,7 +46,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 imageUrl = getImageUrl(response.posterPath),
                 seasonCount = response.seasons.size,
                 totalEpisodeNumber = response.seasons.sumOf { it.episodeCount },
-                voteAverage = response.voteAverage
+                voteAverage = response.voteAverage.withDecimalDigits(1)
             )
         })
     }

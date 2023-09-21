@@ -1,13 +1,14 @@
 package movee.presentation.theme
 
 import androidx.compose.ui.graphics.Color
-
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 
 object AppColors {
     val DarkCyan = Color(0xFF55868C)
     val FavoriteStar = Color(0xFFFFC107)
+}
+
+fun Color.isDark(): Boolean {
+    return ColorUtils.calculateLuminance(this.toArgb()) < 0.1
 }
