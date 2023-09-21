@@ -2,7 +2,6 @@
 .gradle
 /local.properties
 .idea
-ApiKey.kt
 .DS_Store
 /build
 /captures

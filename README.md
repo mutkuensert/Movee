@@ -5,12 +5,16 @@ https://github.com/mutkuensert/Movee/assets/97624869/bfd5d03e-8260-4338-a597-415
 
 ## Table of Contents
 * [About The Project](#about-the-project)
+* [Configuration](#configuration)
 * [Tech](#tech)
 * [Contact](#contact)
 
 
 ## About The Project
 This is an Android [Tmdb](https://www.themoviedb.org) client project.
+
+## Configuration
+To be able to run the application, a TMDB api key should be set as environment variable as ``API_KEY_TMDB = your_api_key``
 
 
 ## Tech

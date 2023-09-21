@@ -1,6 +1,6 @@
 package movee.data.network
 
-import movee.data.util.API_KEY
+import movee.data.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -11,7 +11,7 @@ class AuthenticationInterceptor : Interceptor {
         val url = baseRequest
             .url
             .newBuilder()
-            .addQueryParameter("api_key", API_KEY)
+            .addQueryParameter("api_key", BuildConfig.API_KEY_TMDB)
             .build()
 
         val newRequest = baseRequest.newBuilder().url(url).build()

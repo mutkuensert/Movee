@@ -5,6 +5,10 @@ plugins {
 
 android {
     namespace "movee.data"
+
+    defaultConfig {
+        buildConfigField "String", "API_KEY_TMDB", "\"" + System.getenv("API_KEY_TMDB") + "\""
+    }
 }
 
 dependencies {
