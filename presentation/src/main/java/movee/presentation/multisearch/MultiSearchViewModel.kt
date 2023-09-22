@@ -6,20 +6,20 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import movee.presentation.navigation.navigator.MovieNavigator
-import movee.presentation.navigation.navigator.PersonNavigator
-import movee.presentation.navigation.navigator.TvShowNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import movee.domain.multisearch.MultiSearchRepository
+import movee.domain.multisearch.GetMultiSearchPagingFlowUseCase
 import movee.domain.multisearch.model.SearchResult
+import movee.presentation.navigation.navigator.MovieNavigator
+import movee.presentation.navigation.navigator.PersonNavigator
+import movee.presentation.navigation.navigator.TvShowNavigator
 
 @HiltViewModel
 class MultiSearchViewModel @Inject constructor(
-    private val multiSearchRepository: MultiSearchRepository,
+    private val getMultiSearchPagingFlowUseCase: GetMultiSearchPagingFlowUseCase,
     private val movieNavigator: MovieNavigator,
     private val personNavigator: PersonNavigator,
     private val tvShowNavigator: TvShowNavigator,
@@ -35,13 +35,14 @@ class MultiSearchViewModel @Inject constructor(
     )
     val multiSearchResults = _multiSearchResults.asStateFlow()
 
-    val searchTextField = MutableStateFlow("")
+    private val _searchTextField = MutableStateFlow("")
+    val searchTextField = _searchTextField.asStateFlow()
 
-    fun multiSearch(query: String) {
+    fun search(query: String) {
         viewModelScope.launch {
-            searchTextField.value = query
+            _searchTextField.value = query
 
-            multiSearchRepository.getSearchFlow(query)
+            getMultiSearchPagingFlowUseCase.execute(query)
                 .cachedIn(viewModelScope)
                 .collect {
                     _multiSearchResults.value = it

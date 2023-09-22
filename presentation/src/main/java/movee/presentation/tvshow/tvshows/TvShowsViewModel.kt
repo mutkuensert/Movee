@@ -6,19 +6,22 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
-import movee.domain.tvshow.TvShowRepository
+import movee.domain.tvshow.AddTvShowToFavoriteUseCase
+import movee.domain.tvshow.GetPopularTvShowsPagingFlowUseCase
+import movee.domain.tvshow.GetTopRatedTvShowsPagingFlowUseCase
 import movee.presentation.navigation.navigator.TvShowNavigator
 
 @HiltViewModel
 class TvShowsViewModel @Inject constructor(
-    private val tvShowRepository: TvShowRepository,
+    private val getPopularTvShowsPagingFlowUseCase: GetPopularTvShowsPagingFlowUseCase,
+    private val getTopRatedTvShowsPagingFlowUseCase: GetTopRatedTvShowsPagingFlowUseCase,
     private val tvShowNavigator: TvShowNavigator,
-    private val accountRepository: movee.domain.account.AccountRepository,
+    private val addTvShowToFavoriteUseCase: AddTvShowToFavoriteUseCase,
 ) : ViewModel() {
-    val popularTvShows = tvShowRepository.getPopularTvShowsPagingFlow()
+    val popularTvShows = getPopularTvShowsPagingFlowUseCase.execute()
         .cachedIn(viewModelScope)
 
-    val topRatedTvShows = tvShowRepository.getTopRatedTvShowsPagingFlow()
+    val topRatedTvShows = getTopRatedTvShowsPagingFlowUseCase.execute()
         .cachedIn(viewModelScope)
 
     fun navigateToTvShowDetails(tvShowId: Int) {
@@ -27,7 +30,7 @@ class TvShowsViewModel @Inject constructor(
 
     fun addTvShowToFavorites(isFavorite: Boolean, tvShowId: Int) {
         viewModelScope.launch {
-            accountRepository.addTvShowToFavorites(
+            addTvShowToFavoriteUseCase.execute(
                 isFavorite = isFavorite,
                 tvShowId = tvShowId
             )

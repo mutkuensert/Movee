@@ -1,5 +1,6 @@
 package movee.data.account
 
+import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import javax.inject.Inject
@@ -13,8 +14,10 @@ import movee.data.account.remote.model.FavoriteMovieDto
 import movee.data.account.remote.model.FavoriteMoviesResultsDto
 import movee.data.account.remote.model.FavoriteTvShowDto
 import movee.data.account.remote.model.FavoriteTvShowsResultsDto
+import movee.data.network.toEmptyResult
 import movee.data.network.toResult
 import movee.data.util.ApiConstants
+import movee.domain.Failure
 import movee.domain.account.AccountRepository
 import movee.domain.library.SessionManager
 import movee.domain.library.UserManager
@@ -52,7 +55,7 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchFavoriteMoviesAndTvShows() {
-        clearAllFavoriteMoviesAndTvShows()
+        clearAllFavoriteMoviesAndTvShowsInCache()
 
         for (page in ApiConstants.General.DEFAULT_FIRST_PAGE..4) {
             accountApi.getFavoriteMovies(
@@ -99,83 +102,53 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addMovieToFavorites(isFavorite: Boolean, movieId: Int) {
-        if (isFavorite) {
-            insertFavoriteMovieInCache(movieId)
-
-            accountApi.postFavoriteMovie(
-                FavoriteMovieDto(
-                    favorite = true,
-                    mediaId = movieId
-                ),
-                sessionId = sessionManager.getSessionId()!!
-            ).toResult().onFailure {
-                deleteFavoriteMovie(movieId)
-            }
-        } else {
-            deleteFavoriteMovie(movieId = movieId)
-
-            accountApi.postFavoriteMovie(
-                FavoriteMovieDto(
-                    favorite = false,
-                    mediaId = movieId
-                ),
-                sessionId = sessionManager.getSessionId()!!
-            ).toResult().onFailure {
-                insertFavoriteMovieInCache(movieId = movieId)
-            }
-        }
+    override suspend fun addMovieToFavorites(
+        isFavorite: Boolean,
+        movieId: Int
+    ): Result<Unit, Failure> {
+        return accountApi.postFavoriteMovie(
+            FavoriteMovieDto(
+                favorite = isFavorite,
+                mediaId = movieId
+            ),
+            sessionId = sessionManager.getSessionId()!!
+        ).toEmptyResult()
     }
 
-    override suspend fun addTvShowToFavorites(isFavorite: Boolean, tvShowId: Int) {
-        if (isFavorite) {
-            insertFavoriteTvShowInCache(tvShowId)
-
-            accountApi.postFavoriteTvShow(
-                FavoriteTvShowDto(
-                    favorite = true,
-                    mediaId = tvShowId
-                ),
-                sessionId = sessionManager.getSessionId()!!
-            ).toResult().onFailure {
-                deleteFavoriteTvShow(tvShowId)
-            }
-        } else {
-            deleteFavoriteTvShow(tvShowId = tvShowId)
-
-            accountApi.postFavoriteTvShow(
-                FavoriteTvShowDto(
-                    favorite = false,
-                    mediaId = tvShowId
-                ),
-                sessionId = sessionManager.getSessionId()!!
-            ).toResult().onFailure {
-                insertFavoriteTvShowInCache(tvShowId = tvShowId)
-            }
-        }
+    override suspend fun addTvShowToFavorites(
+        isFavorite: Boolean,
+        tvShowId: Int
+    ): Result<Unit, Failure> {
+        return accountApi.postFavoriteTvShow(
+            FavoriteTvShowDto(
+                favorite = isFavorite,
+                mediaId = tvShowId
+            ),
+            sessionId = sessionManager.getSessionId()!!
+        ).toEmptyResult()
     }
 
-    override suspend fun clearAllFavoriteMoviesAndTvShows() {
+    override suspend fun clearAllFavoriteMoviesAndTvShowsInCache() {
         accountDao.clearAllFavoriteMovies()
         accountDao.clearAllFavoriteTvShows()
     }
 
-    private suspend fun insertFavoriteMovieInCache(movieId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun insertFavoriteMovieInCache(movieId: Int) = withContext(Dispatchers.IO) {
         accountDao.insertFavoriteMovies(FavoriteMovieEntity(movieId))
         movieRepository.addMovieToFavorites(movieId)
     }
 
-    private suspend fun deleteFavoriteMovie(movieId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun deleteFavoriteMovieInCache(movieId: Int) = withContext(Dispatchers.IO) {
         accountDao.deleteFavoriteMovies(FavoriteMovieEntity(movieId))
         movieRepository.removeMovieFromFavorites(movieId)
     }
 
-    private suspend fun insertFavoriteTvShowInCache(tvShowId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun insertFavoriteTvShowInCache(tvShowId: Int) = withContext(Dispatchers.IO) {
         accountDao.insertFavoriteTvShows(FavoriteTvShowEntity(tvShowId))
         tvShowRepository.addTvShowToFavorites(tvShowId)
     }
 
-    private suspend fun deleteFavoriteTvShow(tvShowId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun deleteFavoriteTvShowInCache(tvShowId: Int) = withContext(Dispatchers.IO) {
         accountDao.deleteFavoriteTvShows(FavoriteTvShowEntity(tvShowId))
         tvShowRepository.removeTvShowFromFavorites(tvShowId)
     }

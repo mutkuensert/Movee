@@ -33,6 +33,18 @@ fun <T, R> Response<T>.toResult(mapper: (T) -> R): Result<R, Failure> {
     }
 }
 
+/**
+ * @return Returns mapped Ok if response is successful and body isn't null,
+ * otherwise Failure.
+ */
+fun <T> Response<T>.toEmptyResult(): Result<Unit, Failure> {
+    return if (isSuccessful) {
+        Ok(Unit)
+    } else {
+        Err(errorBody().toFailure())
+    }
+}
+
 fun ResponseBody?.toFailure(): Failure {
     if (this == null) return Failure.empty()
 

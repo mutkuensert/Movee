@@ -5,9 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import movee.data.multisearch.model.MovieResultItemDto
 import movee.data.multisearch.model.MultiSearchResultDto
@@ -20,23 +18,18 @@ import movee.domain.multisearch.model.SearchResult
 class MultiSearchRepositoryImpl @Inject constructor(
     private val multiSearchApi: MultiSearchApi
 ) : MultiSearchRepository {
-    override suspend fun getSearchFlow(query: String): Flow<PagingData<SearchResult>> {
-        return if (query.length > 2) {
-            delay(1000)
-
-            Pager(
-                PagingConfig(pageSize = 20)
-            ) {
+    override suspend fun getSearchPagingFlow(query: String): Flow<PagingData<SearchResult>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = {
                 MultiSearchResultsPagingSource { page ->
                     multiSearchApi.multiSearch(query, page)
                 }
-            }.flow.map { pagingData ->
-                pagingData.map { dto ->
-                    mapSearchResultDto(dto)
-                }
             }
-        } else {
-            MutableStateFlow(PagingData.empty())
+        ).flow.map { pagingData ->
+            pagingData.map { dto ->
+                mapSearchResultDto(dto)
+            }
         }
     }
 

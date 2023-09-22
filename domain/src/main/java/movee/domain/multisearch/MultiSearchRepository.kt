@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import movee.domain.multisearch.model.SearchResult
 
 interface MultiSearchRepository {
-    suspend fun getSearchFlow(query: String): Flow<PagingData<SearchResult>>
+    suspend fun getSearchPagingFlow(query: String): Flow<PagingData<SearchResult>>
 }

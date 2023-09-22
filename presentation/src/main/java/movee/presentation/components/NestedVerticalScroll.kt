@@ -1,6 +1,7 @@
 package movee.presentation.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -23,8 +25,9 @@ import kotlin.math.roundToInt
 @Composable
 fun NestedVerticalScroll(
     modifier: Modifier = Modifier,
-    topContent: @Composable () -> Unit,
-    bottomContent: @Composable (lazyListContentPadding: PaddingValues) -> Unit
+    contentAlignment: Alignment = Alignment.TopStart,
+    topContent: @Composable BoxScope.() -> Unit,
+    bottomContent: @Composable BoxScope.(lazyListContentPadding: PaddingValues) -> Unit
 ) {
     val localDensity = LocalDensity.current
 
@@ -43,8 +46,11 @@ fun NestedVerticalScroll(
         }
     }
 
-    Box(modifier = modifier.nestedScroll(nestedScrollConnection)) {
-        bottomContent.invoke(PaddingValues(top = topContentHeight))
+    Box(
+        modifier = modifier.nestedScroll(nestedScrollConnection),
+        contentAlignment = contentAlignment
+    ) {
+        bottomContent.invoke(this, PaddingValues(top = topContentHeight))
 
         Box(modifier = Modifier
             .onSizeChanged {
@@ -56,6 +62,6 @@ fun NestedVerticalScroll(
                     x = 0,
                     y = topContentOffsetHeightPx.roundToInt()
                 )
-            }) { topContent.invoke() }
+            }) { topContent.invoke(this) }
     }
 }

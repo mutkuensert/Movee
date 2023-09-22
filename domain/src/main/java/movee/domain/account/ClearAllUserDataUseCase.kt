@@ -16,7 +16,7 @@ class ClearAllUserDataUseCase @Inject constructor(
 
     suspend fun execute() {
         withContext(Dispatchers.IO) {
-            accountRepository.clearAllFavoriteMoviesAndTvShows()
+            accountRepository.clearAllFavoriteMoviesAndTvShowsInCache()
             userManager.removeCurrentUser()
             sessionManager.removeRequestToken()
             sessionManager.removeSession()

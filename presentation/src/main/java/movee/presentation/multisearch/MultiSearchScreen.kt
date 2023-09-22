@@ -2,7 +2,9 @@ package movee.presentation.multisearch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,15 +34,18 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import movee.domain.multisearch.model.SearchResult
 import movee.presentation.components.LoadingIfAppend
 import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.components.NestedVerticalScroll
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
 
@@ -65,86 +71,109 @@ fun MultiSearchScreen(
         context.getInsetsController()?.isAppearanceLightStatusBars = true
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        NestedVerticalScroll(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.statusBars),
+            contentAlignment = Alignment.TopCenter,
+            topContent = {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                keyboardController?.show()
+                            }
+                        }
+                        .background(MaterialTheme.colors.background),
+                    value = searchTextField.value,
+                    onValueChange = viewModel::search
+                )
+
+                LaunchedEffect(key1 = true) {
+                    focusRequester.requestFocus()
+                }
+            },
+            bottomContent = { lazyListContentPadding ->
+                SearchResults(
+                    modifier = Modifier.padding(top = 15.dp),
+                    lazyListContentPadding = lazyListContentPadding,
+                    searchResults = searchResults,
+                    navigateToMovieDetails = viewModel::navigateToMovieDetails,
+                    navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
+                    navigateToPersonDetails = viewModel::navigateToPersonDetails
+                )
+            })
+
         Spacer(
             Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
                 .windowInsetsTopHeight(WindowInsets.statusBars)
+                .align(Alignment.TopCenter)
         )
+    }
+}
 
-        OutlinedTextField(
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .onFocusChanged {
-                    if (it.isFocused) {
-                        keyboardController?.show()
-                    }
-                },
-            value = searchTextField.value,
-            onValueChange = { viewModel.multiSearch(it) })
-
-        LaunchedEffect(key1 = true) {
-            focusRequester.requestFocus()
+@Composable
+private fun SearchResults(
+    modifier: Modifier = Modifier,
+    lazyListContentPadding: PaddingValues,
+    searchResults: LazyPagingItems<SearchResult>,
+    navigateToMovieDetails: (id: Int) -> Unit,
+    navigateToTvShowDetails: (id: Int) -> Unit,
+    navigateToPersonDetails: (id: Int) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = lazyListContentPadding
+    ) {
+        item {
+            searchResults.loadState.LoadingIfRefresh()
         }
 
-        Spacer(Modifier.height(15.dp))
+        items(count = searchResults.itemCount) { index ->
+            val item = searchResults[index]
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            state = lazyListState
-        ) {
-            item {
-                searchResults.loadState.LoadingIfRefresh()
-            }
-
-            items(count = searchResults.itemCount) { index ->
-                val item = searchResults[index]
-
-                when (item?.type) {
-                    SearchResult.Type.MOVIE -> {
-                        SearchResultItem(
-                            name = item.title,
-                            imageUrl = item.imageUrl,
-                            navigateToItemDetails = {
-                                viewModel.navigateToMovieDetails(item.id)
-                            }
-                        )
-                    }
-
-                    SearchResult.Type.TV -> {
-                        SearchResultItem(
-                            name = item.title,
-                            imageUrl = item.imageUrl,
-                            navigateToItemDetails = {
-                                viewModel.navigateToTvShowDetails(item.id)
-                            }
-                        )
-                    }
-
-                    SearchResult.Type.PERSON -> {
-                        SearchResultItem(
-                            name = item.title,
-                            imageUrl = item.imageUrl,
-                            navigateToItemDetails = {
-                                viewModel.navigateToPersonDetails(item.id)
-                            }
-                        )
-                    }
-
-                    else -> {}
+            when (item?.type) {
+                SearchResult.Type.MOVIE -> {
+                    SearchResultItem(
+                        name = item.title,
+                        imageUrl = item.imageUrl,
+                        navigateToItemDetails = {
+                            navigateToMovieDetails(item.id)
+                        }
+                    )
                 }
-            }
 
-            item {
-                searchResults.loadState.LoadingIfAppend()
+                SearchResult.Type.TV -> {
+                    SearchResultItem(
+                        name = item.title,
+                        imageUrl = item.imageUrl,
+                        navigateToItemDetails = {
+                            navigateToTvShowDetails(item.id)
+                        }
+                    )
+                }
+
+                SearchResult.Type.PERSON -> {
+                    SearchResultItem(
+                        name = item.title,
+                        imageUrl = item.imageUrl,
+                        navigateToItemDetails = {
+                            navigateToPersonDetails(item.id)
+                        }
+                    )
+                }
+
+                else -> {}
             }
+        }
+
+        item {
+            searchResults.loadState.LoadingIfAppend()
         }
     }
 }
@@ -155,9 +184,16 @@ private fun SearchResultItem(
     imageUrl: String?,
     navigateToItemDetails: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .clickable { navigateToItemDetails() }
+    Column(
+        modifier = Modifier
+            .padding(vertical = 10.dp, horizontal = 7.dp)
+            .fillMaxWidth()
+    ) {
+        Card(
+            elevation = 10.dp,
+            modifier = Modifier
+                .clickable(onClick = navigateToItemDetails)
+                .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
@@ -185,7 +221,9 @@ private fun SearchResultItem(
 
                 Text(
                     text = name,
-                    style = MaterialTheme.appTypography.feedShowTitle
+                    style = MaterialTheme.appTypography.feedShowTitle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
