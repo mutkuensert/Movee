@@ -47,8 +47,7 @@ fun Context.setStatusBarAppearanceByDrawable(drawable: Drawable?) {
             ?.rgb
 
         if (dominantDrawableRgb != null) {
-            val isDominantColorDark = Color(dominantDrawableRgb).isDark()
-            getInsetsController()?.isAppearanceLightStatusBars = !isDominantColorDark
+            getInsetsController()?.isAppearanceLightStatusBars = !Color(dominantDrawableRgb).isDark
         }
     }
 }

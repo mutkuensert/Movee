@@ -9,6 +9,4 @@ object AppColors {
     val FavoriteStar = Color(0xFFFFC107)
 }
 
-fun Color.isDark(): Boolean {
-    return ColorUtils.calculateLuminance(this.toArgb()) < 0.1
-}
+val Color.isDark: Boolean get() = ColorUtils.calculateLuminance(this.toArgb()) < 0.1
