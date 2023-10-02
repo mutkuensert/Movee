@@ -4,8 +4,8 @@ import androidx.navigation.NavController
 import movee.presentation.movie.navigation.GRAPH_MOVIE
 import movee.presentation.navigation.NavigationDispatcher
 import movee.presentation.navigation.NavigationType
-import movee.presentation.navigation.navigator.MainNavigator
 import javax.inject.Inject
+import movee.presentation.navigation.navigator.MainNavigator
 import timber.log.Timber
 
 class HomeNavigatorImpl @Inject constructor(

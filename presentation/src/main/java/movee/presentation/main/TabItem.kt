@@ -1,6 +1,6 @@
-package com.mutkuensert.movee.feature.main
+package movee.presentation.main
 
-import movee.presentation.login.navigation.ROUTE_LOGIN
+import movee.presentation.login.navigation.GRAPH_LOGIN
 import movee.presentation.movie.navigation.GRAPH_MOVIE
 import movee.presentation.multisearch.navigation.ROUTE_MULTI_SEARCH
 import movee.presentation.tvshow.navigation.GRAPH_TV_SHOW
@@ -11,7 +11,7 @@ sealed class TabItem(val route: String, val titleKey: String) {
     object MultiSearch :
         TabItem(route = ROUTE_MULTI_SEARCH, titleKey = "Multi Search")
 
-    object Login : TabItem(route = ROUTE_LOGIN, titleKey = "Login")
+    object Login : TabItem(route = GRAPH_LOGIN, titleKey = "Login")
 
     companion object {
         fun all(): List<TabItem> {

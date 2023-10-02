@@ -42,7 +42,14 @@ class AccountRepositoryImpl @Inject constructor(
             }
 
         accountApi.getAccountDetails(sessionId).toResult().onSuccess {
-            userManager.setCurrentUserId(it.id)
+            userManager.setCurrentUser(
+                profilePicturePath = it.avatar.tmdb.avatarPath,
+                id = it.id,
+                includeAdult = it.includeAdult,
+                name = it.name,
+                userName = it.username
+            )
+
             fetchFavoriteMoviesAndTvShows()
 
             return true

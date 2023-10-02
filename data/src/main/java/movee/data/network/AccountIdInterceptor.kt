@@ -16,7 +16,7 @@ class AccountIdInterceptor @Inject constructor(private val userManager: UserMana
 
         for (index in segments.indices) {
             if (PathParameters.ACCOUNT_ID == segments[index]) {
-                val accountId = userManager.getUserId()?.toString()
+                val accountId = userManager.getUser()?.id?.toString()
                     ?: throw RequiresAccountIdError("Account id could not be found.")
 
                 urlBuilder.setPathSegment(index, accountId)

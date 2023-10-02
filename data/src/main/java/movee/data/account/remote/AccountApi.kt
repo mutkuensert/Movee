@@ -6,7 +6,7 @@ import movee.data.account.remote.model.FavoriteTvShowDto
 import movee.data.account.remote.model.FavoriteTvShowsResponse
 import movee.data.account.remote.model.PostFavoriteMovieResponse
 import movee.data.account.remote.model.PostFavoriteTvShowResponse
-import movee.data.authentication.model.AccountDetailsResponse
+import movee.data.account.remote.model.AccountDetailsResponse
 import movee.data.network.PathParameters
 import movee.data.network.QueryParameters
 import retrofit2.Response

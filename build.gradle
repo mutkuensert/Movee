@@ -31,7 +31,7 @@ buildscript {
                 junit                : '4.13.2',
                 junitAndroidXExt     : '1.1.5',
                 kotlinResult         : '1.1.16',
-                kotlinSerialization  : '1.5.1',
+                kotlinSerialization  : '1.6.0',
                 lifecycle            : '2.6.1',
                 moshi                : '1.15.0',
                 navigation           : '2.7.0',

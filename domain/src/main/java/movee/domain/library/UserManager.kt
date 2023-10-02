@@ -1,7 +1,16 @@
 package movee.domain.library
 
+import movee.domain.account.AccountDetails
+
 interface UserManager {
-    fun getUserId(): Int?
-    fun setCurrentUserId(id: Int): Boolean
+    fun getUser(): AccountDetails?
+    fun setCurrentUser(
+        profilePicturePath: String?,
+        id: Int,
+        includeAdult: Boolean,
+        name: String,
+        userName: String
+    ): Boolean
+
     fun removeCurrentUser(): Boolean
 }

@@ -1,10 +1,9 @@
 package movee.presentation.main
 
 import androidx.lifecycle.ViewModel
-import com.mutkuensert.movee.feature.main.TabItem
-import movee.presentation.navigation.navigator.MainNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import movee.presentation.navigation.navigator.MainNavigator
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(

@@ -18,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.mutkuensert.movee.feature.main.TabItem
 import movee.presentation.movie.navigation.GRAPH_MOVIE
 import movee.presentation.navigation.NavigationBuilder
 import movee.presentation.theme.AppColors

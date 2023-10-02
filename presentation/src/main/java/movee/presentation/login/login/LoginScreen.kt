@@ -1,8 +1,7 @@
-package movee.presentation.login
+package movee.presentation.login.login
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,49 +17,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import movee.domain.login.LoginEvent
+import movee.presentation.core.showToast
 import movee.presentation.login.navigation.getLoginRouteWithEntity
 import movee.resources.R
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel = hiltViewModel()) {
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle(null)
     val requestToken by viewModel.requestToken.collectAsStateWithLifecycle()
 
-    if (isLoggedIn != null) {
-        if (!isLoggedIn!!) {
-            LoggedOutScreen(login = viewModel::login, requestToken = requestToken)
-        } else {
-            LoggedInScreen(logout = viewModel::logout)
-        }
-    }
+    LoginScreen(login = viewModel::login, requestToken = requestToken)
 
     val context = LocalContext.current
 
     LaunchedEffect(loginEvent) {
         if (loginEvent == LoginEvent.Login) {
-            Toast.makeText(context, "Logged in successfully.", Toast.LENGTH_SHORT).show()
+            context.showToast("Logged in successfully.")
         } else if (loginEvent == LoginEvent.Logout) {
-            Toast.makeText(context, "Logged out successfully.", Toast.LENGTH_SHORT).show()
+            context.showToast("Logged out successfully.")
         }
     }
 }
 
 @Composable
-private fun LoggedInScreen(logout: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        IconButton(onClick = logout) {
-            Icon(painter = painterResource(R.drawable.ic_logout), contentDescription = null)
-        }
-    }
-}
-
-@Composable
-private fun LoggedOutScreen(login: () -> Unit, requestToken: String?) {
+private fun LoginScreen(login: () -> Unit, requestToken: String?) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

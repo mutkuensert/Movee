@@ -1,4 +1,4 @@
-package movee.data.authentication.model
+package movee.data.account.remote.model
 
 import com.squareup.moshi.Json
 
