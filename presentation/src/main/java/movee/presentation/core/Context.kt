@@ -33,9 +33,11 @@ fun Context.showToastIfNotNull(text: String?, duration: Int = Toast.LENGTH_SHORT
 fun Context.getInsetsController(): WindowInsetsControllerCompat? {
     if (asActivity() == null) return null
 
+    val activity = asActivity()!!
+
     return WindowCompat.getInsetsController(
-        asActivity()!!.window!!,
-        asActivity()!!.window!!.decorView
+        activity.window,
+        activity.window.decorView
     )
 }
 
