@@ -2,6 +2,7 @@ package movee.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import javax.inject.Inject
@@ -36,9 +37,13 @@ class NavigationBuilder @Inject constructor(
     }
 
     private fun navigateToTab(navController: NavHostController, route: String) {
-        val isPopped = navController.popBackStack(route, false)
-
-        if (!isPopped) navController.navigate(route)
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 
     private fun navigateUp(
