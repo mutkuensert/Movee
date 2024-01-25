@@ -25,68 +25,51 @@ fun MoveeTheme(content: @Composable () -> Unit) {
 }
 
 class AppTypography(
-    val feedContentTitle: TextStyle,
-    val feedVoteAverage: TextStyle,
-    val feedShowTitle: TextStyle,
-    val showDetailShowTitle: TextStyle,
-    val showDetailVoteAverage: TextStyle,
-    val showDetailRuntime: TextStyle,
-    val showDetailCastName: TextStyle,
-    val showDetailCharacterName: TextStyle,
-    val showDetailSeasonInfo: TextStyle,
-    val showDetailEpisodeInfo: TextStyle,
+    val h2Bold: TextStyle,
+    val h3Bold: TextStyle,
+    val h4Bold: TextStyle,
+    val bodyLRegular: TextStyle,
+    val bodyLBold: TextStyle,
+    val bodyMRegular: TextStyle,
+    val bodySRegular: TextStyle,
 )
 
 val MaterialTheme.appTypography: AppTypography by lazy {
     AppTypography(
-        feedContentTitle = TextStyle(
-            color = Color.LightGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
+        h2Bold = TextStyle(
+            fontWeight = FontWeight.W700,
+            fontSize = 28.sp,
+            lineHeight = 34.sp,
         ),
-        feedVoteAverage = TextStyle(
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+        h3Bold = TextStyle(
+            fontWeight = FontWeight.W700,
+            fontSize = 22.sp,
+            lineHeight = 28.sp
         ),
-        feedShowTitle = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
+        h4Bold = TextStyle(
+            fontWeight = FontWeight.W700,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
         ),
-        showDetailShowTitle = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 30.sp
+        bodyLRegular = TextStyle(
+            fontWeight = FontWeight.W400,
+            fontSize = 17.sp,
+            lineHeight = 22.sp,
         ),
-        showDetailVoteAverage = TextStyle(
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+        bodyLBold = TextStyle(
+            fontWeight = FontWeight.W700,
+            fontSize = 17.sp,
+            lineHeight = 22.sp,
         ),
-        showDetailRuntime = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+        bodyMRegular = TextStyle(
+            fontWeight = FontWeight.W400,
+            fontSize = 16.sp,
+            lineHeight = 20.sp,
         ),
-        showDetailCastName = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp
-        ),
-        showDetailCharacterName = TextStyle(
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold
-        ),
-        showDetailSeasonInfo = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        ),
-        showDetailEpisodeInfo = TextStyle(
-            color = Color.DarkGray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+        bodySRegular = TextStyle(
+            fontWeight = FontWeight.W400,
+            fontSize = 14.sp,
+            lineHeight = 28.sp,
         )
     )
 }

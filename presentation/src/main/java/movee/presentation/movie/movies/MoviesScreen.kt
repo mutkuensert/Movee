@@ -106,7 +106,7 @@ private fun MoviesNowPlaying(
         Text(
             modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
             text = "Movies in Theaters",
-            style = MaterialTheme.appTypography.feedContentTitle
+            style = MaterialTheme.appTypography.h3Bold
         )
 
         moviesNowPlaying.loadState.LoadingIfRefresh()
@@ -162,7 +162,7 @@ private fun PopularMovies(
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     text = "Popular Movies",
-                    style = MaterialTheme.appTypography.feedContentTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -223,14 +223,14 @@ private fun MoviesNowPlayingItem(
 
                 Text(
                     text = movie.title,
-                    style = MaterialTheme.appTypography.feedShowTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = movie.voteAverage.toString(),
-                    style = MaterialTheme.appTypography.feedVoteAverage
+                    style = MaterialTheme.appTypography.bodyLRegular
                 )
 
                 if (movie.isFavorite != null) {
@@ -288,7 +288,7 @@ private fun PopularMoviesItem(
                 Column {
                     Text(
                         text = movie.title,
-                        style = MaterialTheme.appTypography.feedShowTitle,
+                        style = MaterialTheme.appTypography.h3Bold,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -297,7 +297,7 @@ private fun PopularMoviesItem(
 
                     Text(
                         text = movie.voteAverage.toString(),
-                        style = MaterialTheme.appTypography.feedVoteAverage
+                        style = MaterialTheme.appTypography.bodyLRegular
                     )
 
                     if (movie.isFavorite != null) {

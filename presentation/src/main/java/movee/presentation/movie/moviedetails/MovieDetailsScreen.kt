@@ -139,14 +139,14 @@ private fun MovieDetailsItem(movieDetails: MovieDetails) {
 
         Text(
             text = movieDetails.title,
-            style = MaterialTheme.appTypography.showDetailShowTitle
+            style = MaterialTheme.appTypography.h2Bold
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
         Text(
             text = movieDetails.voteAverage.toString(),
-            style = MaterialTheme.appTypography.showDetailVoteAverage
+            style = MaterialTheme.appTypography.h4Bold
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -154,12 +154,12 @@ private fun MovieDetailsItem(movieDetails: MovieDetails) {
         Row {
             Text(
                 text = "Runtime(min): ",
-                style = MaterialTheme.appTypography.showDetailRuntime
+                style = MaterialTheme.appTypography.h4Bold
             )
 
             Text(
                 text = movieDetails.runtime.toString(),
-                style = MaterialTheme.appTypography.showDetailRuntime
+                style = MaterialTheme.appTypography.h4Bold
             )
         }
 
@@ -167,7 +167,10 @@ private fun MovieDetailsItem(movieDetails: MovieDetails) {
 
         Column {
             if (movieDetails.overview != null) {
-                Text(text = movieDetails.overview!!)
+                Text(
+                    text = movieDetails.overview!!,
+                    style = MaterialTheme.appTypography.bodyMRegular
+                )
             }
         }
     }
@@ -211,14 +214,14 @@ private fun MovieCastItem(cast: MovieCast, navigateToPersonDetails: () -> Unit) 
 
                 Text(
                     text = cast.name,
-                    style = MaterialTheme.appTypography.showDetailCastName
+                    style = MaterialTheme.appTypography.bodyLBold
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = cast.character,
-                    style = MaterialTheme.appTypography.showDetailCharacterName
+                    style = MaterialTheme.appTypography.bodySRegular
                 )
             }
         }

@@ -122,14 +122,14 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
 
             Text(
                 text = tvDetails.name,
-                style = MaterialTheme.appTypography.showDetailShowTitle
+                style = MaterialTheme.appTypography.h2Bold
             )
 
             Spacer(modifier = Modifier.height(15.dp))
 
             Text(
                 text = tvDetails.voteAverage.toString(),
-                style = MaterialTheme.appTypography.showDetailVoteAverage
+                style = MaterialTheme.appTypography.h4Bold
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -137,12 +137,12 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
             Row {
                 Text(
                     text = "Seasons: ",
-                    style = MaterialTheme.appTypography.showDetailSeasonInfo
+                    style = MaterialTheme.appTypography.h4Bold
                 )
 
                 Text(
                     text = tvDetails.seasonCount.toString(),
-                    style = MaterialTheme.appTypography.showDetailSeasonInfo
+                    style = MaterialTheme.appTypography.h4Bold
                 )
             }
 
@@ -151,19 +151,22 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
             Row {
                 Text(
                     text = "Total Episodes: ",
-                    style = MaterialTheme.appTypography.showDetailEpisodeInfo
+                    style = MaterialTheme.appTypography.h4Bold
                 )
 
                 Text(
                     text = tvDetails.totalEpisodeNumber.toString(),
-                    style = MaterialTheme.appTypography.showDetailEpisodeInfo
+                    style = MaterialTheme.appTypography.h4Bold
                 )
             }
 
             Spacer(modifier = Modifier.height(15.dp))
 
             Column {
-                Text(text = tvDetails.overview)
+                Text(
+                    text = tvDetails.overview,
+                    style = MaterialTheme.appTypography.bodyMRegular
+                )
             }
         }
     }
@@ -225,14 +228,14 @@ private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit
 
                 Text(
                     text = cast.name,
-                    style = MaterialTheme.appTypography.showDetailCastName
+                    style = MaterialTheme.appTypography.bodyLBold
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = cast.character,
-                    style = MaterialTheme.appTypography.showDetailCharacterName
+                    style = MaterialTheme.appTypography.bodySRegular
                 )
             }
         }

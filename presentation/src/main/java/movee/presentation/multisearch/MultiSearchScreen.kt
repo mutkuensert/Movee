@@ -221,7 +221,7 @@ private fun SearchResultItem(
 
                 Text(
                     text = name,
-                    style = MaterialTheme.appTypography.feedShowTitle,
+                    style = MaterialTheme.appTypography.h3Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

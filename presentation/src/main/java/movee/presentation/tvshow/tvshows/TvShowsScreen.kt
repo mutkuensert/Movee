@@ -110,7 +110,7 @@ private fun PopularTvShows(
         Text(
             modifier = Modifier.padding(horizontal = 10.dp),
             text = "Popular Tv Shows",
-            style = MaterialTheme.appTypography.feedContentTitle
+            style = MaterialTheme.appTypography.h3Bold
         )
 
         popularTvShows.loadState.LoadingIfRefresh()
@@ -164,7 +164,7 @@ private fun TopRatedTvShows(
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     text = "Top Rated Tv Shows",
-                    style = MaterialTheme.appTypography.feedContentTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -230,14 +230,14 @@ private fun PopularTvShowsItem(
 
                 Text(
                     text = popularTvShow.name,
-                    style = MaterialTheme.appTypography.feedShowTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
 
                 Spacer(Modifier.height(10.dp))
 
                 Text(
                     text = popularTvShow.voteAverage.toString(),
-                    style = MaterialTheme.appTypography.feedVoteAverage
+                    style = MaterialTheme.appTypography.bodyLRegular
                 )
 
                 if (popularTvShow.isFavorite != null) {
@@ -308,7 +308,7 @@ private fun TopRatedTvShowsItem(
                 ) {
                     Text(
                         text = topRatedTvShow.name,
-                        style = MaterialTheme.appTypography.feedShowTitle,
+                        style = MaterialTheme.appTypography.h3Bold,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -317,7 +317,7 @@ private fun TopRatedTvShowsItem(
 
                     Text(
                         text = topRatedTvShow.voteAverage.toString(),
-                        style = MaterialTheme.appTypography.feedVoteAverage
+                        style = MaterialTheme.appTypography.bodyLRegular
                     )
 
                     if (topRatedTvShow.isFavorite != null) {

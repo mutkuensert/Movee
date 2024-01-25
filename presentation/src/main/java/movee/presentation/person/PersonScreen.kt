@@ -116,7 +116,7 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
 
                 Text(
                     text = it.name,
-                    style = MaterialTheme.appTypography.showDetailCastName
+                    style = MaterialTheme.appTypography.bodyMRegular
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -195,7 +195,7 @@ private fun PersonMovieCastItem(
 
                 Text(
                     text = movie.title,
-                    style = MaterialTheme.appTypography.feedShowTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
             }
         }
@@ -257,7 +257,7 @@ private fun PersonTvCastItem(tv: PersonTvCast, navigateToTvDetails: (tvId: Int) 
 
                 Text(
                     text = tv.name,
-                    style = MaterialTheme.appTypography.feedShowTitle
+                    style = MaterialTheme.appTypography.h3Bold
                 )
             }
         }
