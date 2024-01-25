@@ -12,7 +12,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,8 +19,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import movee.presentation.movie.navigation.GRAPH_MOVIE
 import movee.presentation.navigation.NavigationBuilder
 import movee.presentation.theme.AppColors
@@ -60,7 +57,8 @@ private fun BottomNavBar(
     modifier: Modifier = Modifier,
     navController: NavController, viewModel: HomeViewModel
 ) {
-    val lastTabItemRoute by navController.lastTabItemRouteAsState()
+    val lastTabItemRoute by navController.currentTabDestinationAsState(
+        TabItem.all().map { it.route })
 
     BottomNavigation(
         modifier = modifier,
@@ -117,18 +115,32 @@ private fun BottomNavBar(
     }
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
-private fun NavController.lastTabItemRouteAsState(): State<String?> {
+fun NavController.currentTabDestinationAsState(tabDestinations: List<String>): State<String?> {
     val destination = remember { mutableStateOf<String?>(null) }
-    val coroutineScope = rememberCoroutineScope()
 
     DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { navController, _, _ ->
-            coroutineScope.launch {
-                delay(300L) //for completion of navigation
-                destination.value = navController.getLastNavigatedTabItem()?.route
+        val listener =
+            NavController.OnDestinationChangedListener { _, _, _ ->
+                var latestItem: String? = null
+                val reversedBackStackDestinations = currentBackStack.value.reversed()
+                    .map { it.destination.route }
+                val backStackDestinations =
+                    listOf(currentDestination?.route) + reversedBackStackDestinations
+
+                for (route in backStackDestinations) {
+                    val tabDestination =
+                        tabDestinations.firstOrNull { it == route }
+
+                    if (tabDestination != null) {
+                        latestItem = tabDestination
+                        break
+                    }
+                }
+
+                destination.value = latestItem
             }
-        }
 
         addOnDestinationChangedListener(listener)
 
@@ -138,26 +150,4 @@ private fun NavController.lastTabItemRouteAsState(): State<String?> {
     }
 
     return destination
-}
-
-@SuppressLint("RestrictedApi")
-private fun NavController.getLastNavigatedTabItem(): TabItem? {
-    val currentTabItem = TabItem.all().find {
-        val destination = currentBackStackEntry?.destination
-
-        it.route == destination?.parent?.route
-    }
-
-    if (currentTabItem != null) return currentTabItem
-
-    val backIterator = currentBackStack.value.iterator()
-
-    while (backIterator.hasNext()) {
-        val entry = backIterator.next()
-        val tabItem = TabItem.all().find { it.route == entry.destination.route }
-
-        if (tabItem != null) return tabItem
-    }
-
-    return null
 }

@@ -1,17 +1,17 @@
 package movee.presentation.main
 
-import movee.presentation.login.navigation.GRAPH_LOGIN
-import movee.presentation.movie.navigation.GRAPH_MOVIE
-import movee.presentation.multisearch.navigation.GRAPH_MULTI_SEARCH
-import movee.presentation.tvshow.navigation.GRAPH_TV_SHOW
+import movee.presentation.login.navigation.ROUTE_LOGIN
+import movee.presentation.movie.navigation.ROUTE_MOVIES
+import movee.presentation.multisearch.navigation.ROUTE_MULTI_SEARCH
+import movee.presentation.tvshow.navigation.ROUTE_TV_SHOWS
 
 sealed class TabItem(val route: String, val titleKey: String) {
-    object Movie : TabItem(route = GRAPH_MOVIE, titleKey = "Movie")
-    object TvShow : TabItem(route = GRAPH_TV_SHOW, titleKey = "Tv Show")
+    object Movie : TabItem(route = ROUTE_MOVIES, titleKey = "Movie")
+    object TvShow : TabItem(route = ROUTE_TV_SHOWS, titleKey = "Tv Show")
     object MultiSearch :
-        TabItem(route = GRAPH_MULTI_SEARCH, titleKey = "Multi Search")
+        TabItem(route = ROUTE_MULTI_SEARCH, titleKey = "Multi Search")
 
-    object Login : TabItem(route = GRAPH_LOGIN, titleKey = "Login")
+    object Login : TabItem(route = ROUTE_LOGIN, titleKey = "Login")
 
     companion object {
         fun all(): List<TabItem> {
