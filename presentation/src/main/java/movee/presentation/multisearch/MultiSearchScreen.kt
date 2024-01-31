@@ -43,8 +43,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import movee.domain.multisearch.model.SearchResult
-import movee.presentation.components.LoadingIfAppend
-import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.components.LoadingWhenAppend
+import movee.presentation.components.LoadingWhenRefresh
 import movee.presentation.components.NestedVerticalScroll
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
@@ -131,7 +131,7 @@ private fun SearchResults(
         contentPadding = lazyListContentPadding
     ) {
         item {
-            searchResults.loadState.LoadingIfRefresh()
+            searchResults.loadState.LoadingWhenRefresh()
         }
 
         items(count = searchResults.itemCount) { index ->
@@ -173,7 +173,7 @@ private fun SearchResults(
         }
 
         item {
-            searchResults.loadState.LoadingIfAppend()
+            searchResults.loadState.LoadingWhenAppend()
         }
     }
 }

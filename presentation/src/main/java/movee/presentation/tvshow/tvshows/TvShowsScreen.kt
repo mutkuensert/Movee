@@ -45,8 +45,8 @@ import coil.request.ImageRequest
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
 import movee.presentation.components.FavoriteButton
-import movee.presentation.components.LoadingIfAppend
-import movee.presentation.components.LoadingIfRefresh
+import movee.presentation.components.LoadingWhenAppend
+import movee.presentation.components.LoadingWhenRefresh
 import movee.presentation.components.NestedVerticalScroll
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
@@ -113,7 +113,7 @@ private fun PopularTvShows(
             style = MaterialTheme.appTypography.h3Bold
         )
 
-        popularTvShows.loadState.LoadingIfRefresh()
+        popularTvShows.loadState.LoadingWhenRefresh()
 
         LazyRow(
             modifier = Modifier
@@ -134,7 +134,7 @@ private fun PopularTvShows(
             }
 
             item {
-                popularTvShows.loadState.LoadingIfAppend()
+                popularTvShows.loadState.LoadingWhenAppend()
             }
         }
     }
@@ -174,7 +174,7 @@ private fun TopRatedTvShows(
         item(
             span = { GridItemSpan(spanCount) }
         ) {
-            topRatedTvShows.loadState.LoadingIfRefresh()
+            topRatedTvShows.loadState.LoadingWhenRefresh()
         }
 
 
@@ -193,7 +193,7 @@ private fun TopRatedTvShows(
         item(
             span = { GridItemSpan(spanCount) }
         ) {
-            topRatedTvShows.loadState.LoadingIfAppend()
+            topRatedTvShows.loadState.LoadingWhenAppend()
         }
     }
 }
