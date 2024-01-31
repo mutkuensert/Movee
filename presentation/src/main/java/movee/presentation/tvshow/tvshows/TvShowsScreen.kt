@@ -2,27 +2,23 @@ package movee.presentation.tvshow.tvshows
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -31,13 +27,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
@@ -45,8 +43,6 @@ import coil.request.ImageRequest
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
 import movee.presentation.components.FavoriteButton
-import movee.presentation.components.LoadingWhenAppend
-import movee.presentation.components.LoadingWhenRefresh
 import movee.presentation.components.NestedVerticalScroll
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
@@ -70,7 +66,8 @@ fun TvShowsScreen(
                 PopularTvShows(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colors.background),
+                        .background(MaterialTheme.colors.background)
+                        .padding(vertical = 10.dp),
                     popularTvShows = popularTvShowsLazyPagingItems,
                     navigateToTvShowDetails = viewModel::navigateToTvShowDetails,
                     onAddToFavorite = viewModel::addTvShowToFavorites
@@ -106,14 +103,21 @@ private fun PopularTvShows(
     navigateToTvShowDetails: (tvShowId: Int) -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
-    Column(modifier = modifier.padding(vertical = 10.dp)) {
+    Column(modifier = modifier) {
         Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
+            modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
             text = "Popular Tv Shows",
             style = MaterialTheme.appTypography.h3Bold
         )
 
-        popularTvShows.loadState.LoadingWhenRefresh()
+        if (popularTvShows.loadState.refresh == LoadState.Loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator() }
+        }
 
         LazyRow(
             modifier = Modifier
@@ -126,15 +130,14 @@ private fun PopularTvShows(
 
                 if (item != null) {
                     PopularTvShowsItem(
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp)
+                            .width(150.dp),
                         popularTvShow = item,
                         onClick = { navigateToTvShowDetails(item.id) },
                         onAddToFavorite = onAddToFavorite
                     )
                 }
-            }
-
-            item {
-                popularTvShows.loadState.LoadingWhenAppend()
             }
         }
     }
@@ -174,7 +177,14 @@ private fun TopRatedTvShows(
         item(
             span = { GridItemSpan(spanCount) }
         ) {
-            topRatedTvShows.loadState.LoadingWhenRefresh()
+            if (topRatedTvShows.loadState.refresh == LoadState.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    contentAlignment = Alignment.Center
+                ) { CircularProgressIndicator() }
+            }
         }
 
 
@@ -182,158 +192,141 @@ private fun TopRatedTvShows(
             val tvShow = topRatedTvShows[index]
 
             if (tvShow != null) {
-                TopRatedTvShowsItem(
+                TopRatedTvShow(
+                    modifier = Modifier
+                        .width(150.dp)
+                        .padding(10.dp),
                     topRatedTvShow = tvShow,
                     onClick = { navigateToTvShowDetails(tvShow.id) },
                     onAddToFavorite = onAddToFavorite
                 )
             }
         }
-
-        item(
-            span = { GridItemSpan(spanCount) }
-        ) {
-            topRatedTvShows.loadState.LoadingWhenAppend()
-        }
     }
 }
 
 @Composable
 private fun PopularTvShowsItem(
+    modifier: Modifier = Modifier,
     popularTvShow: PopularTvShow,
     onClick: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
-    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier.clickable { onClick() }) {
-            Column(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(popularTvShow.imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        loading = {
-                            CircularProgressIndicator(color = Color.Gray)
-                        },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp))
-                            .height(150.dp),
-                        contentDescription = "Movie Poster"
-                    )
-                }
+    Column(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Poster(modifier = Modifier.padding(5.dp), posterUrl = popularTvShow.imageUrl)
 
-                Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
-                Text(
-                    text = popularTvShow.name,
-                    style = MaterialTheme.appTypography.h3Bold
-                )
+        Text(
+            text = popularTvShow.name,
+            style = MaterialTheme.appTypography.bodyLBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
 
-                Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
-                Text(
-                    text = popularTvShow.voteAverage.toString(),
-                    style = MaterialTheme.appTypography.bodyLRegular
-                )
+        Text(
+            text = popularTvShow.voteAverage.toString(),
+            style = MaterialTheme.appTypography.bodyLRegular
+        )
 
-                if (popularTvShow.isFavorite != null) {
-                    Spacer(Modifier.height(10.dp))
+        if (popularTvShow.isFavorite != null) {
+            Spacer(Modifier.height(10.dp))
 
-                    FavoriteButton(
-                        isFavorite = popularTvShow.isFavorite!!,
-                        onClick = {
-                            onAddToFavorite.invoke(
-                                !popularTvShow.isFavorite!!,
-                                popularTvShow.id
-                            )
-                        }
-                    )
-                }
-            }
+            FavoriteButton(
+                isFavorite = popularTvShow.isFavorite!!,
+                onClick = { onAddToFavorite.invoke(!popularTvShow.isFavorite!!, popularTvShow.id) }
+            )
         }
     }
 }
 
 @Composable
-private fun TopRatedTvShowsItem(
+private fun Poster(
+    modifier: Modifier = Modifier,
+    posterUrl: String?,
+    posterHeight: Dp = 150.dp,
+    posterElevation: Dp = 3.dp
+) {
+    SubcomposeAsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(posterUrl)
+            .crossfade(true)
+            .build(),
+        loading = {
+            Box(
+                modifier = Modifier
+                    .height(posterHeight)
+                    .width(100.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.Gray)
+            }
+        },
+        modifier = modifier
+            .height(posterHeight)
+            .shadow(elevation = posterElevation, shape = MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.medium),
+        contentDescription = "Movie Poster"
+    )
+}
+
+@Composable
+private fun TopRatedTvShow(
+    modifier: Modifier = Modifier,
     topRatedTvShow: TopRatedTvShow,
     onClick: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
-    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(
-            elevation = 10.dp, modifier = Modifier
-                .fillMaxWidth()
-                .height(380.dp)
-                .clickable(onClick = onClick)
+    Column(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Poster(
+            modifier = Modifier.padding(5.dp),
+            posterUrl = topRatedTvShow.imageUrl
+        )
+
+        Spacer(Modifier.width(20.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(topRatedTvShow.imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        loading = {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = Color.Gray)
-                            }
-                        },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp))
-                            .fillMaxWidth(),
-                        contentDescription = "Movie Poster",
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
+            Text(
+                text = topRatedTvShow.name,
+                style = MaterialTheme.appTypography.bodyLBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-                Spacer(Modifier.height(5.dp))
+            Spacer(Modifier.height(10.dp))
 
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    Text(
-                        text = topRatedTvShow.name,
-                        style = MaterialTheme.appTypography.h3Bold,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
+            Text(
+                text = topRatedTvShow.voteAverage.toString(),
+                style = MaterialTheme.appTypography.bodyLRegular
+            )
 
-                    Spacer(Modifier.height(5.dp))
+            if (topRatedTvShow.isFavorite != null) {
+                Spacer(Modifier.height(10.dp))
 
-                    Text(
-                        text = topRatedTvShow.voteAverage.toString(),
-                        style = MaterialTheme.appTypography.bodyLRegular
-                    )
-
-                    if (topRatedTvShow.isFavorite != null) {
-                        Spacer(Modifier.height(10.dp))
-
-                        FavoriteButton(
-                            isFavorite = topRatedTvShow.isFavorite!!,
-                            onClick = {
-                                onAddToFavorite.invoke(
-                                    !topRatedTvShow.isFavorite!!,
-                                    topRatedTvShow.id
-                                )
-                            }
+                FavoriteButton(
+                    isFavorite = topRatedTvShow.isFavorite!!,
+                    onClick = {
+                        onAddToFavorite.invoke(
+                            !topRatedTvShow.isFavorite!!,
+                            topRatedTvShow.id
                         )
                     }
-                }
+                )
             }
         }
     }
@@ -342,7 +335,7 @@ private fun TopRatedTvShowsItem(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun PreviewTopRatedTveShowsItem() {
-    TopRatedTvShowsItem(
+    TopRatedTvShow(
         topRatedTvShow = TopRatedTvShow(
             imageUrl = null,
             id = 0,
