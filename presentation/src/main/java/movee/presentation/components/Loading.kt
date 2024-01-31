@@ -1,10 +1,11 @@
 package movee.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,16 +16,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Loading(
     modifier: Modifier = Modifier,
-    padding: Dp = 50.dp,
     indicatorSize: Dp = 100.dp,
     strokeWidth: Dp = 6.dp,
-    color: Color = Color.Gray
+    color: Color = MaterialTheme.colors.primary
 ) {
     Column(
         modifier = modifier
-            .padding(vertical = padding)
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(indicatorSize),
