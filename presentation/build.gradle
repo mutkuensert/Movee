@@ -17,16 +17,17 @@ dependencies {
     implementation project(':domain')
     implementation project(':resources')
 
+    implementation platform("androidx.compose:compose-bom:$versions.composeBom")
+
     implementation "androidx.core:core-ktx:$versions.core"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
-    implementation "androidx.compose.ui:ui:$versions.composeUi"
-    implementation "androidx.compose.ui:ui-tooling-preview:$versions.composeUi"
-    implementation "androidx.compose.material:material:$versions.composeUi"
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material:material"
 
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$versions.composeUi"
-    debugImplementation "androidx.compose.ui:ui-tooling:$versions.composeUi"
-    //noinspection GradleDependency
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$versions.composeUi"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
 
     implementation "androidx.navigation:navigation-ui-ktx:$versions.navigation"
     implementation "androidx.navigation:navigation-compose:$versions.navigation"
