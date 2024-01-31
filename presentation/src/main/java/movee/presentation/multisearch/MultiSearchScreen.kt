@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -25,9 +23,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -38,18 +36,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import movee.domain.multisearch.model.SearchResult
-import movee.presentation.components.LoadingWhenAppend
-import movee.presentation.components.LoadingWhenRefresh
 import movee.presentation.components.NestedVerticalScroll
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MultiSearchScreen(
     viewModel: MultiSearchViewModel = hiltViewModel()
@@ -80,6 +76,7 @@ fun MultiSearchScreen(
             topContent = {
                 OutlinedTextField(
                     modifier = Modifier
+                        .padding(top = 20.dp)
                         .focusRequester(focusRequester)
                         .onFocusChanged {
                             if (it.isFocused) {
@@ -131,101 +128,72 @@ private fun SearchResults(
         contentPadding = lazyListContentPadding
     ) {
         item {
-            searchResults.loadState.LoadingWhenRefresh()
+            if (searchResults.loadState.refresh == LoadState.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    contentAlignment = Alignment.Center
+                ) { CircularProgressIndicator() }
+            }
         }
 
         items(count = searchResults.itemCount) { index ->
             val item = searchResults[index]
 
-            when (item?.type) {
-                SearchResult.Type.MOVIE -> {
-                    SearchResultItem(
-                        name = item.title,
-                        imageUrl = item.imageUrl,
-                        navigateToItemDetails = {
-                            navigateToMovieDetails(item.id)
+            if (item != null) {
+                SearchResult(
+                    modifier = Modifier.padding(vertical = 20.dp, horizontal = 15.dp),
+                    name = item.title,
+                    imageUrl = item.imageUrl,
+                    navigateToItemDetails = {
+                        when (item.type) {
+                            SearchResult.Type.MOVIE -> navigateToMovieDetails(item.id)
+                            SearchResult.Type.TV -> navigateToTvShowDetails(item.id)
+                            SearchResult.Type.PERSON -> navigateToPersonDetails(item.id)
                         }
-                    )
-                }
-
-                SearchResult.Type.TV -> {
-                    SearchResultItem(
-                        name = item.title,
-                        imageUrl = item.imageUrl,
-                        navigateToItemDetails = {
-                            navigateToTvShowDetails(item.id)
-                        }
-                    )
-                }
-
-                SearchResult.Type.PERSON -> {
-                    SearchResultItem(
-                        name = item.title,
-                        imageUrl = item.imageUrl,
-                        navigateToItemDetails = {
-                            navigateToPersonDetails(item.id)
-                        }
-                    )
-                }
-
-                else -> {}
+                    }
+                )
             }
-        }
-
-        item {
-            searchResults.loadState.LoadingWhenAppend()
         }
     }
 }
 
 @Composable
-private fun SearchResultItem(
+private fun SearchResult(
+    modifier: Modifier = Modifier,
     name: String,
     imageUrl: String?,
     navigateToItemDetails: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .padding(vertical = 10.dp, horizontal = 7.dp)
-            .fillMaxWidth()
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = navigateToItemDetails),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            elevation = 10.dp,
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            loading = {
+                CircularProgressIndicator(color = Color.Gray)
+            },
             modifier = Modifier
-                .clickable(onClick = navigateToItemDetails)
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Card(elevation = 10.dp) {
-                    if (imageUrl != null) {
-                        SubcomposeAsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(imageUrl)
-                                .crossfade(true)
-                                .build(),
-                            loading = {
-                                CircularProgressIndicator(color = Color.Gray)
-                            },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(5.dp))
-                                .height(200.dp),
-                            contentDescription = "Item Poster"
-                        )
-                    }
-                }
+                .height(200.dp)
+                .shadow(elevation = 3.dp, shape = MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.medium),
+            contentDescription = "Item Poster"
+        )
 
-                Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
-                Text(
-                    text = name,
-                    style = MaterialTheme.appTypography.h3Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+        Text(
+            text = name,
+            style = MaterialTheme.appTypography.bodyLBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }

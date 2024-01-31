@@ -129,7 +129,7 @@ private fun PopularTvShows(
                 val item = popularTvShows[index]
 
                 if (item != null) {
-                    PopularTvShowsItem(
+                    PopularTvShow(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .width(150.dp),
@@ -206,7 +206,7 @@ private fun TopRatedTvShows(
 }
 
 @Composable
-private fun PopularTvShowsItem(
+private fun PopularTvShow(
     modifier: Modifier = Modifier,
     popularTvShow: PopularTvShow,
     onClick: () -> Unit,
