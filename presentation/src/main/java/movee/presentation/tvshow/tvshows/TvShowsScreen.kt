@@ -245,7 +245,7 @@ private fun PopularTvShowsItem(
 
                     FavoriteButton(
                         isFavorite = popularTvShow.isFavorite!!,
-                        onAddToFavorite = {
+                        onClick = {
                             onAddToFavorite.invoke(
                                 !popularTvShow.isFavorite!!,
                                 popularTvShow.id
@@ -325,7 +325,7 @@ private fun TopRatedTvShowsItem(
 
                         FavoriteButton(
                             isFavorite = topRatedTvShow.isFavorite!!,
-                            onAddToFavorite = {
+                            onClick = {
                                 onAddToFavorite.invoke(
                                     !topRatedTvShow.isFavorite!!,
                                     topRatedTvShow.id

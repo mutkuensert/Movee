@@ -1,12 +1,10 @@
 package movee.presentation.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -24,10 +22,9 @@ fun CombinedLoadStates.LoadingIfAppend(
 ) {
     if (this.append == LoadState.Loading) {
         Indicator(
-            modifier = if (modifier == Modifier) Modifier
+            modifier = modifier
                 .padding(padding)
-                .fillMaxWidth()
-            else Modifier,
+                .fillMaxWidth(),
             indicatorSize = indicatorSize,
             strokeWidth = strokeWidth,
             color = color
@@ -45,10 +42,9 @@ fun CombinedLoadStates.LoadingIfRefresh(
 ) {
     if (this.refresh == LoadState.Loading) {
         Indicator(
-            modifier = if (modifier == Modifier) Modifier
+            modifier = modifier
                 .padding(padding)
-                .fillMaxWidth()
-            else Modifier,
+                .fillMaxWidth(),
             indicatorSize = indicatorSize,
             strokeWidth = strokeWidth,
             color = color
@@ -63,14 +59,9 @@ private fun Indicator(
     strokeWidth: Dp,
     color: Color
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(indicatorSize),
-            strokeWidth = strokeWidth,
-            color = color
-        )
-    }
+    CircularProgressIndicator(
+        modifier = modifier.size(indicatorSize),
+        strokeWidth = strokeWidth,
+        color = color
+    )
 }

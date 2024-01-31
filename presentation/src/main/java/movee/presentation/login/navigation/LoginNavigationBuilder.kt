@@ -17,7 +17,7 @@ const val ROUTE_LOGIN = "loginRoute/{$KEY_IS_REDIRECTED_FROM_TMDB_LOGIN}"
 const val GRAPH_LOGIN = "graphLogin"
 const val ROUTE_PROFILE = "profileRoute"
 
-fun getLoginRouteWithEntity(isRedirectedFromTmdbLogin: Boolean) =
+fun getLoginRoute(isRedirectedFromTmdbLogin: Boolean) =
     ROUTE_LOGIN.replace(
         KEY_IS_REDIRECTED_FROM_TMDB_LOGIN,
         isRedirectedFromTmdbLogin.toString()

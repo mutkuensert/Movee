@@ -12,14 +12,13 @@ import movee.domain.login.CollectLoginEventsUseCase
 import movee.domain.login.LogoutUseCase
 import movee.presentation.login.navigation.ROUTE_LOGIN
 import movee.presentation.navigation.navigator.MainNavigator
-import timber.log.Timber
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getAccountDetailsUseCase: GetAccountDetailsUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val mainNavigator: MainNavigator,
-    private val collectLoginEventsUseCase: CollectLoginEventsUseCase,
+    collectLoginEventsUseCase: CollectLoginEventsUseCase,
 ) : ViewModel() {
     private val _uiModel = MutableStateFlow(ProfileUiModel.empty())
     val uiModel = _uiModel.asStateFlow()
@@ -29,7 +28,6 @@ class ProfileViewModel @Inject constructor(
     fun getAccountDetails() {
         viewModelScope.launch {
             _uiModel.value = getAccountDetailsUseCase.execute().run {
-                Timber.e(this.toString())
                 ProfileUiModel(
                     userName = this?.userName ?: "",
                     profilePictureUrl = this?.profilePictureUrl

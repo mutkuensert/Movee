@@ -21,9 +21,9 @@ fun Loading(
     color: Color = Color.Gray
 ) {
     Column(
-        modifier = if (modifier == Modifier) Modifier
+        modifier = modifier
             .padding(vertical = padding)
-            .fillMaxSize() else modifier,
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(

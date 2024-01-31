@@ -238,7 +238,7 @@ private fun MoviesNowPlayingItem(
 
                     FavoriteButton(
                         isFavorite = movie.isFavorite!!,
-                        onAddToFavorite = { onAddToFavorite.invoke(!movie.isFavorite!!, movie.id) }
+                        onClick = { onAddToFavorite.invoke(!movie.isFavorite!!, movie.id) }
                     )
                 }
             }
@@ -305,7 +305,7 @@ private fun PopularMoviesItem(
 
                         FavoriteButton(
                             isFavorite = movie.isFavorite!!,
-                            onAddToFavorite = {
+                            onClick = {
                                 onAddToFavorite.invoke(
                                     !movie.isFavorite!!,
                                     movie.id

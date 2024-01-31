@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import movee.domain.login.LoginEvent
 import movee.presentation.core.showToast
-import movee.presentation.login.navigation.getLoginRouteWithEntity
+import movee.presentation.login.navigation.getLoginRoute
 import movee.resources.R
 
 @Composable
@@ -72,7 +72,7 @@ private fun DirectToLoginPage(requestToken: String?) {
                     "https://www.themoviedb.org/authenticate/" +
                             requestToken +
                             "?redirect_to" +
-                            "=$APP_DEEP_LINK${getLoginRouteWithEntity(true)}"
+                            "=$APP_DEEP_LINK${getLoginRoute(true)}"
                 )
             if (uri.scheme == null) {
                 uri = uri

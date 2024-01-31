@@ -25,24 +25,20 @@ import movee.resources.R
 fun FavoriteButton(
     modifier: Modifier = Modifier,
     isFavorite: Boolean,
-    onAddToFavorite: () -> Unit
+    onClick: () -> Unit
 ) {
     AnimatedContent(
         targetState = isFavorite,
         transitionSpec = {
             fadeIn(
-                animationSpec = tween(
-                    300, easing = LinearEasing
-                )
+                animationSpec = tween(easing = LinearEasing)
             ) + slideIntoContainer(
-                animationSpec = tween(300, easing = EaseIn),
+                animationSpec = tween(easing = EaseIn),
                 towards = AnimatedContentTransitionScope.SlideDirection.Down
             ) togetherWith fadeOut(
-                animationSpec = tween(
-                    300, easing = LinearEasing
-                )
+                animationSpec = tween(easing = LinearEasing)
             ) + slideOutOfContainer(
-                animationSpec = tween(300, easing = EaseOut),
+                animationSpec = tween(easing = EaseOut),
                 towards = AnimatedContentTransitionScope.SlideDirection.Down
             )
         },
@@ -50,7 +46,7 @@ fun FavoriteButton(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = onAddToFavorite
+                onClick = onClick
             )
             .size(35.dp),
         label = "Animated Content"
