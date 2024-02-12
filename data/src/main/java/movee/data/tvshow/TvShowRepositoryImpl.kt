@@ -28,7 +28,7 @@ import movee.domain.Failure
 import movee.domain.tvshow.TvShowRepository
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
-import movee.domain.tvshow.model.TvShowCast
+import movee.domain.tvshow.model.Person
 import movee.domain.tvshow.model.TvShowDetails
 
 class TvShowRepositoryImpl @Inject constructor(
@@ -51,10 +51,10 @@ class TvShowRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun getTvShowCast(tvShowId: Int): Result<List<TvShowCast>, Failure> {
+    override suspend fun getTvShowCast(tvShowId: Int): Result<List<Person>, Failure> {
         return tvShowsApi.getTvShowCredits(tvShowId).toResult(mapper = { response ->
             response.cast.map {
-                TvShowCast(
+                Person(
                     id = it.id,
                     name = it.name,
                     imageUrl = getImageUrl(it.profilePath),

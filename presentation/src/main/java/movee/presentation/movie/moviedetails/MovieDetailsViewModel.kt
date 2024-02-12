@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import movee.domain.movie.GetMovieCastUseCase
 import movee.domain.movie.GetMovieDetailsUseCase
-import movee.domain.movie.model.MovieCast
+import movee.domain.movie.model.Person
 import movee.domain.movie.model.MovieDetails
 
 @HiltViewModel
@@ -24,29 +24,29 @@ class MovieDetailsViewModel @Inject constructor(
     private val getMovieCastUseCase: GetMovieCastUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val movieId: Int = requireNotNull(savedStateHandle[KEY_MOVIE_ID]) {
+    private val movieId: Int = requireNotNull(savedStateHandle[KEY_MOVIE_ID]) {
         "Provide $KEY_MOVIE_ID before navigating."
     }
-    private val _movieDetails: MutableStateFlow<Phase<MovieDetails>> =
+    private val _details: MutableStateFlow<Phase<MovieDetails>> =
         MutableStateFlow(Phase.Standby())
-    val movieDetails = _movieDetails.asStateFlow()
+    val details = _details.asStateFlow()
 
-    private val _movieCast: MutableStateFlow<Phase<List<MovieCast>>> =
+    private val _person: MutableStateFlow<Phase<List<Person>>> =
         MutableStateFlow(Phase.Standby())
-    val movieCast = _movieCast.asStateFlow()
+    val person = _person.asStateFlow()
 
-    fun getMovieDetails() {
+    fun getDetails() {
         viewModelScope.launch {
             getMovieDetailsUseCase.execute(movieId).collectLatest {
-                _movieDetails.value = it
+                _details.value = it
             }
         }
     }
 
-    fun getMovieCast() {
+    fun getCast() {
         viewModelScope.launch {
             getMovieCastUseCase.execute(movieId).collectLatest {
-                _movieCast.value = it
+                _person.value = it
             }
         }
     }

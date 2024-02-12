@@ -19,7 +19,7 @@ import movee.data.util.getImageUrl
 import movee.data.util.withDecimalDigits
 import movee.domain.Failure
 import movee.domain.movie.MovieRepository
-import movee.domain.movie.model.MovieCast
+import movee.domain.movie.model.Person
 import movee.domain.movie.model.MovieDetails
 import movee.domain.movie.model.MovieNowPlaying
 import movee.domain.movie.model.PopularMovie
@@ -88,10 +88,10 @@ class MovieRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun getMovieCast(movieId: Int): Result<List<MovieCast>, Failure> {
+    override suspend fun getMovieCast(movieId: Int): Result<List<Person>, Failure> {
         return movieApi.getMovieCredits(movieId).toResult(mapper = { response ->
             response.cast.map {
-                MovieCast(
+                Person(
                     id = it.id,
                     imageUrl = getImageUrl(it.profilePath),
                     name = it.name,

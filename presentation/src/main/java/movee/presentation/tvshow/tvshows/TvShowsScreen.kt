@@ -27,23 +27,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import movee.domain.tvshow.model.PopularTvShow
 import movee.domain.tvshow.model.TopRatedTvShow
 import movee.presentation.components.FavoriteButton
 import movee.presentation.components.NestedVerticalScroll
+import movee.presentation.components.Poster
 import movee.presentation.core.getInsetsController
 import movee.presentation.theme.appTypography
 
@@ -248,36 +244,6 @@ private fun PopularTvShow(
 }
 
 @Composable
-private fun Poster(
-    modifier: Modifier = Modifier,
-    posterUrl: String?,
-    posterHeight: Dp = 150.dp,
-    posterElevation: Dp = 3.dp
-) {
-    SubcomposeAsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(posterUrl)
-            .crossfade(true)
-            .build(),
-        loading = {
-            Box(
-                modifier = Modifier
-                    .height(posterHeight)
-                    .width(100.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color.Gray)
-            }
-        },
-        modifier = modifier
-            .height(posterHeight)
-            .shadow(elevation = posterElevation, shape = MaterialTheme.shapes.medium)
-            .clip(MaterialTheme.shapes.medium),
-        contentDescription = "Movie Poster"
-    )
-}
-
-@Composable
 private fun TopRatedTvShow(
     modifier: Modifier = Modifier,
     topRatedTvShow: TopRatedTvShow,
@@ -334,7 +300,7 @@ private fun TopRatedTvShow(
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-private fun PreviewTopRatedTveShowsItem() {
+private fun PreviewTopRatedTvShow() {
     TopRatedTvShow(
         topRatedTvShow = TopRatedTvShow(
             imageUrl = null,

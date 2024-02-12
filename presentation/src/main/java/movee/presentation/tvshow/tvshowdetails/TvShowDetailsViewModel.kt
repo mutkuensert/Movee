@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import movee.domain.tvshow.GetTvShowCastUseCase
 import movee.domain.tvshow.GetTvShowDetailsUseCase
-import movee.domain.tvshow.model.TvShowCast
+import movee.domain.tvshow.model.Person
 import movee.domain.tvshow.model.TvShowDetails
 import movee.presentation.navigation.navigator.PersonNavigator
 import movee.presentation.tvshow.navigation.KEY_TV_SHOW_ID
@@ -24,29 +24,29 @@ class TvShowDetailsViewModel @Inject constructor(
     private val getTvShowCastUseCase: GetTvShowCastUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val tvShowId: Int = requireNotNull(savedStateHandle[KEY_TV_SHOW_ID]) {
+    private val tvShowId: Int = requireNotNull(savedStateHandle[KEY_TV_SHOW_ID]) {
         "Provide $KEY_TV_SHOW_ID before navigating."
     }
-    private val _tvShowDetails: MutableStateFlow<Phase<TvShowDetails>> =
+    private val _details: MutableStateFlow<Phase<TvShowDetails>> =
         MutableStateFlow(Phase.Standby())
-    val tvShowDetails = _tvShowDetails.asStateFlow()
+    val details = _details.asStateFlow()
 
-    private val _tvShowCast: MutableStateFlow<Phase<List<TvShowCast>>> =
+    private val _cast: MutableStateFlow<Phase<List<Person>>> =
         MutableStateFlow(Phase.Standby())
-    val tvShowCast = _tvShowCast.asStateFlow()
+    val cast = _cast.asStateFlow()
 
-    fun getTvShowDetails() {
+    fun getDetails() {
         viewModelScope.launch {
             getTvShowDetailsUseCase.execute(tvShowId).collectLatest {
-                _tvShowDetails.value = it
+                _details.value = it
             }
         }
     }
 
-    fun getTvShowCast() {
+    fun getCast() {
         viewModelScope.launch {
             getTvShowCastUseCase.execute(tvShowId).collectLatest {
-                _tvShowCast.value = it
+                _cast.value = it
             }
         }
     }

@@ -1,21 +1,19 @@
 package movee.presentation.tvshow.tvshowdetails
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -35,9 +32,10 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.mutkuensert.androidphase.Phase
 import com.mutkuensert.phasecomposeextension.Execute
-import movee.domain.tvshow.model.TvShowCast
+import movee.domain.tvshow.model.Person
 import movee.domain.tvshow.model.TvShowDetails
 import movee.presentation.components.Loading
+import movee.presentation.components.Poster
 import movee.presentation.core.setStatusBarAppearanceByDrawable
 import movee.presentation.core.showToastIfNotNull
 import movee.presentation.theme.appTypography
@@ -46,10 +44,10 @@ import movee.presentation.theme.appTypography
 fun TvDetailsScreen(
     viewModel: TvShowDetailsViewModel = hiltViewModel()
 ) {
-    val tvShowDetails by viewModel.tvShowDetails.collectAsStateWithLifecycle()
-    val tvShowCast by viewModel.tvShowCast.collectAsStateWithLifecycle()
+    val details by viewModel.details.collectAsStateWithLifecycle()
+    val cast by viewModel.cast.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) { viewModel.getTvShowDetails() }
+    LaunchedEffect(true) { viewModel.getDetails() }
 
     Column(
         modifier = Modifier
@@ -57,64 +55,60 @@ fun TvDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        TvShowDetails(
-            phase = tvShowDetails,
-            loadTvCastIfSuccessful = viewModel::getTvShowCast
+        OnPhaseDetails(
+            phase = details,
+            getCast = viewModel::getCast
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        TvShowCast(
-            phase = tvShowCast,
+        OnPhaseCast(
+            phase = cast,
             navigateToPersonDetails = viewModel::navigateToPersonDetails
         )
     }
 }
 
 @Composable
-private fun TvShowDetails(
+private fun OnPhaseDetails(
     phase: Phase<TvShowDetails>,
-    loadTvCastIfSuccessful: () -> Unit
+    getCast: () -> Unit
 ) {
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            TvDetailsItem(it)
-            LaunchedEffect(Unit) { loadTvCastIfSuccessful() }
+            Details(tvDetails = it)
+            LaunchedEffect(Unit) { getCast() }
         },
         onError = { LocalContext.current.showToastIfNotNull(it.message) })
 }
 
 @Composable
-private fun TvDetailsItem(tvDetails: TvShowDetails) {
+private fun Details(modifier: Modifier = Modifier, tvDetails: TvShowDetails) {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier
-            .padding(bottom = 30.dp)
+        modifier = modifier.padding(bottom = 30.dp)
     ) {
         if (tvDetails.imageUrl != null) {
-            Card(
-                elevation = 10.dp,
-                shape = RectangleShape
-            ) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(tvDetails.imageUrl)
-                        .allowHardware(false)
-                        .crossfade(true)
-                        .build(),
-                    loading = {
-                        Loading()
-                    },
-                    onSuccess = { result ->
-                        context.setStatusBarAppearanceByDrawable(drawable = result.result.drawable)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    contentDescription = "Tv Poster",
-                    contentScale = ContentScale.FillWidth
-                )
-            }
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(tvDetails.imageUrl)
+                    .allowHardware(false)
+                    .crossfade(true)
+                    .build(),
+                loading = {
+                    Loading()
+                },
+                onSuccess = { result ->
+                    context.setStatusBarAppearanceByDrawable(drawable = result.result.drawable)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(elevation = 3.dp),
+                contentDescription = "Tv Poster",
+                contentScale = ContentScale.FillWidth
+            )
         }
 
         Column(modifier = Modifier.padding(horizontal = 15.dp)) {
@@ -173,17 +167,18 @@ private fun TvDetailsItem(tvDetails: TvShowDetails) {
 }
 
 @Composable
-private fun TvShowCast(
-    phase: Phase<List<TvShowCast>>,
+private fun OnPhaseCast(
+    phase: Phase<List<Person>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
     phase.Execute(
         onLoading = { Loading() },
         onSuccess = {
-            LazyRow {
+            LazyRow(contentPadding = PaddingValues(horizontal = 10.dp)) {
                 items(it) { item ->
-                    TvShowCastItem(
-                        cast = item,
+                    Person(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        person = item,
                         navigateToPersonDetails = { navigateToPersonDetails(item.id) })
                 }
             }
@@ -192,52 +187,34 @@ private fun TvShowCast(
 }
 
 @Composable
-private fun TvShowCastItem(cast: TvShowCast, navigateToPersonDetails: () -> Unit) {
-    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(
-            elevation = 10.dp, modifier = Modifier
-                .clickable(onClick = navigateToPersonDetails)
-        ) {
-            Column(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+private fun Person(
+    modifier: Modifier = Modifier,
+    person: Person,
+    navigateToPersonDetails: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = navigateToPersonDetails),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Poster(
+            modifier = Modifier.padding(5.dp),
+            posterUrl = person.imageUrl
+        )
 
-                Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(cast.imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        loading = {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = Color.Gray)
-                            }
-                        },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp))
-                            .height(150.dp),
-                        contentDescription = "Tv Show Poster"
-                    )
-                }
+        Spacer(Modifier.width(10.dp))
 
-                Spacer(Modifier.height(10.dp))
+        Text(
+            text = person.name,
+            style = MaterialTheme.appTypography.bodyLBold
+        )
 
-                Text(
-                    text = cast.name,
-                    style = MaterialTheme.appTypography.bodyLBold
-                )
+        Spacer(Modifier.height(10.dp))
 
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    text = cast.character,
-                    style = MaterialTheme.appTypography.bodySRegular
-                )
-            }
-        }
+        Text(
+            text = person.character,
+            style = MaterialTheme.appTypography.bodySRegular
+        )
     }
 }

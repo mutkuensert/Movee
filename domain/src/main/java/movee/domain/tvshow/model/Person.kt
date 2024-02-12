@@ -1,6 +1,6 @@
 package movee.domain.tvshow.model
 
-data class TvShowCast(
+data class Person(
     val id: Int,
     val name: String,
     val imageUrl: String?,

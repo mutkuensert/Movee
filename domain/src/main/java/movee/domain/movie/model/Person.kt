@@ -1,6 +1,6 @@
 package movee.domain.movie.model
 
-data class MovieCast(
+data class Person(
     val id: Int,
     val imageUrl: String?,
     val name: String,
