@@ -1,8 +1,8 @@
 package movee.domain.person.model
 
-data class PersonTvCast(
+data class PersonMovieCasting(
     val character: String,
-    val name: String,
+    val title: String,
     val id: Int,
     val imageUrl: String?
 )

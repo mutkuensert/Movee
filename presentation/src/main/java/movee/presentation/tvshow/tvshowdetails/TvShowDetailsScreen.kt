@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -30,14 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.androidphase.Phase
-import com.mutkuensert.phasecomposeextension.Execute
 import movee.domain.tvshow.model.Person
 import movee.domain.tvshow.model.TvShowDetails
 import movee.presentation.components.Loading
 import movee.presentation.components.Poster
+import movee.presentation.core.UiState
 import movee.presentation.core.setStatusBarAppearanceByDrawable
-import movee.presentation.core.showToastIfNotNull
 import movee.presentation.theme.appTypography
 
 @Composable
@@ -47,7 +44,8 @@ fun TvDetailsScreen(
     val details by viewModel.details.collectAsStateWithLifecycle()
     val cast by viewModel.cast.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) { viewModel.getDetails() }
+    LaunchedEffect(Unit) { viewModel.getDetails() }
+    LaunchedEffect(details) { if (details is UiState.Success) viewModel.getCast() }
 
     Column(
         modifier = Modifier
@@ -55,141 +53,139 @@ fun TvDetailsScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 25.dp)
     ) {
-        OnPhaseDetails(
-            phase = details,
-            getCast = viewModel::getCast
-        )
+        Details(tvShowDetails = details)
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        OnPhaseCast(
-            phase = cast,
+        Cast(
+            cast = cast,
             navigateToPersonDetails = viewModel::navigateToPersonDetails
         )
     }
 }
 
 @Composable
-private fun OnPhaseDetails(
-    phase: Phase<TvShowDetails>,
-    getCast: () -> Unit
-) {
-    phase.Execute(
-        onLoading = { Loading() },
-        onSuccess = {
-            Details(tvDetails = it)
-            LaunchedEffect(Unit) { getCast() }
-        },
-        onError = { LocalContext.current.showToastIfNotNull(it.message) })
-}
-
-@Composable
-private fun Details(modifier: Modifier = Modifier, tvDetails: TvShowDetails) {
+private fun Details(modifier: Modifier = Modifier, tvShowDetails: UiState<TvShowDetails>) {
     val context = LocalContext.current
 
-    Column(
-        modifier = modifier.padding(bottom = 30.dp)
-    ) {
-        if (tvDetails.imageUrl != null) {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(tvDetails.imageUrl)
-                    .allowHardware(false)
-                    .crossfade(true)
-                    .build(),
-                loading = {
-                    Loading()
-                },
-                onSuccess = { result ->
-                    context.setStatusBarAppearanceByDrawable(drawable = result.result.drawable)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(elevation = 3.dp),
-                contentDescription = "Tv Poster",
-                contentScale = ContentScale.FillWidth
-            )
-        }
+    when (tvShowDetails) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> Loading()
+        is UiState.Success -> {
+            val details = tvShowDetails.data
 
-        Column(modifier = Modifier.padding(horizontal = 15.dp)) {
-            Spacer(modifier = Modifier.height(15.dp))
+            Column(
+                modifier = modifier.padding(bottom = 30.dp)
+            ) {
+                if (details.imageUrl != null) {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(details.imageUrl)
+                            .allowHardware(false)
+                            .crossfade(true)
+                            .build(),
+                        loading = {
+                            Loading()
+                        },
+                        onSuccess = { result ->
+                            context.setStatusBarAppearanceByDrawable(drawable = result.result.drawable)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(elevation = 3.dp),
+                        contentDescription = "Tv Poster",
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
 
-            Text(
-                text = tvDetails.name,
-                style = MaterialTheme.appTypography.h2Bold
-            )
+                Column(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    Spacer(modifier = Modifier.height(15.dp))
 
-            Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = details.name,
+                        style = MaterialTheme.appTypography.h2Bold
+                    )
 
-            Text(
-                text = tvDetails.voteAverage.toString(),
-                style = MaterialTheme.appTypography.h4Bold
-            )
+                    Spacer(modifier = Modifier.height(15.dp))
 
-            Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = details.voteAverage.toString(),
+                        style = MaterialTheme.appTypography.h4Bold
+                    )
 
-            Row {
-                Text(
-                    text = "Seasons: ",
-                    style = MaterialTheme.appTypography.h4Bold
-                )
+                    Spacer(modifier = Modifier.height(15.dp))
 
-                Text(
-                    text = tvDetails.seasonCount.toString(),
-                    style = MaterialTheme.appTypography.h4Bold
-                )
-            }
+                    Row {
+                        Text(
+                            text = "Seasons: ",
+                            style = MaterialTheme.appTypography.h4Bold
+                        )
 
-            Spacer(modifier = Modifier.height(15.dp))
+                        Text(
+                            text = details.seasonCount.toString(),
+                            style = MaterialTheme.appTypography.h4Bold
+                        )
+                    }
 
-            Row {
-                Text(
-                    text = "Total Episodes: ",
-                    style = MaterialTheme.appTypography.h4Bold
-                )
+                    Spacer(modifier = Modifier.height(15.dp))
 
-                Text(
-                    text = tvDetails.totalEpisodeNumber.toString(),
-                    style = MaterialTheme.appTypography.h4Bold
-                )
-            }
+                    Row {
+                        Text(
+                            text = "Total Episodes: ",
+                            style = MaterialTheme.appTypography.h4Bold
+                        )
 
-            Spacer(modifier = Modifier.height(15.dp))
+                        Text(
+                            text = details.totalEpisodeNumber.toString(),
+                            style = MaterialTheme.appTypography.h4Bold
+                        )
+                    }
 
-            Column {
-                Text(
-                    text = tvDetails.overview,
-                    style = MaterialTheme.appTypography.bodyMRegular
-                )
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Column {
+                        Text(
+                            text = details.overview,
+                            style = MaterialTheme.appTypography.bodyMRegular
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun OnPhaseCast(
-    phase: Phase<List<Person>>,
+private fun Cast(
+    cast: UiState<List<Person>>,
     navigateToPersonDetails: (personId: Int) -> Unit
 ) {
-    phase.Execute(
-        onLoading = { Loading() },
-        onSuccess = {
+    when (cast) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> Loading()
+        is UiState.Success -> {
             LazyRow(contentPadding = PaddingValues(horizontal = 10.dp)) {
-                items(it) { item ->
+                items(cast.data.size) { index ->
+                    val person = cast.data[index]
+
                     Person(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        person = item,
-                        navigateToPersonDetails = { navigateToPersonDetails(item.id) })
+                        name = person.name,
+                        imageUrl = person.imageUrl,
+                        character = person.character,
+                        navigateToPersonDetails = { navigateToPersonDetails(person.id) })
                 }
             }
-        },
-        onError = { LocalContext.current.showToastIfNotNull(it.message) })
+        }
+    }
 }
 
 @Composable
 private fun Person(
     modifier: Modifier = Modifier,
-    person: Person,
+    name: String,
+    imageUrl: String?,
+    character: String,
     navigateToPersonDetails: () -> Unit
 ) {
     Column(
@@ -200,20 +196,20 @@ private fun Person(
     ) {
         Poster(
             modifier = Modifier.padding(5.dp),
-            posterUrl = person.imageUrl
+            posterUrl = imageUrl
         )
 
         Spacer(Modifier.width(10.dp))
 
         Text(
-            text = person.name,
+            text = name,
             style = MaterialTheme.appTypography.bodyLBold
         )
 
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = person.character,
+            text = character,
             style = MaterialTheme.appTypography.bodySRegular
         )
     }

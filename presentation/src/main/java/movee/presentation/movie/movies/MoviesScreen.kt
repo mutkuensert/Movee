@@ -121,15 +121,19 @@ private fun MoviesNowPlaying(
             contentPadding = PaddingValues(horizontal = 10.dp)
         ) {
             items(count = moviesNowPlaying.itemCount) { index ->
-                val item = moviesNowPlaying[index]
+                val movie = moviesNowPlaying[index]
 
-                if (item != null) {
+                if (movie != null) {
                     NowPlayingMovie(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .width(150.dp),
-                        movie = item,
-                        navigateToMovieDetails = { navigateToMovieDetails(item.id) },
+                        id = movie.id,
+                        title = movie.title,
+                        imageUrl = movie.imageUrl,
+                        isFavorite = movie.isFavorite,
+                        voteAverage = movie.voteAverage,
+                        navigateToMovieDetails = { navigateToMovieDetails(movie.id) },
                         onAddToFavorite = onAddToFavorite
                     )
                 }
@@ -181,15 +185,19 @@ private fun PopularMovies(
         }
 
         items(count = popularMovies.itemCount) { index ->
-            val item = popularMovies[index]
+            val movie = popularMovies[index]
 
-            if (item != null) {
+            if (movie != null) {
                 PopularMovie(
                     modifier = Modifier
                         .padding(10.dp)
                         .fillMaxWidth(),
-                    movie = item,
-                    navigateToMovieDetails = { navigateToMovieDetails(item.id) },
+                    id = movie.id,
+                    title = movie.title,
+                    imageUrl = movie.imageUrl,
+                    isFavorite = movie.isFavorite,
+                    voteAverage = movie.voteAverage,
+                    navigateToMovieDetails = { navigateToMovieDetails(movie.id) },
                     onAddToFavorite = onAddToFavorite
                 )
             }
@@ -200,7 +208,11 @@ private fun PopularMovies(
 @Composable
 private fun NowPlayingMovie(
     modifier: Modifier = Modifier,
-    movie: MovieNowPlaying,
+    id: Int,
+    title: String,
+    imageUrl: String?,
+    isFavorite: Boolean?,
+    voteAverage: Double,
     navigateToMovieDetails: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
@@ -210,12 +222,12 @@ private fun NowPlayingMovie(
             .clickable(onClick = navigateToMovieDetails),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Poster(modifier = Modifier.padding(5.dp), posterUrl = movie.imageUrl)
+        Poster(modifier = Modifier.padding(5.dp), posterUrl = imageUrl)
 
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = movie.title,
+            text = title,
             style = MaterialTheme.appTypography.bodyLBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -224,16 +236,16 @@ private fun NowPlayingMovie(
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = movie.voteAverage.toString(),
+            text = voteAverage.toString(),
             style = MaterialTheme.appTypography.bodyLRegular
         )
 
-        if (movie.isFavorite != null) {
+        if (isFavorite != null) {
             Spacer(Modifier.height(10.dp))
 
             FavoriteButton(
-                isFavorite = movie.isFavorite!!,
-                onClick = { onAddToFavorite.invoke(!movie.isFavorite!!, movie.id) }
+                isFavorite = isFavorite,
+                onClick = { onAddToFavorite.invoke(!isFavorite, id) }
             )
         }
     }
@@ -242,7 +254,11 @@ private fun NowPlayingMovie(
 @Composable
 private fun PopularMovie(
     modifier: Modifier = Modifier,
-    movie: PopularMovie,
+    id: Int,
+    title: String,
+    imageUrl: String?,
+    isFavorite: Boolean?,
+    voteAverage: Double,
     navigateToMovieDetails: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, movieId: Int) -> Unit,
 ) {
@@ -253,13 +269,13 @@ private fun PopularMovie(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Poster(modifier = Modifier.padding(5.dp), posterUrl = movie.imageUrl)
+        Poster(modifier = Modifier.padding(5.dp), posterUrl = imageUrl)
 
         Spacer(Modifier.width(20.dp))
 
         Column {
             Text(
-                text = movie.title,
+                text = title,
                 style = MaterialTheme.appTypography.bodyLBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -268,20 +284,17 @@ private fun PopularMovie(
             Spacer(Modifier.height(10.dp))
 
             Text(
-                text = movie.voteAverage.toString(),
+                text = voteAverage.toString(),
                 style = MaterialTheme.appTypography.bodyLRegular
             )
 
-            if (movie.isFavorite != null) {
+            if (isFavorite != null) {
                 Spacer(Modifier.height(10.dp))
 
                 FavoriteButton(
-                    isFavorite = movie.isFavorite!!,
+                    isFavorite = isFavorite,
                     onClick = {
-                        onAddToFavorite.invoke(
-                            !movie.isFavorite!!,
-                            movie.id
-                        )
+                        onAddToFavorite.invoke(!isFavorite, id)
                     }
                 )
             }
@@ -293,28 +306,25 @@ private fun PopularMovie(
 @Composable
 private fun PreviewPopularMoviesItem() {
     PopularMovie(
-        movie = PopularMovie(
-            imageUrl = null,
-            title = "Title",
-            id = 0,
-            isFavorite = false,
-            voteAverage = 1.0
-        ),
+        id = 5363,
+        title = "quis",
+        imageUrl = null,
+        isFavorite = null,
+        voteAverage = 8.9,
         navigateToMovieDetails = {},
-        onAddToFavorite = { _, _ -> })
+        onAddToFavorite = { _, _ -> }
+    )
 }
 
 @Preview(widthDp = 150)
 @Composable
 private fun PreviewNowPlayingItem() {
     NowPlayingMovie(
-        movie = MovieNowPlaying(
-            imageUrl = null,
-            title = "movie",
-            id = 8466,
-            voteAverage = 2.3,
-            isFavorite = null
-        ),
+        id = 5363,
+        title = "quis",
+        imageUrl = null,
+        isFavorite = null,
+        voteAverage = 8.9,
         navigateToMovieDetails = {},
         onAddToFavorite = { _, _ -> })
 }

@@ -34,14 +34,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.mutkuensert.androidphase.Phase
-import com.mutkuensert.phasecomposeextension.Execute
 import movee.domain.person.model.PersonDetails
-import movee.domain.person.model.PersonMovieCast
-import movee.domain.person.model.PersonTvCast
+import movee.domain.person.model.PersonMovieCasting
+import movee.domain.person.model.PersonTvCasting
 import movee.presentation.components.Loading
+import movee.presentation.core.UiState
 import movee.presentation.core.setStatusBarAppearanceByDrawable
-import movee.presentation.core.showToastIfNotNull
 import movee.presentation.theme.appTypography
 
 @Composable
@@ -52,50 +50,44 @@ fun PersonScreen(
     val movieCasting by viewModel.movieCasting.collectAsStateWithLifecycle()
     val tvCasting by viewModel.tvCasting.collectAsStateWithLifecycle()
 
-    LaunchedEffect(true) { viewModel.getPersonDetails() }
-
-    details.Execute(
-        onSuccess = {
-            LaunchedEffect(true) { viewModel.getCasting() }
-        }
-    )
+    LaunchedEffect(Unit) { viewModel.getPersonDetails() }
+    LaunchedEffect(details) { if (details is UiState.Success) viewModel.getCasting() }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        PersonDetails(phase = details)
+        Details(personDetails = details)
 
-        PersonMovieCasting(
-            phase = movieCasting,
+        MovieCasting(
+            movieCasting = movieCasting,
             navigateToMovieDetails = viewModel::navigateToMovieDetails
         )
 
-        PersonTvCasting(
-            phase = tvCasting,
+        TvCasting(
+            tvCasting = tvCasting,
             navigateToTvDetails = viewModel::navigateToTvShowDetails
         )
     }
 }
 
 @Composable
-private fun PersonDetails(phase: Phase<PersonDetails>) {
+private fun Details(personDetails: UiState<PersonDetails>) {
     val readMore = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    phase.Execute(
-        onLoading = {
-            Loading()
-        },
-        onSuccess = {
+    when (personDetails) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> Loading()
+        is UiState.Success -> {
             Card(
                 elevation = 10.dp,
                 shape = RectangleShape
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(it.imageUrl)
+                        .data(personDetails.data.imageUrl)
                         .allowHardware(false)
                         .crossfade(true)
                         .build(),
@@ -115,20 +107,20 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
-                    text = it.name,
+                    text = personDetails.data.name,
                     style = MaterialTheme.appTypography.bodyMRegular
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
 
                 if (readMore.value) {
-                    Text(text = it.biography)
+                    Text(text = personDetails.data.biography)
 
                     Text(
                         text = "... read less",
                         modifier = Modifier.clickable { readMore.value = false })
                 } else {
-                    Text(text = it.biography, maxLines = 4)
+                    Text(text = personDetails.data.biography, maxLines = 4)
 
                     Text(
                         text = "... read more",
@@ -138,34 +130,46 @@ private fun PersonDetails(phase: Phase<PersonDetails>) {
                 Spacer(modifier = Modifier.height(15.dp))
 
             }
-        },
-        onError = { LocalContext.current.showToastIfNotNull(it.message) })
+        }
+    }
 }
 
 @Composable
-private fun PersonMovieCasting(
-    phase: Phase<List<PersonMovieCast>>,
+private fun MovieCasting(
+    movieCasting: UiState<List<PersonMovieCasting>>,
     navigateToMovieDetails: (movieId: Int) -> Unit
 ) {
-    phase.Execute(
-        onLoading = { Loading() },
-        onSuccess = {
-            it.forEach { item ->
-                PersonMovieCastItem(movie = item, navigateToMovieDetails = navigateToMovieDetails)
+    when (movieCasting) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> Loading()
+        is UiState.Success -> {
+            Column {
+                movieCasting.data.forEach { item ->
+                    Casting(
+                        id = item.id,
+                        title = item.title,
+                        character = item.character,
+                        imageUrl = item.imageUrl,
+                        navigateToDetails = navigateToMovieDetails,
+                    )
+                }
             }
-        },
-        onError = { LocalContext.current.showToastIfNotNull(it.message) })
+        }
+    }
 }
 
 @Composable
-private fun PersonMovieCastItem(
-    movie: PersonMovieCast,
-    navigateToMovieDetails: (movieId: Int) -> Unit
+private fun Casting(
+    id: Int,
+    title: String,
+    character: String,
+    imageUrl: String?,
+    navigateToDetails: (movieId: Int) -> Unit
 ) {
     Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
         Card(elevation = 10.dp, modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigateToMovieDetails(movie.id) }) {
+            .clickable { navigateToDetails(id) }) {
             Row(
                 modifier = Modifier.padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -173,7 +177,7 @@ private fun PersonMovieCastItem(
                 Card(elevation = 10.dp) {
                     SubcomposeAsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(movie.imageUrl)
+                            .data(imageUrl)
                             .crossfade(true)
                             .build(),
                         loading = {
@@ -194,7 +198,14 @@ private fun PersonMovieCastItem(
                 Spacer(Modifier.width(20.dp))
 
                 Text(
-                    text = movie.title,
+                    text = title,
+                    style = MaterialTheme.appTypography.h3Bold
+                )
+
+                Spacer(Modifier.width(10.dp))
+
+                Text(
+                    text = character,
                     style = MaterialTheme.appTypography.h3Bold
                 )
             }
@@ -203,62 +214,24 @@ private fun PersonMovieCastItem(
 }
 
 @Composable
-private fun PersonTvCasting(
-    phase: Phase<List<PersonTvCast>>,
+private fun TvCasting(
+    tvCasting: UiState<List<PersonTvCasting>>,
     navigateToTvDetails: (tvId: Int) -> Unit
 ) {
-    phase.Execute(
-        onLoading = { Loading() },
-        onSuccess = {
-            it.forEach { item ->
-                PersonTvCastItem(
-                    tv = item,
-                    navigateToTvDetails = navigateToTvDetails
-                )
-            }
-        },
-        onError = { LocalContext.current.showToastIfNotNull(it.message) })
-}
-
-@Composable
-private fun PersonTvCastItem(tv: PersonTvCast, navigateToTvDetails: (tvId: Int) -> Unit) {
-    Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 7.dp)) {
-        Card(elevation = 10.dp, modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navigateToTvDetails(tv.id) }) {
-
-            Row(
-                modifier = Modifier.padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Card(elevation = 10.dp) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(tv.imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        loading = {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = Color.Gray)
-                            }
-                        },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp))
-                            .width(150.dp),
-                        contentDescription = "Movie Poster"
+    when (tvCasting) {
+        is UiState.Empty -> {}
+        is UiState.Loading -> Loading()
+        is UiState.Success -> {
+            Column {
+                tvCasting.data.forEach { item ->
+                    Casting(
+                        id = item.id,
+                        title = item.name,
+                        character = item.character,
+                        imageUrl = item.imageUrl,
+                        navigateToDetails = navigateToTvDetails
                     )
                 }
-
-                Spacer(Modifier.width(20.dp))
-
-                Text(
-                    text = tv.name,
-                    style = MaterialTheme.appTypography.h3Bold
-                )
             }
         }
     }

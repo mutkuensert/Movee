@@ -46,8 +46,5 @@ dependencies {
 
     implementation "androidx.browser:browser:$versions.browser"
 
-    implementation "com.github.mutkuensert:Android-Phase:$versions.androidPhase"
-    implementation "com.github.mutkuensert:Android-Phase-Compose-Extension:$versions.androidPhaseCompose"
-
     implementation "androidx.palette:palette:$versions.palette"
 }

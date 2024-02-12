@@ -125,11 +125,15 @@ private fun PopularTvShows(
                 val item = popularTvShows[index]
 
                 if (item != null) {
-                    PopularTvShow(
+                    PopularShow(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .width(150.dp),
-                        popularTvShow = item,
+                        id = item.id,
+                        name = item.name,
+                        imageUrl = item.imageUrl,
+                        voteAverage = item.voteAverage,
+                        isFavorite = item.isFavorite,
                         onClick = { navigateToTvShowDetails(item.id) },
                         onAddToFavorite = onAddToFavorite
                     )
@@ -188,11 +192,15 @@ private fun TopRatedTvShows(
             val tvShow = topRatedTvShows[index]
 
             if (tvShow != null) {
-                TopRatedTvShow(
+                TopRatedShow(
                     modifier = Modifier
                         .width(150.dp)
                         .padding(10.dp),
-                    topRatedTvShow = tvShow,
+                    id = tvShow.id,
+                    name = tvShow.name,
+                    imageUrl = tvShow.imageUrl,
+                    voteAverage = tvShow.voteAverage,
+                    isFavorite = tvShow.isFavorite,
                     onClick = { navigateToTvShowDetails(tvShow.id) },
                     onAddToFavorite = onAddToFavorite
                 )
@@ -202,9 +210,13 @@ private fun TopRatedTvShows(
 }
 
 @Composable
-private fun PopularTvShow(
+private fun PopularShow(
     modifier: Modifier = Modifier,
-    popularTvShow: PopularTvShow,
+    id: Int,
+    name: String,
+    imageUrl: String?,
+    voteAverage: Double,
+    isFavorite: Boolean?,
     onClick: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
@@ -214,12 +226,12 @@ private fun PopularTvShow(
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Poster(modifier = Modifier.padding(5.dp), posterUrl = popularTvShow.imageUrl)
+        Poster(modifier = Modifier.padding(5.dp), posterUrl = imageUrl)
 
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = popularTvShow.name,
+            text = name,
             style = MaterialTheme.appTypography.bodyLBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -228,25 +240,29 @@ private fun PopularTvShow(
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = popularTvShow.voteAverage.toString(),
+            text = voteAverage.toString(),
             style = MaterialTheme.appTypography.bodyLRegular
         )
 
-        if (popularTvShow.isFavorite != null) {
+        if (isFavorite != null) {
             Spacer(Modifier.height(10.dp))
 
             FavoriteButton(
-                isFavorite = popularTvShow.isFavorite!!,
-                onClick = { onAddToFavorite.invoke(!popularTvShow.isFavorite!!, popularTvShow.id) }
+                isFavorite = isFavorite,
+                onClick = { onAddToFavorite.invoke(!isFavorite, id) }
             )
         }
     }
 }
 
 @Composable
-private fun TopRatedTvShow(
+private fun TopRatedShow(
     modifier: Modifier = Modifier,
-    topRatedTvShow: TopRatedTvShow,
+    id: Int,
+    name: String,
+    imageUrl: String?,
+    voteAverage: Double,
+    isFavorite: Boolean?,
     onClick: () -> Unit,
     onAddToFavorite: (isFavorite: Boolean, tvShowId: Int) -> Unit,
 ) {
@@ -258,7 +274,7 @@ private fun TopRatedTvShow(
     ) {
         Poster(
             modifier = Modifier.padding(5.dp),
-            posterUrl = topRatedTvShow.imageUrl
+            posterUrl = imageUrl
         )
 
         Spacer(Modifier.width(20.dp))
@@ -268,7 +284,7 @@ private fun TopRatedTvShow(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = topRatedTvShow.name,
+                text = name,
                 style = MaterialTheme.appTypography.bodyLBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -277,20 +293,17 @@ private fun TopRatedTvShow(
             Spacer(Modifier.height(10.dp))
 
             Text(
-                text = topRatedTvShow.voteAverage.toString(),
+                text = voteAverage.toString(),
                 style = MaterialTheme.appTypography.bodyLRegular
             )
 
-            if (topRatedTvShow.isFavorite != null) {
+            if (isFavorite != null) {
                 Spacer(Modifier.height(10.dp))
 
                 FavoriteButton(
-                    isFavorite = topRatedTvShow.isFavorite!!,
+                    isFavorite = isFavorite,
                     onClick = {
-                        onAddToFavorite.invoke(
-                            !topRatedTvShow.isFavorite!!,
-                            topRatedTvShow.id
-                        )
+                        onAddToFavorite.invoke(!isFavorite, id)
                     }
                 )
             }
@@ -301,14 +314,12 @@ private fun TopRatedTvShow(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun PreviewTopRatedTvShow() {
-    TopRatedTvShow(
-        topRatedTvShow = TopRatedTvShow(
-            imageUrl = null,
-            id = 0,
-            voteAverage = 0.0,
-            name = "Tv Show Title",
-            isFavorite = true
-        ),
+    TopRatedShow(
+        id = 1364,
+        name = "Ada Stein",
+        imageUrl = null,
+        voteAverage = 4.5,
+        isFavorite = null,
         onClick = {},
         onAddToFavorite = { _, _ -> }
     )

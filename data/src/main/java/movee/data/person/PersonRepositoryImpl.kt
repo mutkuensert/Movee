@@ -4,8 +4,8 @@ import com.github.michaelbull.result.Result
 import movee.domain.Failure
 import movee.domain.person.PersonRepository
 import movee.domain.person.model.PersonDetails
-import movee.domain.person.model.PersonMovieCast
-import movee.domain.person.model.PersonTvCast
+import movee.domain.person.model.PersonMovieCasting
+import movee.domain.person.model.PersonTvCasting
 import javax.inject.Inject
 import movee.data.network.toResult
 import movee.data.util.getImageUrl
@@ -14,10 +14,10 @@ class PersonRepositoryImpl @Inject constructor(
     private val personApi: PersonApi
 ) : PersonRepository {
 
-    override suspend fun getPersonMovieCasting(personId: Int): Result<List<PersonMovieCast>, Failure> {
+    override suspend fun getPersonMovieCasting(personId: Int): Result<List<PersonMovieCasting>, Failure> {
         return personApi.getPersonMovieCasting(personId = personId).toResult(mapper = { response ->
             response.cast.map {
-                PersonMovieCast(
+                PersonMovieCasting(
                     character = it.character,
                     title = it.title,
                     id = it.id,
@@ -27,10 +27,10 @@ class PersonRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun getPersonTvCasting(personId: Int): Result<List<PersonTvCast>, Failure> {
+    override suspend fun getPersonTvCasting(personId: Int): Result<List<PersonTvCasting>, Failure> {
         return personApi.getPersonTvCasting(personId).toResult(mapper = { response ->
             response.cast.map {
-                PersonTvCast(
+                PersonTvCasting(
                     character = it.character,
                     name = it.name,
                     id = it.id,

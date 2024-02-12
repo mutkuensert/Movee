@@ -8,5 +8,4 @@ android {
 
 dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$versions.paging"
-    implementation "com.github.mutkuensert:Android-Phase:$versions.androidPhase"
 }
