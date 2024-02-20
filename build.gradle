@@ -53,3 +53,20 @@ plugins {
     id 'com.google.dagger.hilt.android' version "$dagger_version" apply false
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version" apply false
 }
+
+tasks.register('deleteEmptyDirectories') {
+    def emptyDirs = []
+
+    project.fileTree(dir: rootProject.projectDir).visit {
+        File f = it.file
+
+        if (f.isDirectory()) {
+            def children = project.fileTree(f).filter { it.isFile() }.files
+            if (children.size() == 0) {
+                emptyDirs << f
+            }
+        }
+    }
+
+    emptyDirs.reverseEach { it.delete() }
+}
