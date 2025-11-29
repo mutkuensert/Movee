@@ -1,5 +1,7 @@
 # Movee
 
+### This project is no longer maintained. See my new [Tmdb client project](https://github.com/mutkuensert/MovieDb-Light) which demonstrates a cleaner structure.
+
 https://github.com/mutkuensert/Movee/assets/97624869/bfd5d03e-8260-4338-a597-4157033b791f
 
 
